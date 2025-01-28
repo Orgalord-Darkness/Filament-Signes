@@ -2,5 +2,5 @@
 Migration de signes de backpack à filament
 
 # Notes
-paramétrage = Option
-Aide en ligne = Faq
+- paramétrage = Option
+- Aide en ligne = Faq
