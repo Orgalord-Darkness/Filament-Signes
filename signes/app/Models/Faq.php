@@ -41,6 +41,6 @@ class Faq extends ActiveBaseModel
     protected static function boot()
     {
         parent::boot();
-        static::addGlobalScope(new OrderScope(['libelle']));
+        static::addGlobalScope(new OrderScope(['question']));
     }
 }
