@@ -13,6 +13,9 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Filament\Forms\Components\CheckBox;
+use App\Filament\Resources\CategorieResource\Pages\FiltersCategorie; 
+use Filament\Tables\Enums\FiltersLayout;
+
 
 class CategorieResource extends Resource
 {
@@ -36,15 +39,22 @@ class CategorieResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('libelle'),
+                Tables\Columns\TextColumn::make('libelle')
+                    ->wrap()
+                    ->searchable()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('actif')
-                ->formatStateUsing(function ($state) {
-                    return $state ? 'Oui' : 'Non';
-                }),
+                    ->wrap()
+                    ->searchable()
+                    ->sortable()
+                    ->formatStateUsing(function ($state) {
+                        return $state ? 'Oui' : 'Non';
+                    }),
             ])
-            ->filters([
+            ->filters(
                 //
-            ])
+                FiltersCategorie::getFilters(), layout: FiltersLayout::AboveContent
+            )
             ->actions([
                 Tables\Actions\EditAction::make(),
             ])
