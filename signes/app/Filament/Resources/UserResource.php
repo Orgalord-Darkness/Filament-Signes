@@ -17,6 +17,8 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\CheckBox;
 use Filament\Forms\Components\CheckBoxList;
+use Filament\Forms\Components\Password;
+use Illuminate\Support\Facades\Hash;
 
 
 class UserResource extends Resource
@@ -34,24 +36,26 @@ class UserResource extends Resource
                         'M.' => 'M.',
                         'Mme' => 'Mme',
                     ])
-                    ->inline(), // Pour afficher les options en ligne
+                    ->inline() // Pour afficher les options en ligne
+                    ->required(),
                 Forms\Components\TextInput::make('prenom')->required(), 
                 Forms\Components\TextInput::make('nom')->required(),
                 Forms\Components\TextInput::make('email')->label('Courriel')->email()->required(),
-                Forms\Components\TextInput::make('password')->label('Mot de passe')->password()->required(),
+                Forms\Components\TextInput::make('name')->label('Identifiant')->required(),
+                Forms\Components\TextInput::make('password')
+                ->label('Mot de passe')
+                ->password()
+                ->dehydrateStateUsing(fn($state) => Hash::make($state))
+                ->required(),
                 Forms\Components\TextInput::make('password_confirmation')
                     ->password()
                     ->required()
                     ->maxLength(255)
                     ->same('password')
+                    ->dehydrateStateUsing(fn($state) => Hash::make($state))
                     ->label('Conformation du mot de passe'),
-                CheckBoxList::make('Rôles')
-                    ->options([
-                        'Administrateur' => 'Administrateur',
-                        'Gestionnaire' => 'Gestionnaire',
-                        'Opérateur' => 'Opérateur',
-                        'Utilisateur' => 'Utilisateur',
-                    ]),
+                CheckBoxList::make('roles')
+                   ->relationship('roles','name'),
                 Select::make('secteur')
                 ->relationship('secteur', 'libelle')
                 ->required(),  
@@ -69,7 +73,8 @@ class UserResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('civilite'),
-                Tables\Columns\TextColumn::make('prenom'),
+                Tables\Columns\TextColumn::make('prenom')
+                ->searchable(),
                 Tables\Columns\TextColumn::make('nom'),
                 Tables\Columns\TextColumn::make('roles.name'),
                 Tables\Columns\TextColumn::make('secteur.libelle'),
