@@ -12,6 +12,9 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Filament\Forms\Components\CheckBox;
+use App\Filament\Resources\CatFaqResource\Pages\FiltersCatFaq; 
+use Filament\Tables\Enums\FiltersLayout;
 
 class CatFaqResource extends Resource
 {
@@ -25,6 +28,9 @@ class CatFaqResource extends Resource
             ->schema([
                 //
                 Forms\Components\TextInput::make('libelle')->required(),
+                CheckBox::make('actif')
+                        ->label('Actif')
+                        ->required(), 
             ]);
     }
 
@@ -32,15 +38,23 @@ class CatFaqResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('libelle'),
-                Tables\Columns\TextColumn::make('actif')
+                Tables\Columns\TextColumn::make('libelle')
+                ->wrap()
+                ->searchable()
+                ->sortable(),
+                
+                    Tables\Columns\TextColumn::make('actif')
                 ->formatStateUsing(function ($state) {
                     return $state ? 'Oui' : 'Non';
-                }),
+                })
+                ->wrap()
+                ->searchable()
+                ->sortable(),
             ])
-            ->filters([
+            ->filters(
                 //
-            ])
+                FiltersCatFaq::getFilters(), layout: FiltersLayout::AboveContent
+            )
             ->actions([
                 Tables\Actions\EditAction::make(),
             ])
