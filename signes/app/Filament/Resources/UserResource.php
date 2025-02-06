@@ -71,7 +71,7 @@ class UserResource extends Resource
                 Tables\Columns\TextColumn::make('civilite'),
                 Tables\Columns\TextColumn::make('prenom'),
                 Tables\Columns\TextColumn::make('nom'),
-                Tables\Columns\TextColumn::make('role.name'),
+                Tables\Columns\TextColumn::make('roles.name'),
                 Tables\Columns\TextColumn::make('secteur.libelle'),
 
             ])
