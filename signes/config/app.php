@@ -52,14 +52,14 @@ return [
     |
     */
 
-    'url' => env('APP_URL', 'https://signes.valdoise.fr'),
+    'url' => env('APP_URL', 'http://localhost'),
     /*
     |--------------------------------------------------------------------------
     | URL du Web service RefCDVO
     |--------------------------------------------------------------------------
     */
 
-    'refcdvo' => env('REF_CDVO_API_BASE_URI', 'https://refcdvo.valdoise.fr'),
+    #'refcdvo' => env('REF_CDVO_API_BASE_URI', 'https://refcdvo.valdoise.fr'),
 
     /*
     |--------------------------------------------------------------------------

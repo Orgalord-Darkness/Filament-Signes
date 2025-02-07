@@ -79,10 +79,10 @@ class OptionResource extends Resource
                 ->sortable(),
 
             ])
-            ->filters(
-                //
-                FiltersOption::getFilters(), layout: FiltersLayout::AboveContent
-            )
+            // ->filters(
+            //     //
+            //     FiltersOption::getFilters(), layout: FiltersLayout::AboveContent
+            // )
             ->actions([
                 Tables\Actions\EditAction::make(),
             ])
