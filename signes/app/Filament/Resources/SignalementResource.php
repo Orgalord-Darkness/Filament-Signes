@@ -18,6 +18,8 @@ use Filament\Forms\Components\Wizard;
 use Filament\Forms\Components\Wizard\Step;
 use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\Tabs\Tab;
+use Illuminate\Support\Facades\Auth;
+
 
 class SignalementResource extends Resource
 {
@@ -29,83 +31,8 @@ class SignalementResource extends Resource
     {
         return $form
         ->schema([
-            // Wizard::make([
-            //     Step::make('Etablissement-Déclarant')
-            //     ->schema([
-            //         Forms\Components\DatePicker::make('date_evenement')
-            //         ->label('Date et heure du signalement')
-            //         ->required(),
-
-            //         Forms\Components\DatePicker::make('date')
-            //         ->label('Date et heure de l\'évenement')
-            //         ->required(),
-
-            //         Forms\Components\Radio::make('public')
-            //         ->options([
-            //             'Enfant'=> 'Enfant',
-            //             'PA' => 'PA',
-            //             'PH'=> 'PH',
-            //         ])
-            //         ->inline() // Pour afficher les options en ligne
-            //         ->required(), 
-
-            //         Forms\Components\Select::make('secteur_id')
-            //         ->relationship('secteur', 'libelle')
-            //         ->required(),
-
-            //         Forms\Components\Select::make('etablissement_id')
-            //         ->relationship('etablissement', 'nom')
-            //         ->required(),
-
-            //         Forms\Components\Radio::make('civilité')
-            //             ->options([
-            //                 'M.' => 'M.',
-            //                 'Mme' => 'Mme',
-            //             ])
-            //             ->inline() // Pour afficher les options en ligne
-            //             ->required(),
-            //         Forms\Components\TextInput::make('prenom')->required(), 
-            //         Forms\Components\TextInput::make('nom')->required(),
-            //         Forms\Components\TextInput::make('email')->label('Courriel')->email()->required(),
-
-            //         Forms\Components\TextInput::make('tel')
-            //         ->numeric()
-            //         ->integer()
-            //         ->required(),
-                    
-            //         Forms\Components\CheckBoxList::make('ars_info')
-            //         ->options(['ARS'=>'Agence Régionale de Santé']),
-
-            //         Forms\Components\CheckBoxList::make('ddpp_info')
-            //         ->options(['DDPP'=>'Direction Départementale de la Portection des Populations']),
-
-            //         Forms\Components\CheckBoxList::make('dtpjj_info')
-            //         ->options(['DTPJJ'=>'Direction Territoire de la Protection Judiciaire de la Jeunesse du Val d\'Oise']),
-
-            //         Forms\Components\CheckBoxList::make('dtpjj_info')
-            //         ->options(['P'=>'Préfet']),
-            //     ]),  
-            //     Step::make('Faits-Victimes')
-            //     ->schema([
-            //         Forms\Components\Select::make('categorie_id')
-            //         ->relationship('categorie','libelle'),
-
-            //         // Forms\Components\Select::make('rub_nature1_id')
-            //         // ->relationship('rubrique','libelle'),
-
-            //         Forms\Components\TextArea::make('nature1_autre'),
-
-            //         // Forms\Components\Select::make('rub_nature2_id')
-            //         // ->relationship('rubrique','libelle'),
-
-            //         Forms\Components\TextArea::make('nature2_autre'),
-
-            //         Forms\Components\TextArea::make('description'),
-            //     ]),  
-            // ]),
-            Tabs::make('Signalement')
-            ->tabs([
-                Tab::make('Etablissement-Déclarant')
+            Wizard::make([
+                Step::make('Etablissement-Déclarant')
                 ->schema([
                     Forms\Components\DatePicker::make('date_evenement')
                     ->label('Date et heure du signalement')
@@ -138,40 +65,57 @@ class SignalementResource extends Resource
                             'Mme' => 'Mme',
                         ])
                         ->inline() // Pour afficher les options en ligne
+                        ->default(Auth::user()->civilite)
                         ->required(),
-                    Forms\Components\TextInput::make('prenom')->required(), 
-                    Forms\Components\TextInput::make('nom')->required(),
-                    Forms\Components\TextInput::make('email')->label('Courriel')->email()->required(),
+                    Forms\Components\TextInput::make('prenom')
+                    ->default(Auth::user()->prenom)
+                    ->required(), 
+                    Forms\Components\TextInput::make('nom')
+                    ->default(Auth::user()->nom)
+                    ->required(),
+                    Forms\Components\TextInput::make('email')
+                    ->label('Courriel')
+                    ->email()
+                    ->default(Auth::user()->email)
+                    ->required(),
 
                     Forms\Components\TextInput::make('tel')
                     ->numeric()
-                    ->integer()
                     ->required(),
                     
                     Forms\Components\CheckBoxList::make('ars_info')
-                    ->options(['ARS'=>'Agence Régionale de Santé']),
+                    ->options([1=>'Agence Régionale de Santé'])
+                    ->default(0),
 
                     Forms\Components\CheckBoxList::make('ddpp_info')
-                    ->options(['DDPP'=>'Direction Départementale de la Portection des Populations']),
+                    ->default(0)
+                    ->options([1=>'Direction Départementale de la Portection des Populations']),
 
                     Forms\Components\CheckBoxList::make('dtpjj_info')
-                    ->options(['DTPJJ'=>'Direction Territoire de la Protection Judiciaire de la Jeunesse du Val d\'Oise']),
+                    ->default(0)
+                    ->options([1=>'Direction Territoire de la Protection Judiciaire de la Jeunesse du Val d\'Oise']),
 
                     Forms\Components\CheckBoxList::make('dtpjj_info')
-                    ->options(['P'=>'Préfet']),
+                    ->default(0)
+                    ->options([1=>'Préfet']),
                 ]),
-            Tab::make('Faits-Victime')
+            Step::make('Faits-Victime')
                 ->schema([
                     Forms\Components\Select::make('categorie_id')
-                    ->relationship('categorie','libelle'),
+                    ->label('Catégorie Nature des Faits principale')
+                    ->relationship('categorie','libelle')
+                    ->required(),
 
-                    // Forms\Components\Select::make('rub_nature1_id')
-                    // ->relationship('rubrique','libelle'),
+                    Forms\Components\Select::make('rub_nature1_id')
+                    ->label('Nature des Faits principale')
+                    ->required()
+                    ->relationship('rub_nature1','libelle'),
 
                     Forms\Components\TextArea::make('nature1_autre'),
 
-                    // Forms\Components\Select::make('rub_nature2_id')
-                    // ->relationship('rubrique','libelle'),
+                    Forms\Components\Select::make('rub_nature2_id')//ne passe pas 
+                    ->default(1)
+                    ->relationship('rub_nature2','libelle'),
 
                     Forms\Components\TextArea::make('nature2_autre'),
 
@@ -180,9 +124,10 @@ class SignalementResource extends Resource
                     Forms\Components\Radio::make('eig')
                     ->label('L\'EIG s\'est passé pendant une période tenue de l\'organisation ' )
                     ->options([
-                        '1'=>'Oui',
-                        '0'=>'Non',
-                    ]),
+                        'Oui'=>'Oui',
+                        'Non'=>'Non',
+                    ])
+                    ->required(),
                     Forms\Components\Select::make('periode_eig')
                     ->label('Période EIG')
                     ->options([
@@ -238,7 +183,7 @@ class SignalementResource extends Resource
                     ->required(),
 
                     Forms\Components\Radio::make('perex_pec')
-                    ->label('Nombre de personnes prises en charge exposées')
+                    ->label('Nombre de personnes prises en charge exposées')//marche pas 
                     ->options([
                         'Aucune' => 'Aucune',
                         'Une' => 'Une',
@@ -250,7 +195,7 @@ class SignalementResource extends Resource
                     ]),
 
                     Forms\Components\Radio::make('perex_pro')
-                    ->label('Nombre de professionnels exposées')
+                    ->label('Nombre de professionnels exposées')// marche pas
                     ->options([
                         'Aucune' => 'Aucune',
                         'Une' => 'Une',
@@ -262,7 +207,7 @@ class SignalementResource extends Resource
                     ]),
 
                     Forms\Components\Radio::make('perex_autre')
-                    ->label('Nombre de professionnels exposées autre')
+                    ->label('Nombre de professionnels exposées autre') //marche pas 
                     ->options([
                         'Aucune' => 'Aucune',
                         'Une' => 'Une',
@@ -273,7 +218,7 @@ class SignalementResource extends Resource
                         'Tous'=>'Tous',
                     ]),
                 ]),
-            Tab::make('Conséquences-Mesures')
+            Step::make('Conséquences-Mesures')
                 ->schema([
                     Forms\Components\Select::make('consequence1')
                     ->label('Pour la ou les personnes prises en charge')
@@ -333,6 +278,7 @@ class SignalementResource extends Resource
                         'Refus de l\'usager'=>'Refus de l\'usager',  
                         'Autre'=>'Autre',
                     ])
+                    ->reactive()
                     ->required(),
                     Forms\Components\TextInput::make('secours_non')
                     ->label('Si Non, précisez')
@@ -368,8 +314,160 @@ class SignalementResource extends Resource
                     ->label(
                         'Réunion entre la direction et l\'équipe concernée' 
                     ),
+                ]),
+        Step::make('Information-Dispositions')
+            ->schema([
+                Forms\Components\Radio::make('information')
+                ->label('Information')
+                ->options([
+                    'Oui'=>'Oui',
+                    'Non'=>'Non',
+                    'Ne sais pas'=>'Ne sais pas',
+                    'Sans objet'=>'Sans objet',
                 ])
+                ->reactive()
+                ->required(),
+                
+                Forms\Components\TextInput::make('plus_information'),
+
+                Forms\Components\TextInput::make('information_non')
+                ->label('Si Non, précisez')
+                ->visible(fn ($get)=>$get('information') === 'Non' ),
+
+                Forms\Components\TextInput::make('information_autre')
+                ->label('Si Autre, précisez')
+                ->visible(fn ($get)=>$get('information') === 'Autre' ),
+                
+                Forms\Components\TextInput::make('disposition1_autre')
+                ->label('Concernant les usagers')
+                ->required(),
+
+                Forms\Components\TextInput::make('disposition2_autre')
+                ->label('Concernant les professionnels')
+                ->required(),
+
+                Forms\Components\TextInput::make('disposition3_autre')
+                ->label('Concernant l\'organisation du travail')
+                ->required(),
+
+                Forms\Components\TextInput::make('disposition4_autre')
+                ->label('Concernant l\'établissement')
+                ->required(),
+
+            ]),  
+        Step::make('Suites-Répercutions')
+            ->schema([
+                Forms\Components\Radio::make('suite1')
+                ->label('Enquête de Police ou de Gendarmerie')
+                ->options([
+                    'Oui'=>'Oui',
+                    'Non'=>'Non',
+                ])
+                ->required(),
+                
+                Forms\Components\Radio::make('suite2')
+                ->label('Dépôt de plainte')
+                ->options([
+                    'Oui'=>'Oui',
+                    'Non'=>'Non',
+                ])
+                ->required(),
+
+                Forms\Components\Radio::make('suite3')
+                ->label('Signalement au Procureur de la République')
+                ->options([
+                    'Oui'=>'Oui',
+                    'Non'=>'Non',
+                ])
+                ->required(),
+
+                Forms\Components\TextArea::make('evolution')
+                ->label('évolutions prévisible ou difficultés attendues, les informations saisies dans ce champ sont confidentielles'),
+
+                Forms\Components\Radio::make('media1')
+                ->label('L\'évènement peut-il avoir un impact médiatique ?')
+                ->options([
+                    'Oui'=>'Oui',
+                    'Non'=>'Non',
+                ])
+                ->reactive()
+                ->required(),
+                Forms\Components\TextInput::make('media1_oui')
+                ->label('Si oui, dans quelle mesure ?')
+                ->visible(fn ($get) => $get('media1') === 'Oui'),
+
+                Forms\Components\Radio::make('media2')
+                ->label('Les médias sont-ils déjà informés de l\'évènement ?')
+                ->options([
+                    'Oui'=>'Oui',
+                    'Non'=>'Non',
+                ])
+                ->reactive()
+                ->required(),
+                Forms\Components\TextInput::make('media2_oui')
+                ->label('Si oui, par quel moyen ?')
+                ->visible(fn ($get) => $get('media2') === 'Oui'),
+
+                Forms\Components\Radio::make('media3')
+                ->label('Communication effectuée ou prévue ?')
+                ->options([
+                    'Oui'=>'Oui',
+                    'Non'=>'Non',
+                ])
+                ->reactive()
+                ->required(),
+                Forms\Components\TextInput::make('media3_oui')
+                ->label('Si oui, précisez par qui ? quand ? comment ?')
+                ->visible(fn ($get) => $get('media3') === 'Oui'),
+                
             ]),
+            Step::make('Suivi')
+            ->schema([
+                Forms\Components\Radio::make('maitrise')
+                ->label('Après sa survenue, pensez-vous que l\'évènement soit maîtrisé ?')
+                ->options([
+                    'Oui' => 'Oui',
+                    'Non'=>'Non',
+                    'En cours'=>'En cours',
+                ]),
+
+                Forms\Components\Radio::make('analyse') //marche pas 
+                ->label('L\'évènement va t-il être analysé ?')
+                ->options([
+                    'Oui' => 'Oui',
+                    'Non'=>'Non',
+                ]),
+
+                Forms\Components\Radio::make('analyse_car_event') //marche pas
+                ->label('Après l\'analyse, comment qualifieriez-vous le caractère de cet évènement ?')
+                ->options([
+                    'Inévitable' => 'Inévitable',
+                    'Probablement inévitable'=>'Probablement inévitable',
+                    'Evitable'=>'Evitable',
+                    'Probablement évitable'=>'Probablement évitable'
+                ]),
+
+                Forms\Components\Radio::make('analyse_collect') //marche pas
+                ->label('L\'analyse a-t-elle été réalisée collectivement ?')
+                ->options([
+                    'Oui' => 'Oui',
+                    'Non'=>'Non',
+                ])
+                ->reactive(),
+
+                Forms\Components\Select::make('analyse_group_id')
+                ->label('Groupe d\'analyse')
+                ->relationship('analyse_groupe','libelle')
+                ->visible(fn ($get)=>$get('analyse_collect') === 'Oui')
+                ->reactive(),
+
+                Forms\Components\TextInput::make('analyse_group_autre')
+                ->label('Si Autre, précisez')
+                ->visible(fn ($get)=>$get('analyse_group_id') === 'Autre'),
+
+                Forms\Components\TextArea::make('commentaire'),
+            ]),
+        ])
         ]);
     }
 
