@@ -20,6 +20,8 @@ use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\Tabs\Tab;
 use Illuminate\Support\Facades\Auth;
 use AlperenErsoy\FilamentExport\Actions\FilamentExportBulkAction; 
+use App\Models\Option ;
+use App\Models\Section ;
 
 
 class SignalementResource extends Resource
@@ -37,10 +39,12 @@ class SignalementResource extends Resource
                 ->schema([
                     Forms\Components\DatePicker::make('date_evenement')
                     ->label('Date et heure du signalement')
+                    ->default(Now())
                     ->required(),
 
                     Forms\Components\DatePicker::make('date')
                     ->label('Date et heure de l\'évenement')
+                    ->default(Now())
                     ->required(),
 
                     Forms\Components\Radio::make('public')
@@ -52,7 +56,7 @@ class SignalementResource extends Resource
                     ->inline() // Pour afficher les options en ligne
                     ->required(), 
                     Forms\Components\TextInput::make('etat')
-                    ->default('Envoyé')
+                    ->default('Ouvert')
                     ->required(),
                     Forms\Components\Select::make('secteur_id')
                     ->relationship('secteur', 'libelle')
@@ -87,7 +91,8 @@ class SignalementResource extends Resource
                     ->required(),
                     
                     Forms\Components\Select::make('user_id')
-                    ->relationship('user','prenom')
+                    ->relationship('user','nom')
+                    ->default(Auth::user()->id)
                     ->required(),
                     Forms\Components\Toggle::make('ars_info')
                     ->label('Agence Régionale de Santé')
@@ -107,27 +112,70 @@ class SignalementResource extends Resource
 
                     Forms\Components\Select::make('fonction_id')
                     ->label('Fonction')
-                    ->relationship('fonction','libelle')
+
+                    ->relationship('fonction','libelle', function ($query) { 
+                        $id = 1 ; 
+                        $sections = Section::all(); 
+                        foreach($sections as $ligne){
+                            if($ligne['libelle'] == 'Fonctions déclarant'){
+                                $id = $ligne['id'];
+                                break ; 
+                            }
+                        }
+                        $query->where('section_id',$id); 
+                    })  
                     ->required(), 
                 ]),
             Step::make('Faits-Victime')
                 ->schema([
-                    Forms\Components\Select::make('categorie_id')
+                    Forms\Components\Select::make('nature1_id')
                     ->label('Catégorie Nature des Faits principale')
-                    ->relationship('categorie','libelle')
+                    ->relationship('nature1','libelle', function ($query) { 
+                        $id = 1 ; 
+                        $sections = Section::all(); 
+                        foreach($sections as $ligne){
+                            if($ligne['libelle'] == 'Nature des Faits'){
+                                $id = $ligne['id'];
+                                break ; 
+                            }
+                        }
+                        $query->where('section_id',$id); 
+                    })
                     ->required(),
 
                     Forms\Components\Select::make('rub_nature1_id')
                     ->label('Nature des Faits principale')
                     ->required()
-                    ->relationship('rub_nature1','libelle'),
+                    ->relationship('rub_nature1','libelle', function ($query) { 
+                        $id = 1 ; 
+                        $sections = Section::all(); 
+                        foreach($sections as $ligne){
+                            if($ligne['libelle'] == 'Nature des Faits'){
+                                $id = $ligne['id'];
+                                break ; 
+                            }
+                        }
+                        $query->where('section_id',$id); 
+                    }),
 
                     Forms\Components\TextArea::make('nature1_autre'),
 
+                    Forms\Components\Select::make('nature2_id')//ne passe pas 
+                    ->default(1)
+                    ->relationship('nature2','libelle', function ($query) { 
+                        $id = 1 ; 
+                        $sections = Section::all(); 
+                        foreach($sections as $ligne){
+                            if($ligne['libelle'] == 'Nature des Faits'){
+                                $id = $ligne['id'];
+                                break ; 
+                            }
+                        }
+                        $query->where('section_id',$id); 
+                    }),
                     Forms\Components\Select::make('rub_nature2_id')//ne passe pas 
                     ->default(1)
-                    ->relationship('rub_nature2','libelle'),
-
+                    ->relationship('rub_nature2','libelle'), 
                     Forms\Components\TextArea::make('nature2_autre'),
 
                     Forms\Components\TextArea::make('description'),
@@ -281,16 +329,20 @@ class SignalementResource extends Resource
                     ->label('Si autre précisez')
                     ->visible(fn ($get) => $get('consequence3') === 'Autre'),
                     
-                    Forms\Components\Select::make('secours')
-                    ->label('Demande d\'intervention des secours' )
-                    ->options([
-                        'Oui' => 'Oui',
-                        'Non' =>'Non', 
-                        'Refus de l\'usager'=>'Refus de l\'usager',  
-                        'Autre'=>'Autre',
-                    ])
-                    ->reactive()
+                    Forms\Components\Select::make('secours_id')
+                    ->relationship('secours','libelle', function ($query) { 
+                        $id = 1 ; 
+                        $sections = Section::all(); 
+                        foreach($sections as $ligne){
+                            if($ligne['libelle'] == 'Secours'){
+                                $id = $ligne['id'];
+                                break ; 
+                            }
+                        }
+                        $query->where('section_id',$id); 
+                    })
                     ->required(),
+                    
                     Forms\Components\TextInput::make('secours_non')
                     ->label('Si Non, précisez')
                     ->required(),
@@ -298,8 +350,34 @@ class SignalementResource extends Resource
                     ->label('Si Autre, précisez')
                     ->required(),
 
-                    Forms\Components\Select::make('secours_id')
-                    ->relationship('secours','libelle')
+                    Forms\Components\Toggle::make('secours_ide')
+                    ->label('IDE (Infirmière Diplômée d\'Etat')
+                    ->default(false)
+                    ->required(),
+
+                    Forms\Components\Toggle::make('secours_medecin')
+                    ->label('Médecin')
+                    ->default(false)
+                    ->required(),
+
+                    Forms\Components\Toggle::make('secours_medecin2')
+                    ->label('Médecin traitant')
+                    ->default(false)
+                    ->required(),
+
+                    Forms\Components\Toggle::make('secours_police')
+                    ->label('Police')
+                    ->default(false)
+                    ->required(),
+
+                    Forms\Components\Toggle::make('secours_samu')
+                    ->label('SAMU')
+                    ->default(false)
+                    ->required(),
+
+                    Forms\Components\Toggle::make('secours_pompiers')
+                    ->label('Pompiers')
+                    ->default(false)
                     ->required(),
 
                     Forms\Components\TextArea::make('mesure1')
@@ -468,8 +546,17 @@ class SignalementResource extends Resource
 
                 Forms\Components\Select::make('analyse_group_id')
                 ->label('Groupe d\'analyse')
-                ->relationship('analyse_groupe','libelle')
-                ->visible(fn ($get)=>$get('analyse_collect') === 'O')
+                ->relationship('analyse_groupe','libelle', function ($query) { 
+                    $id = 1 ; 
+                    $sections = Section::all(); 
+                    foreach($sections as $ligne){
+                        if($ligne['libelle'] == 'Analyse'){
+                            $id = $ligne['id'];
+                            break ; 
+                        }
+                    }
+                    $query->where('section_id',$id); 
+                })
                 ->reactive(),
 
                 Forms\Components\TextInput::make('analyse_group_autre')
