@@ -23,6 +23,9 @@ class OptionResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
+    // Définir le label de navigation
+    protected static ?string $navigationLabel = 'Paramétrage';
+
     public static function form(Form $form): Form
     {
         return $form

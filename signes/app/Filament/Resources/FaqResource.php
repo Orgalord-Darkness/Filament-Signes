@@ -26,13 +26,16 @@ class FaqResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
+    // Définir le label de navigation
+    protected static ?string $navigationLabel = 'Aide en ligne';
+
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
                 //
                 Select::make('catfaq_id')
-                ->relationship('catfaqs', 'libelle')
+                ->relationship('catfaq', 'libelle')
                 ->required(),  //c'est le classe du model pas le nom de la table
                 Forms\Components\TextInput::make('question')->required(), 
                 Forms\Components\TextArea::make('reponse'),
