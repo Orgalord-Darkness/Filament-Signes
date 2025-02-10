@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Filament\Forms\Components\Select ; 
 use Filament\Forms\Components\CheckBox;
 use App\Repositories\CommuneRepository; 
+use AlperenErsoy\FilamentExport\Actions\FilamentExportBulkAction; 
 
 class EtablissementResource extends Resource
 {
@@ -259,8 +260,14 @@ class EtablissementResource extends Resource
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
+                    FilamentExportBulkAction::make('export')
+                    ->label("Télécharger")
+                    ->FileName('etablissements')
+                    ->defaultFormat('xlsx')
+                    ->defaultPageOrientation('landscape')
                 ]),
-            ]);
+            ])->paginated([10,25,50,100,200,300])
+            ->defaultSort('id','desc');
     }
 
     public static function getRelations(): array

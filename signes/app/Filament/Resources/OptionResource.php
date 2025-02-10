@@ -15,7 +15,7 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Filament\Forms\Components\Select ; 
 use App\Filament\Resources\OptionResource\Pages\FiltersOption; 
 use Filament\Tables\Enums\FiltersLayout;
-
+use AlperenErsoy\FilamentExport\Actions\FilamentExportBulkAction; 
 
 class OptionResource extends Resource
 {
@@ -89,8 +89,14 @@ class OptionResource extends Resource
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
+                    FilamentExportBulkAction::make('export')
+                    ->label("Télécharger")
+                    ->FileName('options')
+                    ->defaultFormat('xlsx')
+                    ->defaultPageOrientation('landscape')
                 ]),
-            ]);
+            ])->paginated([10,25,50,100,200,300])
+            ->defaultSort('id','desc');
     }
 
     public static function getRelations(): array

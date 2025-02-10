@@ -19,6 +19,7 @@ use Filament\Forms\Components\CheckBox;
 use Filament\Forms\Components\CheckBoxList;
 use Filament\Forms\Components\Password;
 use Illuminate\Support\Facades\Hash;
+use AlperenErsoy\FilamentExport\Actions\FilamentExportBulkAction; 
 
 
 class UserResource extends Resource
@@ -89,8 +90,14 @@ class UserResource extends Resource
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
+                    FilamentExportBulkAction::make('export')
+                    ->label("Télécharger")
+                    ->FileName('utilisateurs')
+                    ->defaultFormat('xlsx')
+                    ->defaultPageOrientation('landscape')
                 ]),
-            ]);
+            ])->paginated([10,25,50,100,200,300])
+            ->defaultSort('id','desc');
     }
 
     public static function getRelations(): array

@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Filament\Forms\Components\CheckBox;
 use App\Filament\Resources\CatFaqResource\Pages\FiltersCatFaq; 
 use Filament\Tables\Enums\FiltersLayout;
+use AlperenErsoy\FilamentExport\Actions\FilamentExportBulkAction; 
 
 class CatFaqResource extends Resource
 {
@@ -61,8 +62,14 @@ class CatFaqResource extends Resource
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
+                    FilamentExportBulkAction::make('export')
+                    ->label("Télécharger")
+                    ->FileName('categories_faq')
+                    ->defaultFormat('xlsx')
+                    ->defaultPageOrientation('landscape')
                 ]),
-            ]);
+            ])->paginated([10,25,50,100,200,300])
+            ->defaultSort('id','desc');
     }
 
     public static function getRelations(): array

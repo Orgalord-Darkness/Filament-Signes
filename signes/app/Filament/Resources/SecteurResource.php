@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\SecteurResource\Pages\FiltersSecteur; 
 use Filament\Tables\Enums\FiltersLayout;
+use AlperenErsoy\FilamentExport\Actions\FilamentExportBulkAction; 
 
 class SecteurResource extends Resource
 {
@@ -82,8 +83,14 @@ class SecteurResource extends Resource
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
+                    FilamentExportBulkAction::make('export')
+                    ->label("Télécharger")
+                    ->FileName('secteurs')
+                    ->defaultFormat('xlsx')
+                    ->defaultPageOrientation('landscape')
                 ]),
-            ]);
+            ])->paginated([10,25,50,100,200,300])
+            ->defaultSort('id','desc');
     }
 
     public static function getRelations(): array
