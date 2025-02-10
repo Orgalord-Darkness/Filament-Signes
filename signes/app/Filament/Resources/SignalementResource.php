@@ -512,6 +512,18 @@ class SignalementResource extends Resource
                 ->wrap(),
 
                 Tables\Columns\TextColumn::make('complet')
+                ->formatStateUsing(function ($record) {
+                    // Liste des champs à vérifier
+                    $fields = ['user_id', 'prenom', 'nom'];
+
+                    // Vérifier si tous les champs sont remplis
+                    foreach ($fields as $field) {
+                        if (empty($record->$field)) {
+                            return 'Non';
+                        }
+                    }
+                    return 'Oui';
+                })
                 ->searchable()
                 ->sortable()
                 ->wrap(),
