@@ -50,7 +50,9 @@ class SignalementResource extends Resource
                     ])
                     ->inline() // Pour afficher les options en ligne
                     ->required(), 
-
+                    Forms\Components\TextInput::make('etat')
+                    ->default('Envoyé')
+                    ->required(),
                     Forms\Components\Select::make('secteur_id')
                     ->relationship('secteur', 'libelle')
                     ->required(),
@@ -59,7 +61,7 @@ class SignalementResource extends Resource
                     ->relationship('etablissement', 'nom')
                     ->required(),
 
-                    Forms\Components\Radio::make('civilité')
+                    Forms\Components\Radio::make('civilite')
                         ->options([
                             'M.' => 'M.',
                             'Mme' => 'Mme',
@@ -83,21 +85,29 @@ class SignalementResource extends Resource
                     ->numeric()
                     ->required(),
                     
-                    Forms\Components\CheckBoxList::make('ars_info')
-                    ->options([1=>'Agence Régionale de Santé'])
-                    ->default(0),
+                    Forms\Components\Select::make('user_id')
+                    ->relationship('user','prenom')
+                    ->required(),
+                    Forms\Components\Toggle::make('ars_info')
+                    ->label('Agence Régionale de Santé')
+                    ->default(false),
 
-                    Forms\Components\CheckBoxList::make('ddpp_info')
-                    ->default(0)
-                    ->options([1=>'Direction Départementale de la Portection des Populations']),
+                    Forms\Components\Toggle::make('ddpp_info')
+                    ->default(false)
+                    ->label('Direction Départementale de la Portection des Populations'),
 
-                    Forms\Components\CheckBoxList::make('dtpjj_info')
-                    ->default(0)
-                    ->options([1=>'Direction Territoire de la Protection Judiciaire de la Jeunesse du Val d\'Oise']),
+                    Forms\Components\Toggle::make('dtpjj_info')
+                    ->default(false)
+                    ->label('Direction Territoire de la Protection Judiciaire de la Jeunesse du Val d\'Oise'),
 
-                    Forms\Components\CheckBoxList::make('dtpjj_info')
-                    ->default(0)
-                    ->options([1=>'Préfet']),
+                    Forms\Components\Toggle::make('prefet_info')
+                    ->default(false)
+                    ->label('Préfet'),
+
+                    Forms\Components\Select::make('fonction_id')
+                    ->label('Fonction')
+                    ->relationship('fonction','libelle')
+                    ->required(), 
                 ]),
             Step::make('Faits-Victime')
                 ->schema([
@@ -270,7 +280,7 @@ class SignalementResource extends Resource
                     ->label('Si autre précisez')
                     ->visible(fn ($get) => $get('consequence3') === 'Autre'),
                     
-                    Forms\Components\Select::make('demande_secours')
+                    Forms\Components\Select::make('secours')
                     ->label('Demande d\'intervention des secours' )
                     ->options([
                         'Oui' => 'Oui',
@@ -282,10 +292,10 @@ class SignalementResource extends Resource
                     ->required(),
                     Forms\Components\TextInput::make('secours_non')
                     ->label('Si Non, précisez')
-                    ->visible(fn ($get) => $get('demande_secours') === 'Non'),
+                    ->required(),
                     Forms\Components\TextInput::make('secours_autre')
                     ->label('Si Autre, précisez')
-                    ->visible(fn ($get) => $get('demande_secours') === 'Autre'),
+                    ->required(),
 
                     Forms\Components\Select::make('secours_id')
                     ->relationship('secours','libelle')
@@ -434,8 +444,8 @@ class SignalementResource extends Resource
                 Forms\Components\Radio::make('analyse') //marche pas 
                 ->label('L\'évènement va t-il être analysé ?')
                 ->options([
-                    'Oui' => 'Oui',
-                    'Non'=>'Non',
+                    'O' => 'O',
+                    'N'=>'N',
                 ]),
 
                 Forms\Components\Radio::make('analyse_car_event') //marche pas
@@ -458,7 +468,7 @@ class SignalementResource extends Resource
                 Forms\Components\Select::make('analyse_group_id')
                 ->label('Groupe d\'analyse')
                 ->relationship('analyse_groupe','libelle')
-                ->visible(fn ($get)=>$get('analyse_collect') === 'Oui')
+                ->visible(fn ($get)=>$get('analyse_collect') === 'O')
                 ->reactive(),
 
                 Forms\Components\TextInput::make('analyse_group_autre')
@@ -491,12 +501,12 @@ class SignalementResource extends Resource
                 ->sortable()
                 ->wrap(),
 
-                Tables\Columns\TextColumn::make('etablissement.libelle')
+                Tables\Columns\TextColumn::make('etablissement.nom')
                 ->searchable()
                 ->sortable()
                 ->wrap(),
 
-                Tables\Columns\TextColumn::make('statut')
+                Tables\Columns\TextColumn::make('etat')
                 ->searchable()
                 ->sortable()
                 ->wrap(),
