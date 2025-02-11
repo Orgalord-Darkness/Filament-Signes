@@ -22,6 +22,7 @@ use Illuminate\Support\Facades\Auth;
 use AlperenErsoy\FilamentExport\Actions\FilamentExportBulkAction; 
 use App\Models\Option ;
 use App\Models\Section ;
+use Filament\Forms\Components\Grid ; 
 
 
 class SignalementResource extends Resource
@@ -34,18 +35,22 @@ class SignalementResource extends Resource
     {
         return $form
         ->schema([
-            Wizard::make([
-                Step::make('Etablissement-Déclarant')
+            Tabs::make('Signalement')
+                ->tabs([
+                Tab::make('Etablissement-Déclarant')
                 ->schema([
-                    Forms\Components\DatePicker::make('date_evenement')
-                    ->label('Date et heure du signalement')
-                    ->default(Now())
-                    ->required(),
+                    Forms\Components\Grid::make(2)
+                    ->schema([
+                        Forms\Components\DatePicker::make('date_evenement')
+                        ->label('Date et heure du signalement')
+                        ->default(Now())
+                        ->required(),
 
-                    Forms\Components\DatePicker::make('date')
-                    ->label('Date et heure de l\'évenement')
-                    ->default(Now())
-                    ->required(),
+                        Forms\Components\DatePicker::make('date')
+                        ->label('Date et heure de l\'évenement')
+                        ->default(Now())
+                        ->required(),
+                    ]),
 
                     Forms\Components\Radio::make('public')
                     ->options([
@@ -55,18 +60,24 @@ class SignalementResource extends Resource
                     ])
                     ->inline() // Pour afficher les options en ligne
                     ->required(), 
+                    
                     Forms\Components\TextInput::make('etat')
                     ->default('Ouvert')
+                    ->hidden()
                     ->required(),
-                    Forms\Components\Select::make('secteur_id')
-                    ->relationship('secteur', 'libelle')
-                    ->required(),
+                    Forms\Components\Grid::make(2)
+                        ->schema([
+                            Forms\Components\Select::make('secteur_id')
+                            ->relationship('secteur', 'libelle')
+                            ->required(),
 
-                    Forms\Components\Select::make('etablissement_id')
-                    ->relationship('etablissement', 'nom')
-                    ->required(),
-
-                    Forms\Components\Radio::make('civilite')
+                            Forms\Components\Select::make('etablissement_id')
+                            ->relationship('etablissement', 'nom')
+                            ->required(),
+                        ]),
+                    Forms\Components\Grid::make(3)
+                    ->schema([
+                        Forms\Components\Radio::make('civilite')
                         ->options([
                             'M.' => 'M.',
                             'Mme' => 'Mme',
@@ -74,24 +85,44 @@ class SignalementResource extends Resource
                         ->inline() // Pour afficher les options en ligne
                         ->default(Auth::user()->civilite)
                         ->required(),
-                    Forms\Components\TextInput::make('prenom')
-                    ->default(Auth::user()->prenom)
-                    ->required(), 
-                    Forms\Components\TextInput::make('nom')
-                    ->default(Auth::user()->nom)
-                    ->required(),
-                    Forms\Components\TextInput::make('email')
-                    ->label('Courriel')
-                    ->email()
-                    ->default(Auth::user()->email)
-                    ->required(),
+                        Forms\Components\TextInput::make('prenom')
+                        ->default(Auth::user()->prenom)
+                        ->required(), 
+                        Forms\Components\TextInput::make('nom')
+                        ->default(Auth::user()->nom)
+                        ->required(),
+                    ]),
+                    Forms\Components\Grid::make(3)
+                    ->schema([
+                        Forms\Components\TextInput::make('email')
+                        ->label('Courriel')
+                        ->email()
+                        ->default(Auth::user()->email)
+                        ->required(),
 
-                    Forms\Components\TextInput::make('tel')
-                    ->numeric()
-                    ->required(),
-                    
+                        Forms\Components\TextInput::make('tel')
+                        ->numeric()
+                        ->required(),
+
+                        Forms\Components\Select::make('fonction_id')
+                        ->label('Fonction')
+                        ->relationship('fonction','libelle', function ($query) { 
+                            $id = 1 ; 
+                            $sections = Section::all(); 
+                            foreach($sections as $ligne){
+                                if($ligne['libelle'] == 'Fonctions déclarant'){
+                                    $id = $ligne['id'];
+                                    break ; 
+                                }
+                            }
+                            $query->where('section_id',$id); 
+                        })  
+                        ->required(),
+                    ]),
+                                    
                     Forms\Components\Select::make('user_id')
                     ->relationship('user','nom')
+                    ->hidden()
                     ->default(Auth::user()->id)
                     ->required(),
                     Forms\Components\Toggle::make('ars_info')
@@ -108,25 +139,9 @@ class SignalementResource extends Resource
 
                     Forms\Components\Toggle::make('prefet_info')
                     ->default(false)
-                    ->label('Préfet'),
-
-                    Forms\Components\Select::make('fonction_id')
-                    ->label('Fonction')
-
-                    ->relationship('fonction','libelle', function ($query) { 
-                        $id = 1 ; 
-                        $sections = Section::all(); 
-                        foreach($sections as $ligne){
-                            if($ligne['libelle'] == 'Fonctions déclarant'){
-                                $id = $ligne['id'];
-                                break ; 
-                            }
-                        }
-                        $query->where('section_id',$id); 
-                    })  
-                    ->required(), 
+                    ->label('Préfet'), 
                 ]),
-            Step::make('Faits-Victime')
+            Tab::make('Faits-Victime')
                 ->schema([
                     Forms\Components\Select::make('nature1_id')
                     ->label('Catégorie Nature des Faits principale')
@@ -180,176 +195,200 @@ class SignalementResource extends Resource
 
                     Forms\Components\TextArea::make('description'),
 
-                    Forms\Components\Radio::make('eig')
-                    ->label('L\'EIG s\'est passé pendant une période tenue de l\'organisation ' )
-                    ->options([
-                        'Oui'=>'Oui',
-                        'Non'=>'Non',
-                    ])
-                    ->required(),
-                    Forms\Components\Select::make('periode_eig')
-                    ->label('Période EIG')
-                    ->options([
-                        'Durant la nuit'=>'Durant la nuit',
-                        'Durant le week-end'=>'Durant le week-end',
-                        'Un jour férié'=>'Un jour férié',
-                        'Heure de changement d\'équipe'=>'Heure de changement d\'équipe',
-                        'Autre'=>'Autre',
-                    ])
-                    ->required()
-                    ->reactive(),
-                    Forms\Components\TextInput::make('periode_eig_autre')
-                    ->label('Si Autre, précisez')
-                    ->visible(fn ($get) => $get('periode_eig') === 'Autre'),
-
-                    Forms\Components\Radio::make('victimes_pec')
-                    ->label('Nombre de victimes prises en charge')
-                    ->options([
-                        'Aucune' => 'Aucune',
-                        'Une' => 'Une',
-                        'Deux' => 'Deux',
-                        'Trois' => 'Trois',
-                        'Quatre'=>'Quatre',
-                        'Cinq et plus'=> 'Cinq et plus',
-                        'Tous'=>'Tous',
-                    ])
-                    ->required(),
-
-                    Forms\Components\Radio::make('victimes_pro')
-                    ->label('Nombre de victimes professionnels')
-                    ->options([
-                        'Aucune' => 'Aucune',
-                        'Une' => 'Une',
-                        'Deux' => 'Deux',
-                        'Trois' => 'Trois',
-                        'Quatre'=>'Quatre',
-                        'Cinq et plus'=> 'Cinq et plus',
-                        'Tous'=>'Tous',
-                    ])
-                    ->required(),
-
-                    Forms\Components\Radio::make('victimes_autre')
-                    ->label('Nombre de victimes autre')
-                    ->options([
-                        'Aucune' => 'Aucune',
-                        'Une' => 'Une',
-                        'Deux' => 'Deux',
-                        'Trois' => 'Trois',
-                        'Quatre'=>'Quatre',
-                        'Cinq et plus'=> 'Cinq et plus',
-                        'Tous'=>'Tous',
-                    ])
-                    ->required(),
-
-                    Forms\Components\Radio::make('perex_pec')
-                    ->label('Nombre de personnes prises en charge exposées')//marche pas 
-                    ->options([
-                        'Aucune' => 'Aucune',
-                        'Une' => 'Une',
-                        'Deux' => 'Deux',
-                        'Trois' => 'Trois',
-                        'Quatre'=>'Quatre',
-                        'Cinq et plus'=> 'Cinq et plus',
-                        'Tous'=>'Tous',
+                    Forms\Components\Grid::make(3)
+                    ->schema([
+                        Forms\Components\Radio::make('eig')
+                        ->label('L\'EIG s\'est passé pendant une période tenue de l\'organisation ' )
+                        ->options([
+                            'Oui'=>'Oui',
+                            'Non'=>'Non',
+                        ])
+                        ->required(),
+                        Forms\Components\Select::make('periode_eig')
+                        ->label('Période EIG')
+                        ->options([
+                            'Durant la nuit'=>'Durant la nuit',
+                            'Durant le week-end'=>'Durant le week-end',
+                            'Un jour férié'=>'Un jour férié',
+                            'Heure de changement d\'équipe'=>'Heure de changement d\'équipe',
+                            'Autre'=>'Autre',
+                        ])
+                        ->required()
+                        ->reactive(),
+                        Forms\Components\TextInput::make('periode_eig_autre')
+                        ->label('Si Autre, précisez')
+                        ->visible(fn ($get) => $get('periode_eig') === 'Autre'),
                     ]),
 
-                    Forms\Components\Radio::make('perex_pro')
-                    ->label('Nombre de professionnels exposées')// marche pas
-                    ->options([
-                        'Aucune' => 'Aucune',
-                        'Une' => 'Une',
-                        'Deux' => 'Deux',
-                        'Trois' => 'Trois',
-                        'Quatre'=>'Quatre',
-                        'Cinq et plus'=> 'Cinq et plus',
-                        'Tous'=>'Tous',
+                    Forms\Components\Grid::make(2)
+                    ->schema([
+                        Forms\Components\Radio::make('victimes_pec')
+                        ->label('Nombre de victimes prises en charge')
+                        ->options([
+                            'Aucune' => 'Aucune',
+                            'Une' => 'Une',
+                            'Deux' => 'Deux',
+                            'Trois' => 'Trois',
+                            'Quatre'=>'Quatre',
+                            'Cinq et plus'=> 'Cinq et plus',
+                            'Tous'=>'Tous',
+                        ])
+                        ->required(),
+
+                        Forms\Components\Radio::make('perex_pec')
+                        ->label('Nombre de personnes prises en charge exposées')//marche pas 
+                        ->options([
+                            'Aucune' => 'Aucune',
+                            'Une' => 'Une',
+                            'Deux' => 'Deux',
+                            'Trois' => 'Trois',
+                            'Quatre'=>'Quatre',
+                            'Cinq et plus'=> 'Cinq et plus',
+                            'Tous'=>'Tous',
+                        ]),
                     ]),
 
-                    Forms\Components\Radio::make('perex_autre')
-                    ->label('Nombre de professionnels exposées autre') //marche pas 
-                    ->options([
-                        'Aucune' => 'Aucune',
-                        'Une' => 'Une',
-                        'Deux' => 'Deux',
-                        'Trois' => 'Trois',
-                        'Quatre'=>'Quatre',
-                        'Cinq et plus'=> 'Cinq et plus',
-                        'Tous'=>'Tous',
+                    Forms\Components\Grid::make(2)
+                    ->schema([
+                        Forms\Components\Radio::make('victimes_pro')
+                        ->label('Nombre de victimes professionnels')
+                        ->options([
+                            'Aucune' => 'Aucune',
+                            'Une' => 'Une',
+                            'Deux' => 'Deux',
+                            'Trois' => 'Trois',
+                            'Quatre'=>'Quatre',
+                            'Cinq et plus'=> 'Cinq et plus',
+                            'Tous'=>'Tous',
+                        ])
+                        ->required(),
+
+                        Forms\Components\Radio::make('perex_pro')
+                        ->label('Nombre de professionnels exposées')// marche pas
+                        ->options([
+                            'Aucune' => 'Aucune',
+                            'Une' => 'Une',
+                            'Deux' => 'Deux',
+                            'Trois' => 'Trois',
+                            'Quatre'=>'Quatre',
+                            'Cinq et plus'=> 'Cinq et plus',
+                            'Tous'=>'Tous',
+                        ]),
+                    ]),
+                    
+                    Forms\Components\Grid::make(2)
+                    ->schema([
+                        Forms\Components\Radio::make('victimes_autre')
+                        ->label('Nombre de victimes autre')
+                        ->options([
+                            'Aucune' => 'Aucune',
+                            'Une' => 'Une',
+                            'Deux' => 'Deux',
+                            'Trois' => 'Trois',
+                            'Quatre'=>'Quatre',
+                            'Cinq et plus'=> 'Cinq et plus',
+                            'Tous'=>'Tous',
+                        ])
+                        ->required(),
+
+                        Forms\Components\Radio::make('perex_autre')
+                        ->label('Nombre de professionnels exposées autre') //marche pas 
+                        ->options([
+                            'Aucune' => 'Aucune',
+                            'Une' => 'Une',
+                            'Deux' => 'Deux',
+                            'Trois' => 'Trois',
+                            'Quatre'=>'Quatre',
+                            'Cinq et plus'=> 'Cinq et plus',
+                            'Tous'=>'Tous',
+                        ]),
                     ]),
                 ]),
-            Step::make('Conséquences-Mesures')
+            Tab::make('Conséquences-Mesures')
                 ->schema([
-                    Forms\Components\Select::make('consequence1')
-                    ->label('Pour la ou les personnes prises en charge')
-                    ->options([
-                        'Aucune' => 'Aucune',
-                        'Aggravation de la santé' => 'Aggravation de la santé',
-                        'Blessure' => 'Blessure',
-                        'Changement de comportement ou d\'humeur' => 'Changement de comportement ou d\'humeur',
-                        'Décès' => 'Décès',
-                        'Hospitalisation'=>'Hospitalisation',
-                        'Soin en interne'=>'Soin en interne',
-                        'Autre'=>'Autre',                       
-                    ])
-                    ->reactive()
-                    ->required(),
-                    Forms\Components\TextInput::make('consequence1_autre')
-                    ->label('Si autre précisez')
-                    ->visible(fn ($get) => $get('consequence1') === 'Autre'),
+                    Forms\Components\Grid::make(2)
+                    ->schema([
+                        Forms\Components\Select::make('consequence1')
+                        ->label('Pour la ou les personnes prises en charge')
+                        ->options([
+                            'Aucune' => 'Aucune',
+                            'Aggravation de la santé' => 'Aggravation de la santé',
+                            'Blessure' => 'Blessure',
+                            'Changement de comportement ou d\'humeur' => 'Changement de comportement ou d\'humeur',
+                            'Décès' => 'Décès',
+                            'Hospitalisation'=>'Hospitalisation',
+                            'Soin en interne'=>'Soin en interne',
+                            'Autre'=>'Autre',                       
+                        ])
+                        ->reactive()
+                        ->required(),
+                        Forms\Components\TextInput::make('consequence1_autre')
+                        ->label('Si autre précisez')
+                        ->visible(fn ($get) => $get('consequence1') === 'Autre'),
 
-                    Forms\Components\Select::make('consequence2')
-                    ->label('Pour la ou les professionnels')
-                    ->options([
-                        'Aucune' => 'Aucune',
-                        'Arrêt maladie' => 'Arrêt maladie',
-                        'Décès' => 'Décès',
-                        'Impossibilité de se rendre sur le lieu de travail' => 'Impossibilité de se rendre sur le lieu de travail',
-                        'Organisation d\'une prise en charge médicale et/ou soutien psychologique' => 'Organisation d\'une prise en charge médicale et/ou soutien psychologique',
-                        'Autre'=>'Autre',                       
-                    ])
-                    ->reactive()
-                    ->required(),
-                    Forms\Components\TextInput::make('consequence2_autre')
-                    ->label('Si autre précisez')
-                    ->visible(fn ($get) => $get('consequence2') === 'Autre'),
+                    ]),
+                    Forms\Components\Grid::make(2)
+                    ->schema([
+                        Forms\Components\Select::make('consequence2')
+                        ->label('Pour la ou les professionnels')
+                        ->options([
+                            'Aucune' => 'Aucune',
+                            'Arrêt maladie' => 'Arrêt maladie',
+                            'Décès' => 'Décès',
+                            'Impossibilité de se rendre sur le lieu de travail' => 'Impossibilité de se rendre sur le lieu de travail',
+                            'Organisation d\'une prise en charge médicale et/ou soutien psychologique' => 'Organisation d\'une prise en charge médicale et/ou soutien psychologique',
+                            'Autre'=>'Autre',                       
+                        ])
+                        ->reactive()
+                        ->required(),
+                        Forms\Components\TextInput::make('consequence2_autre')
+                        ->label('Si autre précisez')
+                        ->visible(fn ($get) => $get('consequence2') === 'Autre'),
 
-                    Forms\Components\Select::make('consequence3')
-                    ->label('Pour l\'organisation et le fonctionnement de l\'établissement')
-                    ->options([
-                        'Aucune' => 'Aucune',
-                        'Difficultés d\'approvisionnement'=> 'Difficultés d\'approvisionnement',
-                        'Difficultés d\'accès à l\'établissement ou au lieu de prise en charge'=>'Difficultés d\'accès à l\'établissement ou au lieu de prise en charge', 
-                        'Nécessitant d\'évacuation des résidents'=>'Nécessitant d\'évacuation des résidents',
-                        'Fonctionnement en mode dégradé' => 'Fonctionnement en mode dégradé', 
-                        'Autre'=>'Autre',                       
-                    ])
-                    ->reactive()
-                    ->required(),
-                    Forms\Components\TextInput::make('consequence3_autre')
-                    ->label('Si autre précisez')
-                    ->visible(fn ($get) => $get('consequence3') === 'Autre'),
+                    ]),
+                    Forms\Components\Grid::make(2)
+                    ->schema([
+                        Forms\Components\Select::make('consequence3')
+                        ->label('Pour l\'organisation et le fonctionnement de l\'établissement')
+                        ->options([
+                            'Aucune' => 'Aucune',
+                            'Difficultés d\'approvisionnement'=> 'Difficultés d\'approvisionnement',
+                            'Difficultés d\'accès à l\'établissement ou au lieu de prise en charge'=>'Difficultés d\'accès à l\'établissement ou au lieu de prise en charge', 
+                            'Nécessitant d\'évacuation des résidents'=>'Nécessitant d\'évacuation des résidents',
+                            'Fonctionnement en mode dégradé' => 'Fonctionnement en mode dégradé', 
+                            'Autre'=>'Autre',                       
+                        ])
+                        ->reactive()
+                        ->required(),
+                        Forms\Components\TextInput::make('consequence3_autre')
+                        ->label('Si autre précisez')
+                        ->visible(fn ($get) => $get('consequence3') === 'Autre'),
+                    ]),
                     
-                    Forms\Components\Select::make('secours_id')
-                    ->relationship('secours','libelle', function ($query) { 
-                        $id = 1 ; 
-                        $sections = Section::all(); 
-                        foreach($sections as $ligne){
-                            if($ligne['libelle'] == 'Secours'){
-                                $id = $ligne['id'];
-                                break ; 
+                    Forms\Components\Grid::make()
+                    ->schema([
+                        Forms\Components\Select::make('secours_id')
+                        ->relationship('secours','libelle', function ($query) { 
+                            $id = 1 ; 
+                            $sections = Section::all(); 
+                            foreach($sections as $ligne){
+                                if($ligne['libelle'] == 'Secours'){
+                                    $id = $ligne['id'];
+                                    break ; 
+                                }
                             }
-                        }
-                        $query->where('section_id',$id); 
-                    })
-                    ->required(),
-                    
-                    Forms\Components\TextInput::make('secours_non')
-                    ->label('Si Non, précisez')
-                    ->required(),
-                    Forms\Components\TextInput::make('secours_autre')
-                    ->label('Si Autre, précisez')
-                    ->required(),
+                            $query->where('section_id',$id); 
+                        })
+                        ->required(),
+                        
+                        Forms\Components\TextInput::make('secours_non')
+                        ->label('Si Non, précisez')
+                        ->required(),
+                        Forms\Components\TextInput::make('secours_autre')
+                        ->label('Si Autre, précisez')
+                        ->required(),
 
+                    ]),
                     Forms\Components\Toggle::make('secours_ide')
                     ->label('IDE (Infirmière Diplômée d\'Etat')
                     ->default(false)
@@ -404,28 +443,32 @@ class SignalementResource extends Resource
                         'Réunion entre la direction et l\'équipe concernée' 
                     ),
                 ]),
-        Step::make('Information-Dispositions')
+        Tab::make('Information-Dispositions')
             ->schema([
-                Forms\Components\Radio::make('information')
-                ->label('Information')
-                ->options([
-                    'Oui'=>'Oui',
-                    'Non'=>'Non',
-                    'Ne sais pas'=>'Ne sais pas',
-                    'Sans objet'=>'Sans objet',
-                ])
-                ->reactive()
-                ->required(),
+                Grid::make()
+                ->schema([
+                    Forms\Components\Radio::make('information')
+                    ->label('Information')
+                    ->options([
+                        'Oui'=>'Oui',
+                        'Non'=>'Non',
+                        'Ne sais pas'=>'Ne sais pas',
+                        'Sans objet'=>'Sans objet',
+                    ])
+                    ->reactive()
+                    ->required(),
+                    
+                    Forms\Components\TextInput::make('plus_information'),
+
+                    Forms\Components\TextInput::make('information_non')
+                    ->label('Si Non, précisez')
+                    ->visible(fn ($get)=>$get('information') === 'Non' ),
+
+                    Forms\Components\TextInput::make('information_autre')
+                    ->label('Si Autre, précisez')
+                    ->visible(fn ($get)=>$get('information') === 'Autre' ),
                 
-                Forms\Components\TextInput::make('plus_information'),
-
-                Forms\Components\TextInput::make('information_non')
-                ->label('Si Non, précisez')
-                ->visible(fn ($get)=>$get('information') === 'Non' ),
-
-                Forms\Components\TextInput::make('information_autre')
-                ->label('Si Autre, précisez')
-                ->visible(fn ($get)=>$get('information') === 'Autre' ),
+                ]),
                 
                 Forms\Components\TextInput::make('disposition1_autre')
                 ->label('Concernant les usagers')
@@ -444,73 +487,84 @@ class SignalementResource extends Resource
                 ->required(),
 
             ]),  
-        Step::make('Suites-Répercutions')
+        Tab::make('Suites-Répercutions')
             ->schema([
-                Forms\Components\Radio::make('suite1')
-                ->label('Enquête de Police ou de Gendarmerie')
-                ->options([
-                    'Oui'=>'Oui',
-                    'Non'=>'Non',
-                ])
-                ->required(),
-                
-                Forms\Components\Radio::make('suite2')
-                ->label('Dépôt de plainte')
-                ->options([
-                    'Oui'=>'Oui',
-                    'Non'=>'Non',
-                ])
-                ->required(),
+                Grid::make()
+                ->schema([
+                    Forms\Components\Radio::make('suite1')
+                    ->label('Enquête de Police ou de Gendarmerie')
+                    ->options([
+                        'Oui'=>'Oui',
+                        'Non'=>'Non',
+                    ])
+                    ->required(),
+                    
+                    Forms\Components\Radio::make('suite2')
+                    ->label('Dépôt de plainte')
+                    ->options([
+                        'Oui'=>'Oui',
+                        'Non'=>'Non',
+                    ])
+                    ->required(),
 
-                Forms\Components\Radio::make('suite3')
-                ->label('Signalement au Procureur de la République')
-                ->options([
-                    'Oui'=>'Oui',
-                    'Non'=>'Non',
-                ])
-                ->required(),
+                    Forms\Components\Radio::make('suite3')
+                    ->label('Signalement au Procureur de la République')
+                    ->options([
+                        'Oui'=>'Oui',
+                        'Non'=>'Non',
+                    ])
+                    ->required(),
+                ]),
 
                 Forms\Components\TextArea::make('evolution')
                 ->label('évolutions prévisible ou difficultés attendues, les informations saisies dans ce champ sont confidentielles'),
 
-                Forms\Components\Radio::make('media1')
-                ->label('L\'évènement peut-il avoir un impact médiatique ?')
-                ->options([
-                    'Oui'=>'Oui',
-                    'Non'=>'Non',
-                ])
-                ->reactive()
-                ->required(),
-                Forms\Components\TextInput::make('media1_oui')
-                ->label('Si oui, dans quelle mesure ?')
-                ->visible(fn ($get) => $get('media1') === 'Oui'),
+                Grid::make()
+                ->schema([
+                    Forms\Components\Radio::make('media1')
+                    ->label('L\'évènement peut-il avoir un impact médiatique ?')
+                    ->options([
+                        'Oui'=>'Oui',
+                        'Non'=>'Non',
+                    ])
+                    ->reactive()
+                    ->required(),
+                    Forms\Components\TextInput::make('media1_oui')
+                    ->label('Si oui, dans quelle mesure ?')
+                    ->visible(fn ($get) => $get('media1') === 'Oui'),
+                ]),
 
-                Forms\Components\Radio::make('media2')
-                ->label('Les médias sont-ils déjà informés de l\'évènement ?')
-                ->options([
-                    'Oui'=>'Oui',
-                    'Non'=>'Non',
-                ])
-                ->reactive()
-                ->required(),
-                Forms\Components\TextInput::make('media2_oui')
-                ->label('Si oui, par quel moyen ?')
-                ->visible(fn ($get) => $get('media2') === 'Oui'),
+                Grid::make()
+                ->schema([
+                    Forms\Components\Radio::make('media2')
+                    ->label('Les médias sont-ils déjà informés de l\'évènement ?')
+                    ->options([
+                        'Oui'=>'Oui',
+                        'Non'=>'Non',
+                    ])
+                    ->reactive()
+                    ->required(),
+                    Forms\Components\TextInput::make('media2_oui')
+                    ->label('Si oui, par quel moyen ?')
+                    ->visible(fn ($get) => $get('media2') === 'Oui'),
+                ]),
 
-                Forms\Components\Radio::make('media3')
-                ->label('Communication effectuée ou prévue ?')
-                ->options([
-                    'Oui'=>'Oui',
-                    'Non'=>'Non',
-                ])
-                ->reactive()
-                ->required(),
-                Forms\Components\TextInput::make('media3_oui')
-                ->label('Si oui, précisez par qui ? quand ? comment ?')
-                ->visible(fn ($get) => $get('media3') === 'Oui'),
-                
+                Grid::make()
+                ->schema([
+                    Forms\Components\Radio::make('media3')
+                    ->label('Communication effectuée ou prévue ?')
+                    ->options([
+                        'Oui'=>'Oui',
+                        'Non'=>'Non',
+                    ])
+                    ->reactive()
+                    ->required(),
+                    Forms\Components\TextInput::make('media3_oui')
+                    ->label('Si oui, précisez par qui ? quand ? comment ?')
+                    ->visible(fn ($get) => $get('media3') === 'Oui'),
+                ]),
             ]),
-            Step::make('Suivi')
+            Tab::make('Suivi')
             ->schema([
                 Forms\Components\Radio::make('maitrise')
                 ->label('Après sa survenue, pensez-vous que l\'évènement soit maîtrisé ?')
@@ -544,24 +598,27 @@ class SignalementResource extends Resource
                 ])
                 ->reactive(),
 
-                Forms\Components\Select::make('analyse_group_id')
-                ->label('Groupe d\'analyse')
-                ->relationship('analyse_groupe','libelle', function ($query) { 
-                    $id = 1 ; 
-                    $sections = Section::all(); 
-                    foreach($sections as $ligne){
-                        if($ligne['libelle'] == 'Analyse'){
-                            $id = $ligne['id'];
-                            break ; 
+                Grid::make()
+                ->schema([
+                    Forms\Components\Select::make('analyse_group_id')
+                    ->label('Groupe d\'analyse')
+                    ->relationship('analyse_groupe','libelle', function ($query) { 
+                        $id = 1 ; 
+                        $sections = Section::all(); 
+                        foreach($sections as $ligne){
+                            if($ligne['libelle'] == 'Analyse'){
+                                $id = $ligne['id'];
+                                break ; 
+                            }
                         }
-                    }
-                    $query->where('section_id',$id); 
-                })
-                ->reactive(),
+                        $query->where('section_id',$id); 
+                    })
+                    ->reactive(),
 
-                Forms\Components\TextInput::make('analyse_group_autre')
-                ->label('Si Autre, précisez')
-                ->visible(fn ($get)=>$get('analyse_group_id') === 'Autre'),
+                    Forms\Components\TextInput::make('analyse_group_autre')
+                    ->label('Si Autre, précisez')
+                    ->visible(fn ($get)=>$get('analyse_group_id') === 'Autre'),
+                ]),
 
                 Forms\Components\TextArea::make('commentaire'),
             ]),
