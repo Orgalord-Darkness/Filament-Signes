@@ -31,8 +31,13 @@ class SignalementResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
+    protected static ?string $navigationGroup = 'Administration';
+
+     protected static ?int $navigationSort = 0 ;
+
     public static function form(Form $form): Form
     {
+        
         return $form
         ->schema([
             Tabs::make('Signalement')
@@ -470,22 +475,94 @@ class SignalementResource extends Resource
                 
                 ]),
                 
-                Forms\Components\TextInput::make('disposition1_autre')
-                ->label('Concernant les usagers')
-                ->required(),
+                Grid::make()
+                ->schema([
+                    Forms\Components\Select::make('disposition1')
+                    ->options([
+                        'Aucune' => 'Aucune',
+                        'Adaptation des soins/de la prise en charge' => 'Adaptation des soins/de la prise en charge',
+                        'Fin de prise en charge' => 'Fin de prise en charge',
+                        'Orientation vers autre établissement/service' => 'Orientation vers autre établissement/service',
+                        'Orientation vers Dispositif Personnes Qualifiées' => 'Orientation vers Dispositif Personnes Qualifiées',
+                        'Révision du projet de vie' => 'Révision du projet de vie',
+                        'Soutien psychologique'=>'Soutien psychologique', 
+                        'Transfert/hospitalisation'=>'Transfert/hospitalisation',
+                        'Autre'=>'Autre', 
+                    ])
+                    ->reactive()
+                    ->multiple()
+                    ->label('Concernant les usagers')
+                    ->required(),
+                    
+                    Forms\Components\TextInput::make('disposition1_autre')
+                    ->label('Si Autre, précisez')
+                    ->visible(fn ($get)=> in_array('Autre', $get('disposition1') ?? []) ),
 
-                Forms\Components\TextInput::make('disposition2_autre')
-                ->label('Concernant les professionnels')
-                ->required(),
+                ]),
 
-                Forms\Components\TextInput::make('disposition3_autre')
-                ->label('Concernant l\'organisation du travail')
-                ->required(),
+                Grid::make()
+                ->schema([
+                    Forms\Components\Select::make('disposition2')
+                    ->options([
+                        'Aucune' => 'Aucune',
+                        'Action de formation' => 'Action de formation',
+                        'Action de sensibilité' => 'Action de sensibilité',
+                        'Mesure conservatoire' => 'Mesure conservatoire',
+                        'Mesure disciplinaire' => 'Mesure disciplinaire',
+                        'Soutien psychologique'=>'Soutien psychologique', 
+                        'Autre'=>'Autre', 
+                    ])
+                    ->reactive()
+                    ->multiple()
+                    ->label('Concernant les professionnels')
+                    ->required(),
+                    
+                    Forms\Components\TextInput::make('disposition2_autre')
+                    ->label('Si Autre, précisez')
+                    ->visible(fn ($get)=> in_array('Autre', $get('disposition2') ?? [])  ),
 
-                Forms\Components\TextInput::make('disposition4_autre')
-                ->label('Concernant l\'établissement')
-                ->required(),
+                ]),
 
+                Grid::make()
+                ->schema([
+                    Forms\Components\Select::make('disposition3')
+                    ->options([
+                        'Aucune' => 'Aucune',
+                        'Fonctionnement en mode dégradé' => 'Fonctionnement en mode dégradé',
+                        'Mise en place / à jour de procédures' => 'Mise en place / à jour de procédures',
+                        'Révision de planning' => 'Révision de planning',
+                        'Autre'=>'Autre', 
+                    ])
+                    ->reactive()
+                    ->multiple()
+                    ->label('Concernant l\'organisation du travail')
+                    ->required(),
+                    
+                    Forms\Components\TextInput::make('disposition3_autre')
+                    ->label('Si Autre, précisez')
+                    ->visible(fn ($get)=> in_array('Autre', $get('disposition3') ?? [])  ),
+                ]),     
+
+                Grid::make()
+                ->schema([
+                    Forms\Components\Select::make('disposition4')
+                    ->options([
+                        'Aucune' => 'Aucune',
+                        'Activation d\'une cellule de crise ou d\'un plan' => 'Activation d\'une cellule de crise ou d\'un plan',
+                        'Aménagement ou réparation des locaux et / ou équipements' => 'Aménagement ou réparation des locaux et / ou équipements',
+                        'Orientation vers autre établissement/service' => 'Demande d\'aide ou d\'appui à autorité administrative ',
+                        'Information interne et/ou externe' => 'Information interne et/ou externe',
+                        'Autre'=>'Autre', 
+                    ])
+                    ->reactive()
+                    ->label('Concernant l\'établissement')
+                    ->multiple()
+                    ->required(), 
+                  
+                    Forms\Components\TextInput::make('disposition4_autre')
+                    ->label('Si Autre, précisez')
+                    ->visible(fn ($get)=> in_array('Autre', $get('disposition4') ?? [])  ),
+                ]),  
             ]),  
         Tab::make('Suites-Répercutions')
             ->schema([
@@ -621,6 +698,10 @@ class SignalementResource extends Resource
                 ]),
 
                 Forms\Components\TextArea::make('commentaire'),
+                //Champs automatiques
+                Forms\Components\Checkbox::make('complet')
+                ->default(true)
+                ->hidden(),
             ]),
         ])
         ]);
@@ -656,17 +737,8 @@ class SignalementResource extends Resource
                 ->sortable()
                 ->wrap(),
 
-                Tables\Columns\TextColumn::make('complet')
+                Tables\Columns\TextColumn::make('prenom')
                 ->formatStateUsing(function ($record) {
-                    // Liste des champs à vérifier
-                    $fields = ['user_id', 'prenom', 'nom'];
-
-                    // Vérifier si tous les champs sont remplis
-                    foreach ($fields as $field) {
-                        if (empty($record->$field)) {
-                            return 'Non';
-                        }
-                    }
                     return 'Oui';
                 })
                 ->searchable()
@@ -676,7 +748,8 @@ class SignalementResource extends Resource
             ])
             //->filters(FiltersSignalement::getFilters(), layout: FiltersLayout::AboveContent)
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\EditAction::make()->label('Modifier'),
+                Tables\Actions\DeleteAction::make()->label('Supprimer'),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

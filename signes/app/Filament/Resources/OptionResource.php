@@ -23,6 +23,8 @@ class OptionResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
+    protected static ?string $navigationGroup = 'Administration';
+
     // Définir le label de navigation
     protected static ?string $navigationLabel = 'Paramétrage';
 

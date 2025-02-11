@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Scopes\OrderScope;
 use Spatie\Permission\Traits\HasRoles;
+use App\Scopes\IncludeAllScope;
 
 class Catfaq extends ActiveBaseModel
 {
@@ -32,5 +33,6 @@ class Catfaq extends ActiveBaseModel
     {
         parent::boot();
         static::addGlobalScope(new OrderScope(['libelle']));
+        //static::addGlobalScope(new IncludeAllScope);
     }
 }

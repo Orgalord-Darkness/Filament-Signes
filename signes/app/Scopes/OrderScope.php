@@ -10,8 +10,8 @@ class OrderScope implements Scope
 {
     public function __construct($fieldName, $order = 'ASC')
     {
-        $this->fieldName = $fieldName;
-        $this->order = $order;
+        // $this->fieldName = $fieldName;
+        // $this->order = $order;
     }
     /**
      * Apply the scope to a given Eloquent query builder.
@@ -22,12 +22,12 @@ class OrderScope implements Scope
      */
     public function apply(Builder $builder, Model $model)
     {
-        if (is_array($this->fieldName)) {
-            foreach ($this->fieldName as $field) {
-                $builder->orderBy($field, $this->order);
-            }
-        } else {
-            $builder->orderBy($this->fieldName, $this->order);
-        }
+        // if (is_array($this->fieldName)) {
+        //     foreach ($this->fieldName as $field) {
+        //         $builder->orderBy($field, $this->order);
+        //     }
+        // } else {
+        //     $builder->orderBy($this->fieldName, $this->order);
+        // }
     }
 }

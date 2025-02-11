@@ -16,6 +16,7 @@ use Filament\Forms\Components\CheckBox;
 use App\Filament\Resources\CatFaqResource\Pages\FiltersCatFaq; 
 use Filament\Tables\Enums\FiltersLayout;
 use AlperenErsoy\FilamentExport\Actions\FilamentExportBulkAction; 
+use Illuminate\Support\Facades\DB;
 
 class CatFaqResource extends Resource
 {
@@ -26,6 +27,8 @@ class CatFaqResource extends Resource
     // Définir le label de navigation
     protected static ?string $navigationLabel = 'Catégories Aide en ligne';
 
+    protected static ?string $navigationGroup = 'Administration';
+    
     public static function form(Form $form): Form
     {
         return $form
@@ -47,7 +50,7 @@ class CatFaqResource extends Resource
                 ->searchable()
                 ->sortable(),
                 
-                    Tables\Columns\TextColumn::make('actif')
+                Tables\Columns\TextColumn::make('actif')
                 ->formatStateUsing(function ($state) {
                     return $state ? 'Oui' : 'Non';
                 })
@@ -60,7 +63,8 @@ class CatFaqResource extends Resource
                 FiltersCatFaq::getFilters(), layout: FiltersLayout::AboveContent
             )
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\EditAction::make()
+                ->visible(fn (CatFaq $record): bool => !$record->actif),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -71,7 +75,7 @@ class CatFaqResource extends Resource
                     ->defaultFormat('xlsx')
                     ->defaultPageOrientation('landscape')
                 ]),
-            ])->paginated([10,25,50,100,200,300])
+            ])->paginated([5,10,25,50,100,200,300])
             ->defaultSort('id','desc');
     }
 

@@ -1,13 +1,15 @@
 <?php 
 namespace App\Filament\Resources\CatFaqResource\Pages ; 
 
-use App\Models\Categorie ; 
+use App\Models\CatFaq; 
 use Filament\Tables\Filters\Filter;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\DatePicker;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Forms\Components\CheckBox;
+use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Filament\Tables\Filters\TernaryFilter;
 
 class FiltersCatFaq
 {
@@ -30,6 +32,7 @@ class FiltersCatFaq
                 return $query
                 ->when($data['actif'], fn (Builder $query, $actif): Builder => $query->where('actif',$actif)); 
             }), 
+            
         ];
     }
 }

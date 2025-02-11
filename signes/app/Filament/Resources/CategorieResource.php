@@ -33,22 +33,19 @@ class CategorieResource extends Resource
 
     protected static ?string $pluralLabel = 'Categories';
     protected static ?string $label = 'Une Catégorie';
+
+    protected static ?string $navigationGroup = 'Administration';
     // protected static ?int $navigationSort = 2 ;
 
     public static function table(Table $table): Table
     {
         return $table
-            ->headerActions([
-                CreateAction::make()
-            ])
-
             ->columns([
                 Tables\Columns\TextColumn::make('libelle')
                     ->wrap()
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('actif')
-                    ->wrap()
                     ->searchable()
                     ->sortable()
                     ->formatStateUsing(function ($state) {
