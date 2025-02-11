@@ -23,6 +23,8 @@ use AlperenErsoy\FilamentExport\Actions\FilamentExportBulkAction;
 use App\Models\Option ;
 use App\Models\Section ;
 use Filament\Forms\Components\Grid ; 
+use App\Models\Commune ; 
+use App\Models\Etablissement ; 
 
 
 class SignalementResource extends Resource
@@ -68,7 +70,6 @@ class SignalementResource extends Resource
                     
                     Forms\Components\TextInput::make('etat')
                     ->default('Ouvert')
-                    ->hidden()
                     ->required(),
                     Forms\Components\Grid::make(2)
                         ->schema([
@@ -78,7 +79,27 @@ class SignalementResource extends Resource
 
                             Forms\Components\Select::make('etablissement_id')
                             ->relationship('etablissement', 'nom')
-                            ->required(),
+                            ->required()
+                            ->reactive()
+                            ->afterStateUpdated(function (callable $set, callable $get) {
+                                $etablissementId = $get('etablissement_id');
+                                if ($etablissementId) {
+                                    $communeId = Etablissement::find($etablissementId)->commune_id;
+                                    $set('commune_id', $communeId);
+
+                                    $categorieId = Etablissement::find($etablissementId)->categorie_id; 
+                                    $set('categorie_id',$categorieId); 
+
+                                    $type = Etablissement::find($etablissementId)->type; 
+                                    $set('type', $type) ; 
+
+                                    $competence = Etablissement::find($etablissementId)->competence; 
+                                    $set('competence',$competence); 
+
+                                    $territoire = Etablissement::find($etablissementId)->territoire;
+                                    $set('territoire',$territoire);  
+                                }
+                            })
                         ]),
                     Forms\Components\Grid::make(3)
                     ->schema([
@@ -127,7 +148,6 @@ class SignalementResource extends Resource
                                     
                     Forms\Components\Select::make('user_id')
                     ->relationship('user','nom')
-                    ->hidden()
                     ->default(Auth::user()->id)
                     ->required(),
                     Forms\Components\Toggle::make('ars_info')
@@ -145,6 +165,25 @@ class SignalementResource extends Resource
                     Forms\Components\Toggle::make('prefet_info')
                     ->default(false)
                     ->label('Préfet'), 
+
+                    Forms\Components\Select::make('commune_id')
+                    ->relationship('commune','nom')
+                    ->options(function (callable $get) {
+                        $etablissementId = $get('diplome_id');
+                        if ($etablissementId) {
+                            return Commune::where('etablissement_id', $etablissementId)->pluck('libelle', 'id');
+                        }
+                        return Commune::all()->pluck('libelle', 'id');
+                    })
+                    ->hidden()
+                    ->reactive(),
+
+                    Forms\Components\TextInput::make('type'),
+                    Forms\Components\TextInput::make('competence'),
+                    Forms\Components\TextInput::make('territoire'),
+                    Forms\Components\Select::make('categorie_id')
+                    ->relationship('categorie','libelle'),
+
                 ]),
             Tab::make('Faits-Victime')
                 ->schema([
@@ -737,9 +776,10 @@ class SignalementResource extends Resource
                 ->sortable()
                 ->wrap(),
 
-                Tables\Columns\TextColumn::make('prenom')
+                Tables\Columns\TextColumn::make('complet')
                 ->formatStateUsing(function ($record) {
-                    return 'Oui';
+                   return 'Oui' ; 
+
                 })
                 ->searchable()
                 ->sortable()
