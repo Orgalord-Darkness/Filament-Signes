@@ -1,0 +1,2066 @@
+-- phpMyAdmin SQL Dump
+-- version 5.2.0
+-- https://www.phpmyadmin.net/
+--
+-- Hôte : 127.0.0.1:3306
+-- Généré le : mer. 12 fév. 2025 à 10:44
+-- Version du serveur : 8.0.31
+-- Version de PHP : 8.3.11
+
+SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+START TRANSACTION;
+SET time_zone = "+00:00";
+
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8mb4 */;
+
+--
+-- Base de données : `signes`
+--
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `action_signalements`
+--
+
+DROP TABLE IF EXISTS `action_signalements`;
+CREATE TABLE IF NOT EXISTS `action_signalements` (
+  `id` int UNSIGNED NOT NULL AUTO_INCREMENT,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `question_id` int UNSIGNED DEFAULT NULL COMMENT 'Relation vers option',
+  `question2` longtext COLLATE utf8mb4_unicode_ci,
+  `reponse` longtext COLLATE utf8mb4_unicode_ci,
+  `motif_id` int UNSIGNED NOT NULL COMMENT 'Relation vers option',
+  `user_id` int UNSIGNED NOT NULL COMMENT 'Relation vers user',
+  `signalement_id` int UNSIGNED NOT NULL COMMENT 'Relation vers signalement',
+  PRIMARY KEY (`id`),
+  KEY `options_action_signalements2` (`question_id`),
+  KEY `options_action_signalements` (`motif_id`),
+  KEY `users_action_signalements` (`user_id`),
+  KEY `signalements_action_signalements` (`signalement_id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `cache`
+--
+
+DROP TABLE IF EXISTS `cache`;
+CREATE TABLE IF NOT EXISTS `cache` (
+  `key` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `value` mediumtext COLLATE utf8mb4_unicode_ci NOT NULL,
+  `expiration` int NOT NULL,
+  PRIMARY KEY (`key`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Déchargement des données de la table `cache`
+--
+
+INSERT INTO `cache` (`key`, `value`, `expiration`) VALUES
+('spatie.permission.cache', 'a:3:{s:5:\"alias\";a:0:{}s:11:\"permissions\";a:0:{}s:5:\"roles\";a:0:{}}', 1739367151),
+('livewire-rate-limiter:a17961fa74e9275d529f489537f179c05d50c2f3:timer', 'i:1739348166;', 1739348166),
+('livewire-rate-limiter:a17961fa74e9275d529f489537f179c05d50c2f3', 'i:1;', 1739348166);
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `cache_locks`
+--
+
+DROP TABLE IF EXISTS `cache_locks`;
+CREATE TABLE IF NOT EXISTS `cache_locks` (
+  `key` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `owner` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `expiration` int NOT NULL,
+  PRIMARY KEY (`key`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `categories`
+--
+
+DROP TABLE IF EXISTS `categories`;
+CREATE TABLE IF NOT EXISTS `categories` (
+  `id` int UNSIGNED NOT NULL AUTO_INCREMENT,
+  `code` varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `libelle` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `actif` tinyint(1) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM AUTO_INCREMENT=32 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Déchargement des données de la table `categories`
+--
+
+INSERT INTO `categories` (`id`, `code`, `libelle`, `actif`) VALUES
+(1, 'AEMO', 'Action Educative en Milieu Ouvert', 1),
+(2, 'AJ', 'Accueil de Jour', 1),
+(3, 'AJTP', 'Accueil de Jour à Temps Partiel', 1),
+(4, 'CM', 'Centre Maternel', 1),
+(5, 'CP', 'Centre Parental', 1),
+(6, 'EHPA', 'Etablissement Hébergement Personnes Agées', 1),
+(7, 'EHPAD', 'Etablissement Hébergement Personnes Agées Dépendantes', 1),
+(8, 'FAM', 'Foyer d\'Accueil Médicalisé', 1),
+(9, 'FH', 'Foyer d\'Hébergement', 1),
+(10, 'FHE', 'Foyer d\'Hébergement Eclaté', 1),
+(11, 'FV', 'Foyer de Vie', 1),
+(12, 'MECS', 'Maison d\'Enfants à Caractère Social', 1),
+(13, 'MEDIATION', 'Médiation familiale', 1),
+(14, 'MULTI', 'Etablissements multi agréments', 1),
+(15, 'PF', 'Placements Familiaux', 1),
+(16, 'POU', 'Pouponnière', 1),
+(17, 'PUV', 'Petite Unité de Vie', 1),
+(18, 'RA', 'Résidence Autonomie', 1),
+(19, 'REL', 'Relais Parental', 1),
+(20, 'SAM', 'Service d\'Accueil Modulable', 0),
+(21, 'SAMSAH', 'Service d\'Accompagnement Médico-Aocial pour Adultes Handicapés', 1),
+(22, 'SAU', 'Service d\'Accueil d\'Urgence', 1),
+(23, 'SAVS', 'Service d\'Accompagnement à la Vie Sociale', 1),
+(24, 'SAVSREG', 'SAVS Regroupé', 1),
+(25, 'SPEF', 'Service de Protection Enfant Famille', 1),
+(26, 'SPE MNA', 'Etablissement Spécifique MNA', 1),
+(27, 'USLD', 'Unité de Soins de Longue Durée', 1),
+(28, 'SAAD', 'Services d\'Aide à Domicile', 1),
+(30, 'SAM', 'Service d\'Accueil Modulable ', 0),
+(31, 'SR', 'Service Retraite', 0);
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `catfaqs`
+--
+
+DROP TABLE IF EXISTS `catfaqs`;
+CREATE TABLE IF NOT EXISTS `catfaqs` (
+  `id` int UNSIGNED NOT NULL AUTO_INCREMENT,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `libelle` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `actif` tinyint(1) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Déchargement des données de la table `catfaqs`
+--
+
+INSERT INTO `catfaqs` (`id`, `created_at`, `updated_at`, `libelle`, `actif`) VALUES
+(1, '2025-02-10 12:17:53', '2025-02-10 12:17:53', 'Information et droits des usagers - RGPD', 1),
+(2, '2025-02-11 13:10:53', '2025-02-11 13:10:53', 'Autre', 0);
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `communes`
+--
+
+DROP TABLE IF EXISTS `communes`;
+CREATE TABLE IF NOT EXISTS `communes` (
+  `id` int UNSIGNED NOT NULL AUTO_INCREMENT,
+  `libelle` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM AUTO_INCREMENT=95471 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Déchargement des données de la table `communes`
+--
+
+INSERT INTO `communes` (`id`, `libelle`) VALUES
+(95470, 'Survilliers');
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `consequence1_signalement`
+--
+
+DROP TABLE IF EXISTS `consequence1_signalement`;
+CREATE TABLE IF NOT EXISTS `consequence1_signalement` (
+  `signalement_id` int UNSIGNED DEFAULT NULL COMMENT 'Relation vers signalements',
+  `consequence1_id` int UNSIGNED DEFAULT NULL COMMENT 'Relation vers options',
+  KEY `consequence1_signalement_id_foreign` (`signalement_id`),
+  KEY `signalement_consequence1_id_foreign` (`consequence1_id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `consequence2_signalement`
+--
+
+DROP TABLE IF EXISTS `consequence2_signalement`;
+CREATE TABLE IF NOT EXISTS `consequence2_signalement` (
+  `signalement_id` int UNSIGNED DEFAULT NULL COMMENT 'Relation vers signalements',
+  `consequence2_id` int UNSIGNED DEFAULT NULL COMMENT 'Relation vers options',
+  KEY `consequence2_signalement_id_foreign` (`signalement_id`),
+  KEY `signalement_consequence2_id_foreign` (`consequence2_id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `consequence3_signalement`
+--
+
+DROP TABLE IF EXISTS `consequence3_signalement`;
+CREATE TABLE IF NOT EXISTS `consequence3_signalement` (
+  `signalement_id` int UNSIGNED DEFAULT NULL COMMENT 'Relation vers signalements',
+  `consequence3_id` int UNSIGNED DEFAULT NULL COMMENT 'Relation vers options',
+  KEY `consequence3_signalement_id_foreign` (`signalement_id`),
+  KEY `signalement_consequence3_id_foreign` (`consequence3_id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `destinataire_signalement`
+--
+
+DROP TABLE IF EXISTS `destinataire_signalement`;
+CREATE TABLE IF NOT EXISTS `destinataire_signalement` (
+  `signalement_id` int UNSIGNED DEFAULT NULL COMMENT 'Relation vers signalements',
+  `destinataire_id` int UNSIGNED DEFAULT NULL COMMENT 'Relation vers options',
+  KEY `destinataire_signalement_id_foreign` (`signalement_id`),
+  KEY `signalement_destinataire_id_foreign` (`destinataire_id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `disposition1_signalement`
+--
+
+DROP TABLE IF EXISTS `disposition1_signalement`;
+CREATE TABLE IF NOT EXISTS `disposition1_signalement` (
+  `signalement_id` int UNSIGNED DEFAULT NULL COMMENT 'Relation vers signalements',
+  `disposition1_id` int UNSIGNED DEFAULT NULL COMMENT 'Relation vers options',
+  KEY `disposition1_signalement_id_foreign` (`signalement_id`),
+  KEY `signalement_disposition1_id_foreign` (`disposition1_id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `disposition2_signalement`
+--
+
+DROP TABLE IF EXISTS `disposition2_signalement`;
+CREATE TABLE IF NOT EXISTS `disposition2_signalement` (
+  `signalement_id` int UNSIGNED DEFAULT NULL COMMENT 'Relation vers signalements',
+  `disposition2_id` int UNSIGNED DEFAULT NULL COMMENT 'Relation vers options',
+  KEY `disposition2_signalement_id_foreign` (`signalement_id`),
+  KEY `signalement_disposition2_id_foreign` (`disposition2_id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `disposition3_signalement`
+--
+
+DROP TABLE IF EXISTS `disposition3_signalement`;
+CREATE TABLE IF NOT EXISTS `disposition3_signalement` (
+  `signalement_id` int UNSIGNED DEFAULT NULL COMMENT 'Relation vers signalements',
+  `disposition3_id` int UNSIGNED DEFAULT NULL COMMENT 'Relation vers options',
+  KEY `disposition3_signalement_id_foreign` (`signalement_id`),
+  KEY `signalement_disposition3_id_foreign` (`disposition3_id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `disposition4_signalement`
+--
+
+DROP TABLE IF EXISTS `disposition4_signalement`;
+CREATE TABLE IF NOT EXISTS `disposition4_signalement` (
+  `signalement_id` int UNSIGNED DEFAULT NULL COMMENT 'Relation vers signalements',
+  `disposition4_id` int UNSIGNED DEFAULT NULL COMMENT 'Relation vers options',
+  KEY `disposition4_signalement_id_foreign` (`signalement_id`),
+  KEY `signalement_disposition4_id_foreign` (`disposition4_id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `etablissements`
+--
+
+DROP TABLE IF EXISTS `etablissements`;
+CREATE TABLE IF NOT EXISTS `etablissements` (
+  `id` int UNSIGNED NOT NULL AUTO_INCREMENT,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `delos` varchar(30) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `nom` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `statut` varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `type` varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `competence` varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `adresse` varchar(200) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `adresse2` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `tel` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `email` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `territoire` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `actif` tinyint(1) NOT NULL,
+  `secteur_id` int UNSIGNED NOT NULL COMMENT 'Relation vers Secteur',
+  `categorie_id` int UNSIGNED NOT NULL COMMENT 'Relation vers Categorie',
+  `commune_id` int UNSIGNED NOT NULL COMMENT 'Relation vers Commune',
+  `gestionnaire_id` int UNSIGNED DEFAULT NULL COMMENT 'Relation vers users',
+  PRIMARY KEY (`id`),
+  KEY `secteurs_etabs` (`secteur_id`),
+  KEY `categories_etabs` (`categorie_id`),
+  KEY `communes_etabs` (`commune_id`),
+  KEY `etablissement_user_id_foreign` (`gestionnaire_id`)
+) ENGINE=MyISAM AUTO_INCREMENT=384 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Déchargement des données de la table `etablissements`
+--
+
+INSERT INTO `etablissements` (`id`, `created_at`, `updated_at`, `delos`, `nom`, `statut`, `type`, `competence`, `adresse`, `adresse2`, `tel`, `email`, `territoire`, `actif`, `secteur_id`, `categorie_id`, `commune_id`, `gestionnaire_id`) VALUES
+(1, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT150000000142', 'ACCUEIL DE JOUR AUTONOME RENEE ORTIN - OSE', 'ASSO', 'ET', 'CDARS', '3 BOULEVARD ALBERT CAMUS 95200 SARCELLES', '', NULL, NULL, NULL, 1, 4, 2, 95585, NULL),
+(2, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT140000000056', 'ACCUEIL DE JOUR CAMILLE CLAUDEL - LES EGUERETS', 'PRIVE', 'ET', 'CD', '45 rue de Gisors 95300 PONTOISE', '', NULL, NULL, NULL, 1, 3, 2, 95500, NULL),
+(3, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT170000000002', 'ACCUEIL DE JOUR DE MAGNY-EN-VEXIN', 'HOSP', 'ET', 'CDARS', '38 RUE CARNOT 95420 MAGNY EN VEXIN', '', NULL, NULL, NULL, 1, 4, 2, 95355, NULL),
+(4, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT150000000083', 'ACCUEIL DE JOUR LA GRIOTTE SAINTE GENEVIEVE', 'ASSO', 'ET', 'CDARS', '140 RUE DU MARECHAL FOCH 95150 TAVERNY', '', NULL, NULL, NULL, 1, 4, 2, 95607, NULL),
+(5, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT140000000031', 'ACTIONS EDUCATIVES EN MILIEU OUVERT', 'PRIVE', 'SE', 'CDDPJJ', '3 Boulevard Albert Camus 95200 SARCELLES', '', NULL, NULL, NULL, 1, 3, 1, 95585, NULL),
+(6, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT140000000008', 'ADOVAL', 'PRIVE', 'ET', 'CD', '32 avenue Georges Clémenceau 95100 ARGENTEUIL', '', NULL, NULL, NULL, 1, 3, 2, 95018, NULL),
+(7, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT140000000044', 'AEMO REGROUPéES + AEMO RENFORCéES', 'PRIVE', 'SE', 'CDDPJJ', '57 rue du général leclerc 95320 ST LEU LA FORET', '', NULL, NULL, NULL, 1, 3, 1, 95563, NULL),
+(8, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT130000000060', 'AIDA HéBERGEMENT', 'PRIVE', 'ET', 'CD', '4 Rue Bonnet 95400 ARNOUVILLE', '', NULL, NULL, NULL, 1, 5, 9, 95019, NULL),
+(9, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT140000000034', 'AROBASE', 'PRIVE', 'ET', 'CDDPJJ', '13 Rue Camille Pelletan 95190 GOUSSAINVILLE', '', NULL, NULL, NULL, 1, 3, 12, 95280, NULL),
+(10, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT210000000005', 'AUTEUIL - « DISPOSITIF DE REMOBILISATION SCOLAIRE » DIT « PASSERELLE »', 'PRIVE', 'SE', 'CD', '24 rue Jean Jaurès 95600 EAUBONNE', '', NULL, NULL, NULL, 1, 3, 2, 95203, NULL),
+(11, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT140000000011', 'BAYARD JOLY', 'PRIVE', 'ET', 'CD', '2 rue Paul Vaillant Couturier 95100 ARGENTEUIL', '', NULL, NULL, NULL, 1, 3, 12, 95018, NULL),
+(12, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT140000000037', 'BOIS RENARD', 'PRIVE', 'ET', 'CD', '9 Ruelle Pérette 95390 ST PRIX', '', NULL, NULL, NULL, 1, 3, 12, 95574, NULL),
+(13, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT160000000007', 'CAVT EST DU VAL D\'OISE', 'PRIVE', 'ET', 'CD', '36 rue Frederic Joliot-Curie 95140 GARGES LES GONESSE', '', NULL, NULL, NULL, 1, 5, 2, 95268, NULL),
+(14, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT130000000030', 'CENTRE D\'ACCUEIL DE JOUR DE SOISY', 'PRIVE', 'ET', 'CD', '18 rue de Bleury 95230 SOISY SOUS MONTMORENCY', '', NULL, NULL, NULL, 1, 5, 2, 95598, NULL),
+(15, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT130000000014', 'CENTRE D\'ADAPTATION à LA VIE ET AU TRAVAIL VIVRE PARMI LES AUTRES', 'PRIVE', 'ET', 'CD', '7 RUE DU PETIT ALBI 95800 CERGY', '', NULL, NULL, NULL, 1, 5, 2, 95127, NULL),
+(16, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT140000000002', 'CENTRE DE VIE PASSERAILE', 'PRIVE', 'ET', 'CDARS', '5 Rue Etienne Fourmont 95220 HERBLAY', '', NULL, NULL, NULL, 1, 5, 8, 95306, NULL),
+(17, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT130000000047', 'CENTRE D\'INITIATION AU TRAVAIL ET à LA VIE SOCIALE', 'PRIVE', 'ET', 'CD', '45 rue des Valanchards 95280 JOUY LE MOUTIER', '', NULL, NULL, NULL, 1, 5, 2, 95323, NULL),
+(18, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT130000000044', 'CENTRE D\'INITIATION AU TRAVAIL ET AUX LOISIRS', 'PRIVE', 'ET', 'CD', '8 RUE BERTHELOT 95500 GONESSE', '', NULL, NULL, NULL, 1, 5, 2, 95277, NULL),
+(19, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT150000000091', 'CENTRE HOSPITALIER ARGENTEUIL - USLD', 'HOSP', 'ET', 'CDARS', '69 RUE DU LIEUTENANT COLONEL PRUDHON 95100 ARGENTEUIL', '', NULL, NULL, NULL, 1, 4, 27, 95018, NULL),
+(20, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT170000000006', 'CENTRE HOSPITALIER DE GONESSE - AJ', 'HOSP', 'ET', 'CDARS', '2 BOULEVARD DU 19 MARS 1962 95500 GONESSE', '95503 GONESSE CEDEX', NULL, NULL, NULL, 1, 4, 2, 95277, NULL),
+(21, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT150000000073', 'CENTRE HOSPITALIER DE GONESSE - MRH', 'HOSP', 'ET', 'CDARS', '2 BOULEVARD DU 19 MARS 1962 95500 GONESSE', '95503 GONESSE CEDEX', NULL, NULL, NULL, 1, 4, 7, 95277, NULL),
+(22, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT150000000074', 'CENTRE HOSPITALIER DE GONESSE - USLD', 'HOSP', 'ET', 'CDARS', '2 BOULEVARD DU 19 MARS 1962 95500 GONESSE', '95 503 GONESSE CEDEX', NULL, NULL, NULL, 1, 4, 27, 95277, NULL),
+(23, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT170000000004', 'CENTRE HOSPITALIER SIMONE VEIL - USLD', 'HOSP', 'ET', 'CDARS', '14 RUE DE SAINT PRIX 95600 EAUBONNE', '', NULL, NULL, NULL, 1, 4, 27, 95203, NULL),
+(24, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT140000000006', 'CENTRE PARENTAL HEVEA', 'PRIVE', 'ET', 'CD', '2 Rue des Chênes Emeraude 95000 CERGY', '', NULL, NULL, NULL, 1, 3, 5, 95127, NULL),
+(25, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT210000000004', 'CENTRE PARENTAL LA VAGA', 'PRIVE', 'ET', '', '33 ESPACE EUROPE Avenue Frédéric Joliot Curie 95140 GARGES LES GONESSE', '', NULL, NULL, NULL, 1, 3, 5, 95268, NULL),
+(26, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT150000000016', 'CHABRAND THIBAULT', 'ASSO', 'ET', 'CDARS', '48 RUE ARISTIDE BRIAND 95240 CORMEILLES EN PARISIS', '', NULL, NULL, NULL, 1, 4, 7, 95176, NULL),
+(27, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT150000000071', 'CHABRAND THIBAULT ACCUEIL DE JOUR LA SOURCE', 'ASSO', 'ET', 'CDARS', '48 RUE ARISTIDE BRIAND 95240 CORMEILLES EN PARISIS', 'BP 31', NULL, NULL, NULL, 1, 4, 2, 95176, NULL),
+(28, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT140000000017', 'CHATEAU DE DINO', 'PRIVE', 'ET', 'CDDPJJ', '74 avenue Charles de Gaulle 95160 MONTMORENCY', '', NULL, NULL, NULL, 1, 3, 12, 95428, NULL),
+(29, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT140000000026', 'CHATEAU DE MAUBUISSON', 'PRIVE', 'ET', 'CDDPJJ', 'Château de Maubuisson 95310 ST OUEN L\'AUMONE', '', NULL, NULL, NULL, 1, 3, 12, 95572, NULL),
+(30, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT150000000056', 'CHATEAU DE NEUVILLE', 'PRIVELUC', 'ET', 'CDARS', '4 RUE JOSEPH CORNUDET 95000 NEUVILLE SUR OISE', '', NULL, NULL, NULL, 1, 4, 7, 95450, NULL),
+(31, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT140000000009', 'CITE DE L\'ESPERANCE', 'PRIVE', 'ET', 'CD', '9 rue de la Haute Borne 95610 ERAGNY', '', NULL, NULL, NULL, 1, 3, 12, 95218, NULL),
+(32, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT190000000005', 'COALLIA', 'PRIVE', 'ET', 'CD', '6 BOULEVARD DE L\'HAUTIL 95000 CERGY', '', NULL, NULL, NULL, 1, 3, 26, 95127, NULL),
+(33, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT140000000023', 'DIR! DISPOSITIF INTERACTIF DE REMOBILISATION', 'PRIVE', 'ET', 'CD', '18 rue Thibault Chabrand 95240 CORMEILLES EN PARISIS', '', NULL, NULL, NULL, 1, 3, 2, 95176, NULL),
+(34, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT140000000045', 'DISPOSITIF D\'HéBERGEMENT ET D\'ACCOMPAGNEMENT EDUCATIF', 'PRIVE', 'ET', 'CDDPJJ', '97 av. de Paris 95550 BESSANCOURT', '', NULL, NULL, NULL, 1, 3, 12, 95060, NULL),
+(35, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT150000000104', 'DISPOSITIF D\'INSERTION SOCIALE DU VAL D\'OISE', 'PRIVE', 'ET', 'CD', '2 rue Paul Vaillant Couturier 95100 ARGENTEUIL', '', NULL, NULL, NULL, 1, 3, 26, 95018, NULL),
+(36, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT190000000004', 'DISPOSITIF EDUCATIF POUR MINEURS ADOLESCENTS INTERNATIONAUX', 'PRIVE', 'ET', 'CD', '2 Rue des Chênes Emeraude 95000 CERGY', '', NULL, NULL, NULL, 1, 3, 26, 95127, NULL),
+(37, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT150000000064', 'DOMAINE DE SAINT PRY', 'PRIVELUC', 'ET', 'CDARS', '2 RUE REINEBOURG 95390 ST PRIX', '', NULL, NULL, NULL, 1, 4, 7, 95574, NULL),
+(38, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT150000000058', 'DONATION BRIERE', 'ASSO', 'ET', 'CDARS', '14 RUE DU SEVY 95190 FONTENAY EN PARISIS', '', NULL, NULL, NULL, 1, 4, 7, 95241, NULL),
+(39, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT130000000035', 'EAM ANAIS DE JOUY LE MOUTIER', 'PRIVE', 'ET', 'CDARS', '27 Rue des Vallanchards 95280 JOUY LE MOUTIER', '', NULL, NULL, NULL, 1, 5, 8, 95323, NULL),
+(40, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT150000000061', 'EHPAD DU GHIV - SITE DE MARINES', 'HOSP', 'ET', 'CDARS', '12 BOULEVARD GAMBETTA 95640 MARINES', '', NULL, NULL, NULL, 1, 4, 7, 95370, NULL),
+(41, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT150000000033', 'EHPAD PIERRE CAMPAGNAC (EX CCAS-EDF-GDF)', 'ASSO', 'ET', 'CDARS', '1 RUE ARISTIDE BRIAND 95580 ANDILLY', '', NULL, NULL, NULL, 1, 4, 7, 95014, NULL),
+(42, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT140000000012', 'ELIE WIESEL - CHATEAU DE VAUCELLES', 'PRIVE', 'ET', 'CDDPJJ', '20 rue de la Tuyolle 95150 TAVERNY', '', NULL, NULL, NULL, 1, 3, 12, 95607, NULL),
+(43, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT140000000005', 'EN DROITS D\'ENFANCE', 'PRIVE', 'SE', 'CD', '43 Z.A avenue de l\'Europe 95330 DOMONT', '', NULL, NULL, NULL, 1, 3, 1, 95199, NULL),
+(44, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT200000000006', 'EN DROITS D\'ENFANCE - SAM', 'PRIVE', 'ET', 'CD', '43 avenue de l\'Europe 95330 DOMONT', '', NULL, NULL, NULL, 1, 3, 20, 95199, NULL),
+(45, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT140000000035', 'ESPACE DE MéDIATIONS EDUCATIVES ET FAMILIALES', 'PRIVE', 'SE', 'CDDPJJ', '10 rue Victor Hugo 95300 PONTOISE', '', NULL, NULL, NULL, 1, 3, 13, 95500, NULL),
+(46, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT130000000017', 'ETAP APPART VIVRE PARMI LES AUTRES', 'PRIVE', 'SE', 'CD', '7 RUE DU PETIT ALBI 95800 CERGY', '', NULL, NULL, NULL, 1, 5, 24, 95127, NULL),
+(47, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT140000000001', 'FAM BETHANIE', 'PRIVE', 'ET', 'CDARS', '14 Rue Jules GIVONE 95180 MENUCOURT', '', NULL, NULL, NULL, 1, 5, 8, 95388, NULL),
+(48, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT130000000032', 'FAM DE L\'HAUTIL', 'PRIVE', 'ET', 'CDARS', '2 Rue de la côte des auges 95180 MENUCOURT', '', NULL, NULL, NULL, 1, 5, 8, 95388, NULL),
+(49, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT130000000052', 'FAM-FV LOUIS FIEVET', 'PRIVE', 'ET', 'CDARS', '2 RUE GEORGE SAND 95570 BOUFFEMONT', '', NULL, NULL, NULL, 1, 5, 8, 95091, NULL),
+(50, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT130000000025', 'FAM LA GARENNE DU VAL', 'PRIVE', 'ET', 'CDARS', 'Allée de la Clairière 95630 MERIEL', '', NULL, NULL, NULL, 1, 5, 8, 95392, NULL),
+(51, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT130000000018', 'FAM LA MONTAGNE', 'PRIVE', 'ET', 'CDARS', 'Route Stratégique 95240 CORMEILLES EN PARISIS', '', NULL, NULL, NULL, 1, 5, 8, 95176, NULL),
+(52, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT130000000028', 'FAM LE PARC', 'PRIVE', 'ET', 'CDARS', '18 rue de Bleury 95230 SOISY SOUS MONTMORENCY', '', NULL, NULL, NULL, 1, 5, 8, 95598, NULL),
+(53, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT130000000038', 'FHE ANAIS DE SAINT-OUEN-L\'AUMONE', 'PRIVE', 'ET', 'CD', '95 Rue du Mail 95310 ST OUEN L\'AUMONE', '', NULL, NULL, NULL, 1, 5, 10, 95572, NULL),
+(54, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT130000000011', 'FHE DEUIL LA BARRE', 'PRIVE', 'ET', 'CD', '37 Rue de la Gare 95170 DEUIL LA BARRE', '', NULL, NULL, NULL, 1, 5, 10, 95197, NULL),
+(55, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT130000000041', 'FH -FV LA CERISAIE', 'PRIVE', 'ET', 'CDARS', '70 Avenue Georges Clémenceau 95100 ARGENTEUIL', '', NULL, NULL, NULL, 1, 5, 14, 95018, NULL),
+(56, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT130000000026', 'FH GEORGES LAPIERRE', 'PRIVE', 'ET', 'CD', '109 rue de Montmorency 95150 TAVERNY', '', NULL, NULL, NULL, 1, 5, 9, 95607, NULL),
+(57, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT130000000063', 'FH LA CHARMILLE', 'PRIVE', 'ET', 'CD', '23 Rue de Vincourt 95280 JOUY LE MOUTIER', '', NULL, NULL, NULL, 1, 5, 9, 95323, NULL),
+(58, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT210000000001', 'FH PUITS LA MARLIERE', 'PRIVE', 'ET', 'CD', '6 RUE DU FER A CHEVAL 95200 SARCELLES', '', NULL, NULL, NULL, 1, 5, 10, 95585, NULL),
+(59, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT130000000015', 'FH PUITS LA MARLIèRE (AVANT FUSION)', 'PRIVE', 'ET', 'CD', '6 RUE DU FER A CHEVAL 95200 SARCELLES', '', NULL, NULL, NULL, 1, 5, 10, 95585, NULL),
+(60, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT150000000092', 'FLORENCE NIGHTINGALE', 'ASSO', 'ET', 'CDARS', '23 ROUTE DE SAITN GRATIEN 95100 ARGENTEUIL', '', NULL, NULL, NULL, 1, 4, 7, 95018, NULL),
+(61, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT130000000033', 'FL PERSAN', 'PRIVE', 'SE', 'CD', '34 chemin des 3 sources 95290 L\'ISLE ADAM', '', NULL, NULL, NULL, 1, 5, 24, 95313, NULL),
+(62, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT150000000106', 'FONDATION CHANTEPIE MANCIER AJ', 'HOSP', 'ET', 'CDARS', '9 RUE CHANTEPIE MANCIER 95290 L\'ISLE ADAM', '', NULL, NULL, NULL, 1, 4, 2, 95313, NULL),
+(63, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT150000000087', 'FONDATION CHANTEPIE MANCIER EHPAD MRH', 'HOSP', 'ET', 'CDARS', '9 RUE CHANTEPIE MANCIER 95290 L\'ISLE ADAM', '', NULL, NULL, NULL, 1, 4, 7, 95313, NULL),
+(64, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT150000000088', 'FONDATION CHANTEPIE MANCIER USLD', 'HOSP', 'ET', 'CDARS', '9 RUE CHANTEPIE MANCIER 95290 L\'ISLE ADAM', '', NULL, NULL, NULL, 1, 4, 27, 95313, NULL),
+(65, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT130000000012', 'FOYER CASIMIR CARON', 'PRIVE', 'ET', 'CD', '31 Rue Cauchoix 95170 DEUIL LA BARRE', '', NULL, NULL, NULL, 1, 5, 14, 95197, NULL),
+(66, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT130000000031', 'FOYER D\'HéBERGEMENT L\'AVENIR', 'PRIVE', 'ET', 'CD', '34 chemin des trois sources 95290 L\'ISLE ADAM', '', NULL, NULL, NULL, 1, 5, 9, 95313, NULL),
+(67, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT140000000004', 'FOYER LE RENAN', 'PRIVE', 'ET', 'CD', '28 route de Grisy 95830 CORMEILLES EN VEXIN', '', NULL, NULL, NULL, 1, 3, 12, 95177, NULL),
+(68, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT130000000024', 'FOYERS DU VEXIN', 'PRIVE', 'ET', 'CDARS', 'Route de Moussy 95750 CHARS', '', NULL, NULL, NULL, 1, 5, 8, 95142, NULL),
+(69, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT130000000049', 'FOYERS LA CLE POUR L\'AUTISME JLM', 'PRIVE', 'ET', 'CDARS', '47-53 Rue des Valanchards 95280 JOUY LE MOUTIER', '', NULL, NULL, NULL, 1, 5, 8, 95323, NULL),
+(70, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT170000000005', 'FOYERS LA CLE POUR L\'AUTISME SMT', 'ASSO', 'ET', 'CD', '5 ALLEE DE LA FONTAINE AU ROY 95270 ST MARTIN DU TERTRE', '', NULL, NULL, NULL, 1, 5, 11, 95566, NULL),
+(71, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT160000000006', 'FOYERS L\'OLIVAIE', 'ASSO', 'ET', 'CDARS', '30 RUELLE DES PLANTES 95280 JOUY LE MOUTIER', '', NULL, NULL, NULL, 1, 5, 8, 95323, NULL),
+(72, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT200000000011', 'FRATERNITE ST JEAN - JUVENTU', 'PRIVE', 'ET', 'CD', 'route de Vallangoujard 95690 LABBEVILLE', '', NULL, NULL, NULL, 1, 3, 26, 95328, NULL),
+(73, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT130000000053', 'FV ANAIS DE CERGY', 'PRIVE', 'ET', 'CD', '6 Rue des Astres beiges 95000 CERGY', '', NULL, NULL, NULL, 1, 5, 11, 95127, NULL),
+(74, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT130000000055', 'FV ANAIS DE JOUY LE MOUTIER', 'PRIVE', 'ET', 'CD', '25 Rue des Valanchards 95280 JOUY LE MOUTIER', '', NULL, NULL, NULL, 1, 5, 11, 95323, NULL),
+(75, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT130000000058', 'FV HANDAS', 'PRIVE', 'ET', 'CD', '70 Avenue du temps perdu 95280 JOUY LE MOUTIER', '', NULL, NULL, NULL, 1, 5, 11, 95323, NULL),
+(76, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT130000000013', 'FV LA FERME DU CHATEAU', 'PRIVE', 'ET', 'CDARS', '12 rue Jules Givone 95180 MENUCOURT', '', NULL, NULL, NULL, 1, 5, 11, 95388, NULL),
+(77, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT200000000004', 'FV LA PORTE OUVERTE', 'ASSO', 'ET', 'CD', '14 rue Jules GIVONE 95180 MENUCOURT', '', NULL, NULL, NULL, 1, 5, 11, 95388, NULL),
+(78, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT130000000027', 'FV LE GRAND CèDRE', 'PRIVE', 'ET', 'CD', '14 Rue de Verdun 95370 MONTIGNY LES CORMEILLES', '', NULL, NULL, NULL, 1, 5, 14, 95424, NULL),
+(79, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT130000000036', 'FV LES TOURNESOLS - EHPAD LE CLOS DE L\'OSERAIE', 'PRIVE', 'ET', 'CD', '6RUE PAUL EMILE VICTOR 95520 OSNY', '', NULL, NULL, NULL, 1, 5, 11, 95476, NULL),
+(80, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT190000000003', 'GARELLI 95', 'PRIVE', 'ET', 'CD', '83 Rue de Rouen 95300 PONTOISE', '', NULL, NULL, NULL, 1, 3, 26, 95500, NULL),
+(81, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT150000000062', 'GHIV - SITE DE MAGNY EN VEXIN', 'HOSP', 'ET', 'CDARS', '38 RUE CARNOT 95420 MAGNY EN VEXIN', '', NULL, NULL, NULL, 1, 4, 7, 95355, NULL),
+(82, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT150000000046', 'GROUPE HOSPITALIER CARNELLE PORTES DE L\'OISE - SITE BEAUMONT SUR OISE/MERU', 'HOSP', 'ET', 'CDARS', '25 RUE EDMOND TURCQ 95260 BEAUMONT SUR OISE', '', NULL, NULL, NULL, 1, 4, 7, 95052, NULL),
+(83, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT150000000084', 'GROUPE HOSPITALIER CARNELLE PORTES DE L\'OISE - SITE DE CARNELLE', 'HOSP', 'ET', 'CDARS', '2 ALLEE DE LA FONTAINE AU ROY 95270 ST MARTIN DU TERTRE', '', NULL, NULL, NULL, 1, 4, 27, 95566, NULL),
+(84, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT140000000039', 'GROUPE SOS JEUNESSE - SAU', 'PRIVE', 'ET', 'CDDPJJ', '7 Rue Jean Jaures 95400 ARNOUVILLE', '', NULL, NULL, NULL, 1, 3, 22, 95019, NULL),
+(85, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT140000000030', 'HEVEA - EX ADPJ - AEMO', 'PRIVE', 'SE', 'CDDPJJ', '469 rue Jean Richepin 95120 ERMONT', '', NULL, NULL, NULL, 1, 3, 1, 95219, NULL),
+(86, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT140000000018', 'I.G.E.S.A - INSTITUTION DE GESTION SOCIALE DES ARMéES', 'PRIVE', 'ET', 'CD', '23 rue du Général Leclerc 95780 LA ROCHE GUYON', '', NULL, NULL, NULL, 1, 3, 12, 95523, NULL),
+(87, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT180000000001', 'JACQUES ACHARD MGEN', 'ASSO', 'ET', 'CDARS', '36 RUE DU COLONEL FABIEN 95670 MARLY LA VILLE', '', NULL, NULL, NULL, 1, 4, 7, 95371, NULL),
+(88, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT150000000093', 'JEANNE CALLAREC', 'HOSP', 'ET', 'CDARS', '45 AVENUE DU GENERAL DE GAULLE 95160 MONTMORENCY', '', NULL, NULL, NULL, 1, 4, 7, 95428, NULL),
+(89, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT180000000004', 'JULES FOSSIER MGEN', 'ASSO', 'ET', 'CDARS', '3 RUE DEMAISON 95380 LOUVRES', '', NULL, NULL, NULL, 1, 4, 7, 95351, NULL),
+(90, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT150000000032', 'KORIAN HAUTS D\'ANDILLY', 'PRIVELUC', 'ET', 'CDARS', '4 RUE PHILIPPE LE BEL 95580 ANDILLY', '', NULL, NULL, NULL, 1, 4, 7, 95014, NULL),
+(91, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT150000000005', 'KORIAN LA CROISEE BLEUE', 'PRIVELUC', 'ET', 'CDARS', '2 RUE HENRI BARBUSSE 95600 EAUBONNE', '', NULL, NULL, NULL, 1, 4, 7, 95203, NULL),
+(92, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT150000000097', 'KORIAN LE COTTAGE', 'PRIVELUC', 'ET', 'CDARS', '11 RUE JEAN BOUIN 95100 ARGENTEUIL', '', NULL, NULL, NULL, 1, 4, 7, 95018, NULL),
+(93, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT150000000081', 'KORIAN LES MERLETTES', 'PRIVELUC', 'ET', 'CDARS', '206 AVENUE DE LA DIVISION LECLERC 95200 SARCELLES', '', NULL, NULL, NULL, 1, 4, 7, 95585, NULL),
+(94, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT150000000019', 'KORIAN MONTFRAIS', 'PRIVELUC', 'ET', 'CDARS', '35 RUE DU CHEMIN NEUF 95130 FRANCONVILLE', '', NULL, NULL, NULL, 1, 4, 7, 95252, NULL),
+(95, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT150000000008', 'LA CERISAIE', 'PRIVELUC', 'ET', 'CDARS', '4 RUE DU LUXEMBOURG 95160 MONTMORENCY', '', NULL, NULL, NULL, 1, 4, 7, 95428, NULL),
+(96, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT150000000025', 'LA COMMANDERIE DES HOSPITALIERS (EX MADAME DE SEVIGNE)', 'PRIVELUC', 'ET', 'CDARS', '161 AVENUE DE LA DIVISION LECLERC 95880 ENGHIEN LES BAINS', '', NULL, NULL, NULL, 1, 4, 7, 95210, NULL),
+(97, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT140000000025', 'LA GRANDE MAISON DE BRéCOURT', 'PRIVE', 'ET', 'CD', 'route de Vallangoujard 95690 LABBEVILLE', '', NULL, NULL, NULL, 1, 3, 12, 95328, NULL),
+(98, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT140000000013', 'LA MAISON DES CHAMPS', 'PRIVE', 'ET', 'CD', 'Route du Bois Saint Ladre 95270 LUZARCHES', '', NULL, NULL, NULL, 1, 3, 12, 95352, NULL),
+(99, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT150000000035', 'LA MAISON DE THELEME', 'PRIVELUC', 'ET', 'CDARS', '61 RUE DE PARIS 95550 BESSANCOURT', '', NULL, NULL, NULL, 1, 4, 17, 95060, NULL),
+(100, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT150000000041', 'LA MAISON DU PARC', 'PRIVELUC', 'ET', 'CDARS', '21 RUE DES FRERES CAPUCINS 95310 ST OUEN L\'AUMONE', '', NULL, NULL, NULL, 1, 4, 7, 95572, NULL),
+(101, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT140000000042', 'LA MANOISE', 'PRIVE', 'ET', 'CD', '73 rue Denis Roy 95100 ARGENTEUIL', '', NULL, NULL, NULL, 1, 3, 12, 95018, NULL),
+(102, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT160000000009', 'LA VILLA FLEURIE AJ', 'ASSO', 'ET', 'CDARS', '57 RUE DE VAUREAL 95000 CERGY', '', NULL, NULL, NULL, 1, 4, 2, 95127, NULL),
+(103, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT150000000018', 'LE CASTEL', 'PRIVELUC', 'ET', 'CDARS', '5 RUE DES BRUYERES 95150 TAVERNY', '', NULL, NULL, NULL, 1, 4, 7, 95607, NULL),
+(104, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT150000000143', 'LE CHATEAU SAINT VALERY', 'PRIVELUC', 'ET', 'CDARS', '8 RUE DE L\'HERMITAGE 95160 MONTMORENCY', '', NULL, NULL, NULL, 1, 4, 7, 95428, NULL),
+(105, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT150000000023', 'LE CLOS D\'ARNOUVILLE', 'PRIVELUC', 'ET', 'CDARS', '21 RUE JEAN LAUGERE 95400 ARNOUVILLE', '', NULL, NULL, NULL, 1, 4, 7, 95019, NULL),
+(106, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT150000000013', 'LE CLOS DE L\'OSERAIE', 'PRIVELUC', 'ET', 'CDARS', '6 RUE PAUL EMILE VICTOR 95520 OSNY', '', NULL, NULL, NULL, 1, 4, 7, 95476, NULL),
+(107, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT150000000021', 'LE CLOS DE L\'OSERAIE AJ', 'PRIVELUC', 'ET', 'CDARS', '6 RUE PAUL EMILE VICTOR 95520 OSNY', '', NULL, NULL, NULL, 1, 4, 2, 95476, NULL),
+(108, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT150000000034', 'LE CLOS DES LILAS', 'PRIVELUC', 'ET', 'CDARS', '130 BOULEVARD DE LA REPUBLIQUE 95600 EAUBONNE', '', NULL, NULL, NULL, 1, 4, 7, 95203, NULL),
+(109, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT140000000014', 'LE GALILEE', 'PRIVE', 'ET', 'CD', '2 Rue des Chênes Emeraude 95800 CERGY', '', NULL, NULL, NULL, 1, 3, 12, 95127, NULL),
+(110, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT150000000060', 'LE MENHIR', 'ASSO', 'ET', 'CDARS', '57 RUE DE VAUREAL 95000 CERGY', '', NULL, NULL, NULL, 1, 4, 7, 95127, NULL),
+(111, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT150000000076', 'LE PARC FLEURI', 'ASSO', 'ET', 'CDARS', '60 SQUARE DES SPORTS 95500 GONESSE', 'LA FAUCONNIERE', NULL, NULL, NULL, 1, 4, 7, 95277, NULL),
+(112, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT140000000040', 'LE RELAIS JOLY - RELAIS PARENTAL', 'PRIVE', 'ET', 'CD', '2 rue Paul Vaillant Couturier 95100 ARGENTEUIL', '', NULL, NULL, NULL, 1, 3, 19, 95018, NULL),
+(113, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT140000000022', 'LE RENOUVEAU', 'PRIVE', 'ET', 'CDDPJJ', '1 Avenue Marchand 95160 MONTMORENCY', '', NULL, NULL, NULL, 1, 3, 12, 95428, NULL),
+(114, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT140000000038', 'LES GIGOGNES', 'PRIVE', 'ET', 'CD', '2 rue Paul Vaillant Couturier 95100 ARGENTEUIL', '', NULL, NULL, NULL, 1, 3, 5, 95018, NULL),
+(115, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT150000000051', 'LES JARDINS D\'ELEUSIS', 'PRIVELUC', 'ET', 'CDARS', '6 GRANDE RUE 95460 EZANVILLE', '', NULL, NULL, NULL, 1, 4, 7, 95229, NULL),
+(116, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT150000000054', 'LES JARDINS D\'ELEUSIS ACCUEIL DE JOUR', 'PRIVELUC', 'ET', 'CDARS', '6 GRANDE RUE 95460 EZANVILLE', '', NULL, NULL, NULL, 1, 4, 2, 95229, NULL),
+(117, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT150000000031', 'LES JARDINS D\'ENNERY', 'PRIVELUC', 'ET', 'CDARS', 'ROUTE DE LIVILLIERS 95300 ENNERY', '', NULL, NULL, NULL, 1, 4, 7, 95211, NULL),
+(118, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT150000000042', 'LES JARDINS D\'IROISE DE SAINT GRATIEN', 'PRIVELUC', 'ET', 'CDARS', '47 BOULEVARD PASTEUR 95210 ST GRATIEN', '', NULL, NULL, NULL, 1, 4, 7, 95555, NULL),
+(119, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT150000000049', 'LES JARDINS SEMIRAMIS', 'PRIVELUC', 'ET', 'CDARS', '65 BOULEVARD DE VERDUN 95220 HERBLAY SUR SEINE', '', NULL, NULL, NULL, 1, 4, 7, 95306, NULL),
+(120, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT150000000077', 'LES MAGNOLIAS', 'ASSO', 'ET', 'CDARS', '3 RUE DU CLOS SAINT PAUL 95210 ST GRATIEN', '', NULL, NULL, NULL, 1, 4, 7, 95555, NULL),
+(121, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT150000000101', 'LES PENSEES', 'PRIVELUC', 'ET', 'CDARS', '102 RUE ANTONIN GEORGES BELIN 95100 ARGENTEUIL', '', NULL, NULL, NULL, 1, 4, 2, 95018, NULL),
+(122, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT140000000016', 'LES POUSSINETS', 'PRIVE', 'ET', 'CD', '37 Rue du Général Leclerc 95210 ST GRATIEN', '', NULL, NULL, NULL, 1, 3, 16, 95555, NULL),
+(123, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT150000000028', 'LES PRIMEVERES', 'ASSO', 'ET', 'CDARS', '110 RUE DU PROFESSEUR CALMETTE 95120 ERMONT', '', NULL, NULL, NULL, 1, 4, 7, 95219, NULL),
+(124, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT150000000100', 'LES SORBIERS AJ', 'ASSO', 'ET', 'CDARS', '35 RUE DU MARTRAY 95240 CORMEILLES EN PARISIS', '', NULL, NULL, NULL, 1, 4, 2, 95176, NULL),
+(125, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT150000000068', 'LES TAMARIS', 'PRIVELUC', 'ET', 'CDARS', '20 RUE DE BOISSY 95320 ST LEU LA FORET', '', NULL, NULL, NULL, 1, 4, 7, 95563, NULL),
+(126, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT140000000036', 'LE VERT LOGIS', 'PRIVE', 'ET', 'CD', '6 rue Jean Moulin 95160 MONTMORENCY', '', NULL, NULL, NULL, 1, 3, 4, 95428, NULL),
+(127, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT150000000078', 'LE VILLAGE', 'ASSO', 'ET', 'CDARS', '238 RUE DE PARIS 95150 TAVERNY', '', NULL, NULL, NULL, 1, 4, 7, 95607, NULL),
+(128, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT150000000107', 'LIEU D\'ACCUEIL ET D\'ORIENTATION DES MINEURS ISOLéS ETRANGERS', 'PRIVE', 'ET', 'CD', '42 Rue Auguste Godard 95150 TAVERNY', 'Domaine du Tertre', NULL, NULL, NULL, 1, 3, 22, 95607, NULL),
+(129, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT150000000014', 'LOUIS GRASSI', 'ASSO', 'ET', 'CDARS', '25 RUE PIERRE BROSSOLETTE 95590 PRESLES', '', NULL, NULL, NULL, 1, 4, 7, 95504, NULL),
+(130, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT150000000099', 'MAISON DE FAMILLE LA CHATAIGNERAIE', 'PRIVELUC', 'ET', 'CDARS', '1 RUE DE FRANCONVILLE 95240 CORMEILLES EN PARISIS', '', NULL, NULL, NULL, 1, 4, 7, 95176, NULL),
+(131, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT200000000009', 'MAISON DEPARTEMENTALE DE L\'ENFANCE', 'PUBLIC', 'ET', 'CD', '6 Rue du Clos Bruloir 95000 CERGY', '', NULL, NULL, NULL, 1, 3, 22, 95127, NULL),
+(132, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT140000000028', 'MAISON JACQUES LAVAL', 'PRIVE', 'ET', 'CD', '24 rue Jean Jaurès 95600 EAUBONNE', 'CS 20045', NULL, NULL, NULL, 1, 3, 12, 95203, NULL),
+(133, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT140000000027', 'MAISON SAINT JEAN', 'PRIVE', 'ET', 'CD', 'Rond-Point de la Tour du Mail 95110 SANNOIS', '', NULL, NULL, NULL, 1, 3, 12, 95582, NULL),
+(134, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT140000000020', 'MAISON SAINT PIE X', 'PRIVE', 'ET', 'CD', '5 route Stratégique 95330 DOMONT', 'Les Vinciennes', NULL, NULL, NULL, 1, 3, 12, 95199, NULL),
+(135, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT140000000015', 'MAISONS ET APPARTEMENTS EDUCATIFS DU VAL D\'OISE JEAN COTXET', 'PRIVE', 'ET', 'CD', '2 rue du Professeur Calmette 95120 ERMONT', '', NULL, NULL, NULL, 1, 3, 12, 95219, NULL),
+(136, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT140000000054', 'MAISONS RODIN ET LAPRESTE', 'PRIVE', 'ET', 'CD', '22 Rue du Gouverneur Eboué 92130 ISSY LES MOULINEAUX', '', NULL, NULL, NULL, 1, 3, 12, 92040, NULL),
+(137, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT150000000003', 'MAPHA LA SAULAIE', 'PRIVE', 'ET', 'CD', '30 ruelle des plantes 95280 JOUY LE MOUTIER', '', NULL, NULL, NULL, 1, 5, 11, 95323, NULL),
+(138, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT150000000144', 'MARPA VEXIN VAL DE SEINE', 'ASSO', 'ET', 'CD', '15 RUE DE MONTROND 95510 VETHEUIL', '', NULL, NULL, NULL, 1, 4, 18, 95651, NULL),
+(139, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT150000000139', 'EHPA MA VALLEE', 'PRIVELUC', 'STRUCNONTARIF', 'CD', '7 RUE DE LA LIBERATION 95450 US', '', NULL, NULL, NULL, 1, 4, 6, 95625, NULL),
+(140, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT150000000096', 'MONTJOIE', 'ASSO', 'ET', 'CDARS', '12 AVENUE CHARLES DE GAULLE 95160 MONTMORENCY', '', NULL, NULL, NULL, 1, 4, 7, 95428, NULL),
+(141, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT140000000033', 'MOUVEMENT D\'ENSEMBLE POUR DES LIENS VERS L\'INDéPENDANCE ET L\'AUTONOMIE', 'PRIVE', 'SE', 'CD', '3 Place de la Pergola 95000 CERGY', 'Parvis de la Préfecture', NULL, NULL, NULL, 1, 3, 13, 95127, NULL),
+(142, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT150000000090', 'MRH HOPITAL CHARLES RICHET', 'HOSP', 'ET', 'HCD', 'AVENUE CHARLES RICHET 95400 VILLIERS LE BEL', '', NULL, NULL, NULL, 1, 4, 7, 95680, NULL),
+(143, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT140000000003', 'NOTRE DAME DE MONTMELIAN', 'PRIVE', 'ET', 'CD', '9 rue de la Haute Borne 95610 ERAGNY', '', NULL, NULL, NULL, 1, 3, 12, 95218, NULL),
+(144, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT180000000002', 'PAYS DE FRANCE CARNELLE', 'PUBLIC', 'ET', 'CDARS', '3 RUE DE KLEINPETER 95270 VIARMES', '', NULL, NULL, NULL, 1, 4, 7, 95652, NULL),
+(145, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT190000000002', 'PAYS DE FRANCE CARNELLE AJ', 'PUBLIC', 'ET', 'CDARS', '3 RUE KLEINPETER 95270 VIARMES', '', NULL, NULL, NULL, 1, 4, 2, 95652, NULL),
+(146, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT150000000039', 'PIERRE CAMPAGNAC AJ (EX CCAS-EDF-GDF)', 'ASSO', 'ET', 'CDARS', '1 RUE ARISTIDE BRIAND 95580 ANDILLY', '', NULL, NULL, NULL, 1, 4, 2, 95014, NULL),
+(147, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT150000000059', 'QUAI DES BRUMES', 'PRIVELUC', 'ET', 'CDARS', '44 RUE DU MARECHAL FOCH 95620 PARMAIN', '', NULL, NULL, NULL, 1, 4, 7, 95480, NULL),
+(148, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT150000000002', 'RAPHAVIE LES AUBINS', 'PRIVE', 'ET', 'CD', '2 Allée Jacquard 95820 BRUYERES SUR OISE', '', NULL, NULL, NULL, 1, 5, 11, 95116, NULL),
+(149, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT130000000010', 'REMORA 95 _ ASSOCIATION VOIR ENSEMBLE', 'PRIVE', 'SE', 'CD', '8 RUE TRAVERSIERE 95000 CERGY', '', NULL, NULL, NULL, 1, 5, 23, 95127, NULL),
+(150, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT150000000111', 'RESIDENCE AUTONOMIE AMBROISE CROIZAT ARGENTEUIL', 'ASSO', 'STRUCNONTARIF', 'CD', '9 RUE DES GOBELINS 95100 ARGENTEUIL', '', NULL, NULL, NULL, 1, 2, 18, 95018, NULL),
+(151, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT150000000095', 'RESIDENCE ANNIE BEAUCHAIS', 'ASSO', 'ET', 'CDARS', 'CONTRE ALLEE HENRI DUNANT 95200 SARCELLES', '', NULL, NULL, NULL, 1, 4, 7, 95585, NULL),
+(152, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT150000000066', 'RESIDENCE ARC EN CIEL', 'PRIVELUC', 'ET', 'CDARS', '2 RUE GABRIEL REBY 95870 BEZONS', '', NULL, NULL, NULL, 1, 4, 7, 95063, NULL),
+(153, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT150000000010', 'RESIDENCE ARMENIENNE', 'ASSO', 'ET', 'CDARS', '44 AVENUE CHARLES DE GAULLE 95160 MONTMORENCY', '', NULL, NULL, NULL, 1, 4, 7, 95428, NULL),
+(154, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT150000000027', 'RESIDENCE ARPAVIE D\'ENGHIEN', 'ASSO', 'ET', 'CDARS', '1 RUE HENRI DUNANT 95880 ENGHIEN LES BAINS', '', NULL, NULL, NULL, 1, 4, 7, 95210, NULL),
+(155, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT150000000047', 'RESIDENCE BELLEVUE', 'PRIVELUC', 'ET', 'CDARS', '50 AVENUE DE PARIS 95400 VILLIERS LE BEL', '', NULL, NULL, NULL, 1, 4, 7, 95680, NULL),
+(156, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT150000000134', 'RESIDENCE CHARLES DE FOUCAULD', 'ASSO', 'STRUCNONTARIF', 'CD', '28 RUE DE PARIS 95350 ST BRICE SOUS FORET', '', NULL, NULL, NULL, 1, 4, 18, 95539, NULL),
+(157, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT150000000006', 'RESIDENCE DE LA RUE JOHN LENNON', 'PRIVELUC', 'ET', 'CDARS', '3 RUE JOHN LENNON 95370 MONTIGNY LES CORMEILLES', '', NULL, NULL, NULL, 1, 4, 7, 95424, NULL),
+(158, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT170000000001', 'RESIDENCE DE MONTMAGNY AJ', 'PRIVELUC', 'ET', 'CDARS', '79 RUE JULES FERRY 95360 MONTMAGNY', '', NULL, NULL, NULL, 1, 4, 2, 95427, NULL),
+(159, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT150000000007', 'RESIDENCE DES JARDINS', 'PUBLIC', 'ET', 'CD', '12 RUE DU BOUTEILLIER 95380 LOUVRES', '', NULL, NULL, NULL, 1, 4, 18, 95351, NULL),
+(160, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT150000000069', 'RESIDENCE DES LYS', 'PRIVELUC', 'ET', 'CDARS', '2 RUE DE LA PAIX 95480 PIERRELAYE', '', NULL, NULL, NULL, 1, 4, 7, 95488, NULL),
+(161, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT150000000029', 'RESIDENCE DU MANOIR', 'PRIVELUC', 'ET', 'CDARS', '2-4 ROUTE DE VERNON 95710 BRAY ET LU', '', NULL, NULL, NULL, 1, 4, 7, 95101, NULL),
+(162, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT150000000026', 'RESIDENCE DU VEXIN', 'PRIVELUC', 'ET', 'CDARS', 'RUE GAMBETTA LE BOIS ST CLAIR 95770 ST CLAIR SUR EPTE', '', NULL, NULL, NULL, 1, 4, 7, 95541, NULL),
+(163, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT150000000137', 'RESIDENCE AUTONOMIE EDMOND DOBLER', 'ASSO', 'STRUCNONTARIF', 'CD', '5 RUE DU JARDIN RENARD 95230 SOISY SOUS MONTMORENCY', '', NULL, NULL, NULL, 1, 2, 18, 95598, NULL),
+(164, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT150000000113', 'RESIDENCE AUTONOMIE EUGENE ROBIN', 'PUBLIC', 'STRUCNONTARIF', 'CD', '60 AVENUE ANATOLE FRANCE 95250 BEAUCHAMP', '', NULL, NULL, NULL, 1, 2, 18, 95051, NULL),
+(165, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT150000000012', 'RESIDENCE AUTONOMIE FORET DE CARNELLE', 'ASSO', 'ET', 'CD', '56 -58 RUE A. ET L. ROUSSEL 95260 BEAUMONT SUR OISE', '', NULL, NULL, NULL, 1, 2, 18, 95052, NULL),
+(166, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT150000000123', 'RESIDENCE AUTONOMIE GABRIEL DANGIEN', 'PUBLIC', 'STRUCNONTARIF', 'CD', '43 AVENUE DE PARIS 95600 EAUBONNE', '', NULL, NULL, NULL, 1, 2, 18, 95203, NULL),
+(167, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT150000000122', 'RESIDENCE AUTONOMIE HELENE MOUTET', 'ASSO', 'STRUCNONTARIF', 'CD', '2 VOIE DE LA RESIDENCE HELENE MOUTET 95330 DOMONT', '', NULL, NULL, NULL, 1, 2, 18, 95199, NULL),
+(168, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT150000000133', 'RESIDENCE AUTONOMIE HELOISE', 'PUBLIC', 'STRUCNONTARIF', 'CD', '11 AVENUE CHARLES DE GAULLE 95160 MONTMORENCY', '', NULL, NULL, NULL, 1, 2, 18, 95428, NULL),
+(169, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT150000000112', 'RESIDENCE AUTONOMIE JEAN BAILLET', 'ASSO', 'STRUCNONTARIF', 'CD', '106 RUE DU PERREUX 95100 ARGENTEUIL', '', NULL, NULL, NULL, 1, 2, 18, 95018, NULL),
+(170, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT150000000125', 'RESIDENCE AUTONOMIE JEAN MORACCHINI', 'ASSO', 'STRUCNONTARIF', 'CD', '23 RUE DE LA LIBERATION 95880 ENGHIEN LES BAINS', '', NULL, NULL, NULL, 1, 2, 18, 95210, NULL),
+(171, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT150000000130', 'RESIDENCE AUTONOMIE JEANNE CARNAJAC', 'PUBLIC', 'ET', 'CD', '7 RUE DUVIVIER 95140 GARGES LES GONESSE', '', NULL, NULL, NULL, 1, 2, 18, 95268, NULL),
+(172, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT150000000127', 'RESIDENCE AUTONOMIE JEANNE D\'ARC', 'ASSO', 'STRUCNONTARIF', 'CD', '33 RUE DE LA PETITE BAPAUME 95120 ERMONT', '', NULL, NULL, NULL, 1, 2, 18, 95219, NULL),
+(173, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT150000000138', 'RESIDENCE AUTONOMIE JEAN NOHAIN', 'PUBLIC', 'STRUCNONTARIF', 'CD', '18 RUE FRANCOIS BROUSSAIS 95150 TAVERNY', '', NULL, NULL, NULL, 1, 2, 18, 95607, NULL),
+(174, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT150000000118', 'RESIDENCE AUTONOMIE LA BASTIDE', 'ASSO', 'STRUCNONTARIF', 'CD', '2 PLACE DU MARCHE 95800 CERGY', '', NULL, NULL, NULL, 1, 2, 18, 95127, NULL),
+(175, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT150000000129', 'RESIDENCE AUTONOMIE LA BONNE RENCONTRE', 'ASSO', 'ET', 'CD', '4 RUE DE LA BONNE RENCONTRE 95130 FRANCONVILLE', '', NULL, NULL, NULL, 1, 2, 18, 95252, NULL),
+(176, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT150000000114', 'RESIDENCE AUTONOMIE LA CLOSERAIE', 'ASSO', 'ET', 'CD', '24 RUE MADAME 95550 BESSANCOURT', '', NULL, NULL, NULL, 1, 2, 18, 95060, NULL),
+(177, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT150000000135', 'RESIDENCE AUTONOMIE LA FONTAINE', 'ASSO', 'ET', 'CD', '5 RUE SAINT EXUPERY 95210 ST GRATIEN', '', NULL, NULL, NULL, 1, 2, 18, 95555, NULL),
+(178, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT150000000120', 'RESIDENCE AUTONOMIE LA SABLONNIERE', 'ASSO', 'STRUCNONTARIF', 'CD', '25 AVENUE MATHIEU CHAZOTTE 95170 DEUIL LA BARRE', '', NULL, NULL, NULL, 1, 2, 18, 95197, NULL),
+(179, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT150000000070', 'RESIDENCE LE BOISQUILLON', 'PRIVELUC', 'ET', 'CDARS', '21 RUE D\'ANDILLY 95230 SOISY SOUS MONTMORENCY', '', NULL, NULL, NULL, 1, 4, 7, 95598, NULL),
+(180, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT150000000140', 'RESIDENCE AUTONOMIE LE FIEF DE LA LAMPE', 'PUBLIC', 'STRUCNONTARIF', 'CD', '8 RUE DE LA GARENNE 95270 VIARMES', '', NULL, NULL, NULL, 1, 2, 18, 95652, NULL),
+(181, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT150000000053', 'RESIDENCE L\'EGLANTIER', 'ASSO', 'ET', 'CDARS', '7 RUE DE L\'EGLANTIER 95500 GONESSE', '', NULL, NULL, NULL, 1, 4, 7, 95277, NULL),
+(182, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT150000000103', 'RESIDENCE LE GRAND CLOS AJ', 'PRIVELUC', 'ET', 'CDARS', '3 RUE GABRIEL PERI 95130 LE PLESSIS BOUCHARD', '', NULL, NULL, NULL, 1, 4, 2, 95491, NULL),
+(183, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT150000000011', 'RESIDENCE LE GRAND CLOS (EX TIERS TEMPS)', 'PRIVELUC', 'ET', 'CDARS', '3 RUE GABRIEL PERI 95130 LE PLESSIS BOUCHARD', '', NULL, NULL, NULL, 1, 4, 7, 95491, NULL),
+(184, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT150000000024', 'RESIDENCE LE MESNIL', 'PRIVELUC', 'ET', 'CDARS', '41 RUE LEON GIRAUDEAU 95570 BOUFFEMONT', '', NULL, NULL, NULL, 1, 4, 7, 95091, NULL),
+(185, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT150000000131', 'RESIDENCE AUTONOMIE LE PARC', 'PUBLIC', 'STRUCNONTARIF', 'CD', '5 RUE DU FOUR A CHAUX 95420 MAGNY EN VEXIN', '', NULL, NULL, NULL, 1, 2, 18, 95355, NULL),
+(186, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT150000000079', 'RESIDENCE LE PATIO', 'PRIVELUC', 'ET', 'CDARS', '79 RUE JULES FERRY 95360 MONTMAGNY', '', NULL, NULL, NULL, 1, 4, 7, 95427, NULL),
+(187, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT150000000128', 'RESIDENCE AUTONOMIE LES CEDRES', 'PUBLIC', 'STRUCNONTARIF', 'CD', '9 RUE D\'ALSACE LORRAINE 95460 EZANVILLE', '', NULL, NULL, NULL, 1, 2, 18, 95229, NULL),
+(188, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT150000000030', 'RESIDENCE LES CHARMILLES', 'PRIVELUC', 'ET', 'CDARS', '1 RUE DES CHARMILLES 95560 MONTSOULT', '', NULL, NULL, NULL, 1, 4, 7, 95430, NULL),
+(189, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT150000000110', 'RESIDENCE AUTONOMIE LES ERABLES', 'PUBLIC', 'STRUCNONTARIF', 'CD', '1 RUE DE CORMEILLES 95220 HERBLAY SUR SEINE', '', NULL, NULL, NULL, 1, 2, 18, 95306, NULL),
+(190, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT150000000020', 'RESIDENCE LES HIRONDELLES', 'PRIVELUC', 'ET', 'CDARS', '2 RUE FERDINAND BUISSON 95190 GOUSSAINVILLE', '', NULL, NULL, NULL, 1, 4, 7, 95280, NULL),
+(191, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT150000000116', 'RESIDENCE AUTONOMIE LES MYOSOTIS', 'ASSO', 'STRUCNONTARIF', 'CD', '11 AVENUE FERDINAND DE LESSEPS 95570 BOUFFEMONT', '', NULL, NULL, NULL, 1, 2, 18, 95091, NULL),
+(192, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT150000000141', 'RESIDENCE AUTONOMIE LES PETITS BALCONS', 'ASSO', 'ET', 'CD', '2 AVENUE HENRI SELLIER 95400 VILLIERS LE BEL', '', NULL, NULL, NULL, 1, 2, 18, 95680, NULL),
+(193, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT150000000132', 'RESIDENCE AUTONOMIE LES PIVOINES', 'ASSO', 'ET', 'CD', '1 PLACE SAINTE THERESE 95360 MONTMAGNY', '', NULL, NULL, NULL, 1, 2, 18, 95427, NULL),
+(194, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT150000000072', 'RESIDENCE LES SANSONNETS', 'PRIVELUC', 'ET', 'CDARS', '4 RUE DE L\'HOTEL DIEU 95750 CHARS', '', NULL, NULL, NULL, 1, 4, 7, 95142, NULL),
+(195, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT150000000117', 'RESIDENCE AUTONOMIE LES TOULEUSES', 'ASSO', 'ET', 'CD', '3 CHEMIN DES TOULEUSES 95000 CERGY', '', NULL, NULL, NULL, 1, 2, 18, 95127, NULL),
+(196, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT150000000119', 'RESIDENCE AUTONOMIE LES VILLAGEOISES', 'ASSO', 'STRUCNONTARIF', 'CD', '9 RUE LA JUSTICE MAUVE 95000 CERGY', '', NULL, NULL, NULL, 1, 2, 18, 95127, NULL),
+(197, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT150000000115', 'RESIDENCE AUTONOMIE LOUIS PERONNET', 'PUBLIC', 'STRUCNONTARIF', 'CD', '137 RUE EDOUARD VAILLANT 95870 BEZONS', '', NULL, NULL, NULL, 1, 2, 18, 95063, NULL),
+(198, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT150000000136', 'RESIDENCE AUTONOMIE MAURICE UTRILLO', 'PUBLIC', 'STRUCNONTARIF', 'CD', '11 RUE HENRY DUMONT 95110 SANNOIS', '', NULL, NULL, NULL, 1, 2, 18, 95582, NULL),
+(199, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT150000000044', 'RESIDENCE MEDICIS', 'PRIVELUC', 'ET', 'CDARS', '74 BOULEVARD HELOISE 95100 ARGENTEUIL', '', NULL, NULL, NULL, 1, 4, 7, 95018, NULL),
+(200, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT150000000050', 'RESIDENCE MEDICIS AJ', 'PRIVELUC', 'ET', 'CDARS', '74 BOULEVARD HELOISE 95100 ARGENTEUIL', '', NULL, NULL, NULL, 1, 4, 2, 95018, NULL),
+(201, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT150000000017', 'RESIDENCE AUTONOMIE MONTJOIE', 'ASSO', 'ET', 'CD', '12 AVENUE CHARLES DE GAULLE 95160 MONTMORENCY', '', NULL, NULL, NULL, 1, 2, 18, 95428, NULL),
+(202, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT150000000037', 'RESIDENCE RACHEL', 'PRIVELUC', 'ET', 'CDARS', '7 RUE DE BOISSY 95320 ST LEU LA FORET', '', NULL, NULL, NULL, 1, 4, 7, 95563, NULL),
+(203, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT150000000022', 'RESIDENCE VAL DE FRANCE', 'PRIVELUC', 'ET', 'CDARS', '5 RUE ROBERT DESNOS 95330 DOMONT', 'B.P 39', NULL, NULL, NULL, 1, 4, 7, 95199, NULL),
+(204, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT150000000121', 'RESIDENCE AUTONOMIE VICTOR COLLET', 'ASSO', 'STRUCNONTARIF', 'CD', '38 -40 RUE DU MOUTIER 95170 DEUIL LA BARRE', '', NULL, NULL, NULL, 1, 2, 18, 95197, NULL),
+(205, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT150000000126', 'RESIDENCE AUTONOMIE YVONNE COLAS', 'ASSO', 'STRUCNONTARIF', 'CD', '39 RUE DE LA MARNE 95610 ERAGNY', '', NULL, NULL, NULL, 1, 2, 18, 95218, NULL),
+(206, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT150000000082', 'SAINTE GENEVIEVE', 'ASSO', 'ET', 'CDARS', '67 RUE DE L\'EGLISE 95150 TAVERNY', '', NULL, NULL, NULL, 1, 4, 7, 95607, NULL),
+(207, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT150000000080', 'EHPAD SAINT LOUIS', 'HOSP', 'ET', 'CDARS', '6 AVENUE DE L\'ILE DE FRANCE 95300 PONTOISE', '', NULL, NULL, NULL, 1, 4, 7, 95500, NULL),
+(208, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT200000000008', 'SAINT VINCENT', 'PRIVE', 'ET', 'CD', '12  Le Berverly Le Berverly boulevard Maurice Berteaux 95100 ARGENTEUIL', '', NULL, NULL, NULL, 1, 3, 20, 95018, NULL),
+(209, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT160000000003', 'SAJ GONESSE', 'ASSO', 'ET', 'CD', '13 Rue Pierre Salvi 95500 GONESSE', '', NULL, NULL, NULL, 1, 5, 2, 95277, NULL),
+(210, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT150000000085', 'SAJH L\'HORIZON', 'ASSO', 'ET', 'CD', 'Rue du Lieutenant Guilbert 95620 PARMAIN', '', NULL, NULL, NULL, 1, 5, 11, 95480, NULL),
+(211, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT130000000043', 'SAJH MAURICE GUIOT', 'PRIVE', 'ET', 'CD', '1 Rue Edmond Bourgois 95340 PERSAN', '', NULL, NULL, NULL, 1, 5, 11, 95487, NULL),
+(212, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT130000000023', 'SAMSAH ADAPT', 'PRIVE', 'SE', 'CDARS', '62 rue Pierre Brossolette 95200 SARCELLES', '', NULL, NULL, NULL, 1, 5, 21, 95585, NULL),
+(213, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT130000000054', 'SAMSAH_APF', 'PRIVE', 'SE', 'CDARS', '28 RUE DE L\'AVEN BP 48304 95000 CERGY', '', NULL, NULL, NULL, 1, 5, 21, 95127, NULL),
+(214, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT130000000048', 'SAMSAH HORIZON 95', 'PUBLIC', 'SE', 'CDARS', '3 Rue Jules VINCENT 95410 GROSLAY', '', NULL, NULL, NULL, 1, 5, 21, 95288, NULL),
+(215, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT190000000001', 'SAMSAH JOHN BOST', 'ASSO', 'SE', 'CDARS', '18 BOULEVARD DE LA PAIX 95800 CERGY', 'Bât.11', NULL, NULL, NULL, 1, 5, 21, 95127, NULL),
+(216, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT150000000067', 'SAS BELLEFONTAINE', 'PRIVELUC', 'ET', 'CDARS', '9 RUE DES SABLONS 95270 BELLEFONTAINE', 'CHATEAU DE BELLEFONTAINE', NULL, NULL, NULL, 1, 4, 7, 95055, NULL),
+(217, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT140000000010', 'SAU LA MONTAGNE VIVRA', 'PRIVE', 'ET', 'CDDPJJ', '18 rue Thibault Chabrand 95240 CORMEILLES EN PARISIS', '', NULL, NULL, NULL, 1, 3, 22, 95176, NULL),
+(218, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT130000000040', 'SAVS ANAIS DE SAINT-OUEN-L\'AUMONE', 'PRIVE', 'SE', 'CD', '95 Rue du Mail 95310 ST OUEN L\'AUMONE', '', NULL, NULL, NULL, 1, 5, 23, 95572, NULL),
+(219, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT160000000005', 'SAVS APAJH 95', 'ASSO', 'SE', 'CD', '40 -42 rue Garbriel Péri 95130 LE PLESSIS BOUCHARD', '', NULL, NULL, NULL, 1, 5, 23, 95491, NULL),
+(220, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT130000000056', 'SAVS APF CERGY', 'PRIVE', 'SE', 'CD', '28 RUE DE L\'AVEN BP 48304 95000 CERGY', '', NULL, NULL, NULL, 1, 5, 23, 95127, NULL),
+(221, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT130000000050', 'SAVS LA HETRAIE', 'PRIVE', 'SE', 'CD', '21 Rue de Vincourt 95280 JOUY LE MOUTIER', '', NULL, NULL, NULL, 1, 5, 23, 95323, NULL),
+(222, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT130000000021', 'SAVS LA MONTAGNE', 'PRIVE', 'SE', 'CD', '10 Rue de Paris 95130 FRANCONVILLE', '', NULL, NULL, NULL, 1, 5, 23, 95252, NULL),
+(223, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT130000000034', 'SAVS L\'ESPOIR', 'PRIVE', 'SE', 'CD', '34 chemin des trois sources 95290 L\'ISLE ADAM', '', NULL, NULL, NULL, 1, 5, 23, 95313, NULL),
+(224, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT130000000046', 'SAVS LIELOS', 'PRIVE', 'SE', 'CD', '10 Résidence de la gare 95370 MONTIGNY LES CORMEILLES', '', NULL, NULL, NULL, 1, 5, 23, 95424, NULL),
+(225, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT130000000009', 'SAVS SOISY/MONTMORENCY', 'PRIVE', 'SE', 'CD', '42 Rue de Montmorency 95230 SOISY SOUS MONTMORENCY', '', NULL, NULL, NULL, 1, 5, 23, 95598, NULL),
+(226, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT130000000029', 'SAVS TAVERNY', 'PRIVE', 'SE', 'CD', '109 Rue de Montmorency 95150 TAVERNY', '', NULL, NULL, NULL, 1, 5, 23, 95607, NULL),
+(227, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT130000000019', 'SAVS VIVRE PARMI LES AUTRES', 'PRIVE', 'SE', 'CD', '7 RUE DU PETIT ALBI 95000 CERGY', '', NULL, NULL, NULL, 1, 5, 23, 95127, NULL),
+(228, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT150000000105', 'SERVICE D\'ACCOMPAGNEMENT DES MINEURS ISOLéS ETRANGERS', 'PRIVE', 'ET', 'CD', '5 Route Stratégique 95330 DOMONT', 'Les Vinciennes', NULL, NULL, NULL, 1, 3, 26, 95199, NULL),
+(229, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT140000000048', 'SERVICE D\'ACCUEIL EDUCATIF DE JOUR', 'PRIVE', 'ET', 'CDDPJJ', '69 rue Pierre Curie 95830 CORMEILLES EN VEXIN', '', NULL, NULL, NULL, 1, 3, 2, 95177, NULL);
+INSERT INTO `etablissements` (`id`, `created_at`, `updated_at`, `delos`, `nom`, `statut`, `type`, `competence`, `adresse`, `adresse2`, `tel`, `email`, `territoire`, `actif`, `secteur_id`, `categorie_id`, `commune_id`, `gestionnaire_id`) VALUES
+(230, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT140000000041', 'SERVICE D\'ACCUEIL FAMILIAL', 'PRIVE', 'ET', 'CDDPJJ', '14 Avenue du Centaure 95000 CERGY', 'Cergy Saint Christophe', NULL, NULL, NULL, 1, 3, 15, 95127, NULL),
+(231, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT140000000029', 'SERVICE D\'ACCUEIL FAMILIAL EDUCATIF DE JOUR OPEJ', 'PRIVE', 'ET', 'CD', '3 bd Albert Camus 95200 SARCELLES', '', NULL, NULL, NULL, 1, 3, 2, 95585, NULL),
+(232, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT140000000019', 'SERVICE D\'ACCUEIL FAMILIAL ET D\'ACCOMPAGNEMENT PARENTAL', 'PRIVE', 'ET', 'CD', '4 rue Robert Baron 95420 MAGNY EN VEXIN', '', NULL, NULL, NULL, 1, 3, 15, 95355, NULL),
+(233, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT140000000049', 'SERVICE DE PROTECTION DE L\'ENFANCE ET DE LA FAMILLE', 'PRIVE', 'SE', 'CD', '52 rue de Crosne 95420 MAGNY EN VEXIN', '', NULL, NULL, NULL, 1, 3, 25, 95355, NULL),
+(234, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT150000000102', 'SERVICE EDUCATIF MOBILE', 'PRIVE', 'SE', 'CD', '42 Auguste Godard 95150 TAVERNY', 'Château du Haut Tertre', NULL, NULL, NULL, 1, 3, 26, 95607, NULL),
+(235, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT140000000047', 'SERVICE SPéCIALISé D\'ACCUEIL EN FAMILLES (AF + AFR)', 'PRIVE', 'ET', 'CD', '1 rue des Ecoles 95310 ST OUEN L\'AUMONE', '', NULL, NULL, NULL, 1, 3, 15, 95572, NULL),
+(236, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT130000000042', 'SIAMAT', 'PRIVE', 'ET', 'CD', '1 Impasse du Petit Moulin 95340 PERSAN', '', NULL, NULL, NULL, 1, 5, 3, 95487, NULL),
+(237, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT150000000036', 'SOLEMNES', 'PRIVELUC', 'ET', 'CDARS', '11 RUE DE LA PAPETERIE 95610 ERAGNY', 'ZAC DE LA GARE', NULL, NULL, NULL, 1, 4, 7, 95218, NULL),
+(238, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT140000000032', 'SOS VILLAGES D\'ENFANTS PERSAN', 'PRIVE', 'ET', 'CD', '1 rue des Érables 95340 PERSAN', 'Résidence des Saules', NULL, NULL, NULL, 1, 3, 12, 95487, NULL),
+(239, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT150000000063', 'USLD DU GHIV - SITE DE MARINES', 'HOSP', 'ET', 'CDARS', '12 BOULEVARD GAMBETTA 95640 MARINES', '', NULL, NULL, NULL, 1, 4, 27, 95370, NULL),
+(240, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT190000000006', 'VAGA - AMINA', 'PRIVE', 'ET', 'CD', '66 RUE DE GISORS 95300 PONTOISE', '', NULL, NULL, NULL, 1, 3, 26, 95500, NULL),
+(241, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT200000000002', 'VAGA - DAM 95', 'PRIVE', 'ET', 'CD', '34 RUE D\'EPLUCHES 95310 ST OUEN L\'AUMONE', '', NULL, NULL, NULL, 1, 3, 20, 95572, NULL),
+(242, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT150000000098', 'VAL NOTRE DAME', 'PRIVELUC', 'ET', 'CDARS', '26 AVENUE D\'ARGENTEUIL 95100 ARGENTEUIL', '', NULL, NULL, NULL, 1, 4, 7, 95018, NULL),
+(243, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT150000000038', 'VILLA BEAUSOLEIL', 'PRIVELUC', 'ET', 'CDARS', '1 RUE LEOPOLD MOURIER 95240 CORMEILLES EN PARISIS', '', NULL, NULL, NULL, 1, 4, 7, 95176, NULL),
+(244, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT150000000015', 'VILLA JEANNE D\'ARC', 'PRIVELUC', 'ET', 'CDARS', '8 RUE NOTRE DAME 95160 MONTMORENCY', '', NULL, NULL, NULL, 1, 4, 7, 95428, NULL),
+(245, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT150000000004', 'YVONNE DE GAULLE', 'ASSO', 'ET', 'CDARS', '124 RESIDENCE YVONNE DE GAULLE 95130 FRANCONVILLE', '', NULL, NULL, NULL, 1, 4, 7, 95252, NULL),
+(246, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT150000000057', 'ZEMGOR', 'ASSO', 'ET', 'CDARS', '35 RUE DU MARTRAY 95240 CORMEILLES EN PARISIS', '', NULL, NULL, NULL, 1, 4, 7, 95176, NULL),
+(247, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT150000000086', 'EHPAD CENTRE HOSPITALIER SIMONE VEIL', 'HOSP', 'ET', 'CDARS', '14 RUE DE SAINT PRIX 95600 EAUBONNE', '', NULL, NULL, NULL, 1, 4, 7, 95203, NULL),
+(248, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT160000000011', 'ACCUEIL DE JOUR CENTRE HOSPITALIER SIMONE VEIL', 'HOSP', 'ET', 'CDARS', '1 RUE JEAN MOULIN 95160 MONTMORENCY', '', NULL, NULL, NULL, 1, 4, 2, 95428, NULL),
+(249, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT150000000009', 'EHPAD LES PENSEES', 'PRIVELUC', 'ET', 'CDARS', '102 RUE ANTONIN GEORGES BELIN 95100 ARGENTEUIL', '', NULL, NULL, NULL, 1, 4, 7, 95018, NULL),
+(250, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT150000000109', 'RESIDENCE AUTONOMIE AMBROISE CROIZAT GOUSSAINVILLE', 'PUBLIC', 'STRUCNONTARIF', 'CD', '28 RUE DES ROSSIGNOLS 95190 GOUSSAINVILLE', '', NULL, NULL, NULL, 1, 4, 18, 95280, NULL),
+(251, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCT150000000108', 'SAINT LOUIS AJ', 'HOSP', 'ET', 'CDARS', '6 AVENUE DE L\'ILE DE FRANCE 95300 PONTOISE', '', NULL, NULL, NULL, 1, 4, 2, 95500, NULL),
+(252, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCTXXSADXX', 'AGE D\'OR SERVICES', 'PRIVELUC', 'SE', 'CD', '58 allée des bois', '', '01 39 95 81 07', 'aos-herblay@agedorservices.com', NULL, 1, 2, 28, 95306, NULL),
+(253, '2025-02-06 10:03:33', '2025-02-06 10:03:34', 'D_STRUCTXXSADXX', 'SERVICE DES TROIS FORETS', 'PRIVELUC', 'SE', 'CD', '15 BOULEVARD DU MARECHAL FOCH', '', '01 39 35 28 49', '3forets@wanadoo.fr', NULL, 1, 2, 28, 95555, NULL),
+(254, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCTXXSADXX', 'SENIORS AVENUE / EPICURIA', 'PRIVELUC', 'SE', 'CD', '62 rue du Général Leclerc', '', '01 39 83 19 40', 'seniorsavenue@hotmail.com', NULL, 1, 2, 28, 95288, NULL),
+(255, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCTXXSADXX', 'DOMALIANCE CERGY', 'PRIVELUC', 'SE', 'CD', 'rue des chauffours', '', '01 85 60 58 76', 'resp-cergy@domaliance.fr', NULL, 1, 2, 28, 95127, NULL),
+(256, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCTXXSADXX', 'MAINTIEN A DOMICILE SERVICES / AIDE A DOMICILE SERVICES', 'PRIVELUC', 'SE', 'CD', '98 avenue du maréchal Joffre', '', '01 34 11 40 61', 'maintien-a-domicile-services@orange.fr', NULL, 1, 2, 28, 95018, NULL),
+(257, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCTXXSADXX', 'SOPHIE SERVICES A LA PERSONNE', 'PRIVELUC', 'SE', 'CD', '85 rue Gallieni', '', '01 34 05 89 96', 'sophie.aideadomicile@orange.fr', NULL, 1, 2, 28, 95197, NULL),
+(258, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCTXXSADXX', 'DOMUSVI DOMICILE', 'PRIVELUC', 'SE', 'CD', '22 rue Alexandre Prachay', '', '01 74 90 38 53', 'agence-pontoise@domusvidomicile.com', NULL, 1, 2, 28, 95500, NULL),
+(259, '2025-02-06 10:03:33', '2025-02-06 10:03:33', 'D_STRUCTXXSADXX', 'AMELIS DOMICILE SERVICES', 'PRIVELUC', 'SE', 'CD', '17 place Guy Moquet', '', '01 84 28 06 36', 'n.meilleur@amelis-services.fr', NULL, 1, 2, 28, 95052, NULL),
+(260, '2025-02-06 10:03:33', '2025-02-06 10:03:34', 'D_STRUCTXXSADXX', 'SENIOR PLUS', 'ASSO', 'SE', 'CD', '18 avenue Voltaire', '', '01 34 05 04 44', 'seniorplus@orange.fr', NULL, 1, 2, 28, 95598, NULL),
+(261, '2025-02-06 10:03:34', '2025-02-06 10:03:34', 'D_STRUCTXXSADXX', 'AADSP SOVON / CLEO GROUP', 'PRIVELUC', 'SE', 'CD', '1 rue Paul Eluard', '', '01 34 22 02 44', 'contact@cleo-group.fr', NULL, 1, 2, 28, 95018, NULL),
+(262, '2025-02-06 10:03:34', '2025-02-06 10:03:34', 'D_STRUCTXXSADXX', 'TOUT A DOM SERVICES AUX PARTICULIERS / TOUT A DOM SERVICES', 'PRIVELUC', 'SE', 'CD', '1 AVENUE DE L\'EUROPE', '', '01 34 16 58 70', 'a.yazgoren@toutadomservices.com', NULL, 1, 2, 28, 95203, NULL),
+(263, '2025-02-06 10:03:34', '2025-02-06 10:03:34', 'D_STRUCTXXSADXX', 'AUXI LIFE 95', 'PRIVELUC', 'SE', 'CD', '3 Résidence des Acacias', '', '01 30 34 71 97', 'Auxilife95@auxilife.fr', NULL, 1, 2, 28, 95058, NULL),
+(264, '2025-02-06 10:03:34', '2025-02-06 10:03:34', 'D_STRUCTXXSADXX', 'PLURIAGE SERVICES', 'PRIVELUC', 'SE', 'CD', '47 rue de Stalingrad', '', '01 39 78 01 47', 'bruno.pochelu@pluriage-services.fr', NULL, 1, 2, 28, 95219, NULL),
+(265, '2025-02-06 10:03:34', '2025-02-06 10:03:34', 'D_STRUCTXXSADXX', 'ADHAP SERVICES - PRESTIUM', 'PRIVELUC', 'SE', 'CD', '23 RUE ROBERT SCHUMANN', '', '01 39 59 32 65', 'domidom95@domidom.fr', NULL, 1, 2, 28, 95203, NULL),
+(266, '2025-02-06 10:03:34', '2025-02-06 10:03:34', 'D_STRUCTXXSADXX', 'AGE D OR SERVICES / DB SERVICES', 'PRIVELUC', 'SE', 'CD', '3 RUE VERTE', '', '01 34 34 06 46', 'argenteuil@agedorservices.com', NULL, 1, 2, 28, 95018, NULL),
+(267, '2025-02-06 10:03:34', '2025-02-06 10:03:34', 'D_STRUCTXXSADXX', 'AXEO SERVICES TAVERNY / JMJU SERVICES', 'PRIVELUC', 'SE', 'CD', '105 rue de Beauchamp ', '', '01 34 18 11 39', 'taverny@axeoservices.fr', NULL, 1, 2, 28, 95607, NULL),
+(268, '2025-02-06 10:03:34', '2025-02-06 10:03:34', 'D_STRUCTXXSADXX', 'DESTIA / SOUS MON TOIT', 'PRIVELUC', 'SE', 'CD', '82 RUE DE LA STATION', '', '01 34 14 30 62', 'christel.chantrel@sousmontoit.fr', NULL, 1, 2, 28, 95252, NULL),
+(269, '2025-02-06 10:03:34', '2025-02-06 10:03:34', 'D_STRUCTXXSADXX', 'A DOM', 'PRIVELUC', 'SE', 'CD', '32 rue de la Briqueterie', '', '01 34 72 76 10', 'adom95@gmail.com', NULL, 1, 2, 28, 95351, NULL),
+(270, '2025-02-06 10:03:34', '2025-02-06 10:03:34', 'D_STRUCTXXSADXX', 'AM2S / ACCOMPAGNEMENT POUR LE BIEN ETRE PAR LES SERVICES A DOMICILE', 'PRIVELUC', 'SE', 'CD', '9 chaussée Jules César', ' Bâtiment 7', '01 30 31 00 32', 'am2s.adquotidien95@orange.fr', NULL, 1, 2, 28, 95476, NULL),
+(271, '2025-02-06 10:03:34', '2025-02-06 10:03:34', 'D_STRUCTXXSADXX', 'MAISON ET COMPAGNIE', 'PRIVELUC', 'SE', 'CD', '23, rue Auguste Romagné', '78700 CONFLANS SAINTE HONORINE', '01 39 72 92 35', 'maisonetcompagnie@orange.fr', NULL, 1, 2, 28, 95998, NULL),
+(272, '2025-02-06 10:03:34', '2025-02-06 10:03:34', 'D_STRUCTXXSADXX', 'BIEN A LA MAISON / ONELA', 'PRIVELUC', 'SE', 'CD', '64 avenue de Stalingrad', '', '01 84 28 00 13', 'argenteuil@onela.com', NULL, 1, 2, 28, 95018, NULL),
+(273, '2025-02-06 10:03:34', '2025-02-06 10:03:34', 'D_STRUCTXXSADXX', 'AVO SERVICES COVIVA', 'PRIVELUC', 'SE', 'CD', '151 RUE MICHEL CARRE ', 'Porte 9', '01 30 25 52 81', 'bernardo.isabel@coviva.fr', NULL, 1, 2, 28, 95018, NULL),
+(274, '2025-02-06 10:03:34', '2025-02-06 10:03:34', 'D_STRUCTXXSADXX', 'VITALLIANCE', 'PRIVELUC', 'SE', 'CD', '18 boulevard de la paix', '', '01 34 24 18 30', 'touria.hadi@vitalliance.fr', NULL, 1, 2, 28, 95127, NULL),
+(275, '2025-02-06 10:03:34', '2025-02-06 10:03:34', 'D_STRUCTXXSADXX', 'ALLIANCE VIE', 'PRIVELUC', 'SE', 'CD', '77 rue du Général Leclerc', '', '01 71 68 10 20', 'eaubonne@alliance-vie.com', NULL, 1, 2, 28, 95203, NULL),
+(276, '2025-02-06 10:03:34', '2025-02-06 10:03:34', 'D_STRUCTXXSADXX', 'AXEO SERVICES / SAP VALMONTMORENCY', 'PRIVELUC', 'SE', 'CD', '22 RUE SAINT LAZARRE', '', '01 34 17 57 16', '', NULL, 1, 2, 28, 95313, NULL),
+(277, '2025-02-06 10:03:34', '2025-02-06 10:03:34', 'D_STRUCTXXSADXX', 'OSDB / OMNICA SERVICE À LA PERSONNE', 'PRIVELUC', 'SE', 'CD', '19 bis rue de la Tourelle', '', '01 34 05 88 02', 'osdb@omnica.fr', NULL, 1, 2, 28, 95197, NULL),
+(278, '2025-02-06 10:03:34', '2025-02-06 10:03:34', 'D_STRUCTXXSADXX', 'AUTONOMIE SERENITE SERVICES - ADENIOR', 'PRIVELUC', 'SE', 'CD', '35 RUE LOUIS SAVOIE', '', '01 39 59 78 40', 'contact@autonomie-serenite-services.fr', NULL, 1, 2, 28, 95219, NULL),
+(279, '2025-02-06 10:03:34', '2025-02-06 10:03:34', 'D_STRUCTXXSADXX', 'HYGIE SERVICES', 'PRIVELUC', 'SE', 'CD', '54 rue Alfred Lasson', '78250 MEZY SUR SEINE', '01 30 22 24 30', 'hygieservices@orange.fr', NULL, 1, 2, 28, 95998, NULL),
+(280, '2025-02-06 10:03:34', '2025-02-06 10:03:34', 'D_STRUCTXXSADXX', 'AADSP SEVO / CLEO GROUP', 'PRIVELUC', 'SE', 'CD', '1 ter rue Paul Eluard', '', '01 34 22 02 44', 'contact@cleo-group.fr', NULL, 1, 2, 28, 95018, NULL),
+(281, '2025-02-06 10:03:34', '2025-02-06 10:03:34', 'D_STRUCTXXSADXX', 'AADSP NEVO / CLEO GROUP', 'PRIVELUC', 'SE', 'CD', '18 avenue du 8 mai 1945', '', '01 34 22 02 44', 'contact@cleo-group.fr', NULL, 1, 2, 28, 95585, NULL),
+(282, '2025-02-06 10:03:34', '2025-02-06 10:03:34', 'D_STRUCTXXSADXX', 'AADSP SOVO / CLEO GROUP', 'PRIVELUC', 'SE', 'CD', '7 RUE DU PETIT ALBI', '', '01 34 22 02 44', 'contact@cleo-group.fr', NULL, 1, 2, 28, 95127, NULL),
+(283, '2025-02-06 10:03:34', '2025-02-06 10:03:34', 'D_STRUCTXXSADXX', 'LA VIE FACILE', 'PRIVELUC', 'SE', 'CD', '1 rue des charbonniers', '', '01 39 91 64 80', 'laviefacile@orange.fr', NULL, 1, 2, 28, 95199, NULL),
+(284, '2025-02-06 10:03:34', '2025-02-06 10:03:34', 'D_STRUCTXXSADXX', 'SI BIEN CHEZ VOUS', 'PRIVELUC', 'SE', 'CD', '22 rue Gustave Eiffel', '78300 POISSY', '01 39 22 39 44', 'contact@agencesibienchezvous.fr', NULL, 1, 2, 28, 95998, NULL),
+(285, '2025-02-06 10:03:34', '2025-02-06 10:03:34', 'D_STRUCTXXSADXX', 'AID.VITAL', 'PRIVELUC', 'SE', 'CD', '93 AVENUE PIERRE SEMARD', '', '01 39 92 40 95', 'contact@aidvital.com', NULL, 1, 2, 28, 95680, NULL),
+(286, '2025-02-06 10:03:34', '2025-02-06 10:03:34', 'D_STRUCTXXSADXX', 'LFB - LES FAMILLES BONHEUR', 'PRIVELUC', 'SE', 'CD', '25 AVENUE DE LA CONSTELLATION', '', '06 72 88 79 52', 'direction@menageetvous.fr', NULL, 1, 2, 28, 95127, NULL),
+(287, '2025-02-06 10:03:34', '2025-02-06 10:03:34', 'D_STRUCTXXSADXX', 'GHENI ASSISTANCE', 'PRIVELUC', 'SE', 'CD', '4 rue de la croix blanche', '', '06 51 67 15 64', 'gheniassistance@gmail.com', NULL, 1, 2, 28, 95424, NULL),
+(288, '2025-02-06 10:03:34', '2025-02-06 10:03:34', 'D_STRUCTXXSADXX', 'CIBAID', 'PRIVELUC', 'SE', 'CD', '10 Avenue de Rochefort ', '78500 SARTROUVILLE', '09 83 09 23 44', 'contact@cibaid.fr', NULL, 1, 2, 28, 95998, NULL),
+(289, '2025-02-06 10:03:34', '2025-02-06 10:03:34', 'D_STRUCTXXSADXX', 'ALZHEIMER AIDANT ASSISTANCE / AUXILARIS', 'PRIVELUC', 'SE', 'CD', '14 BIS RUE VICTOR MERIC ', '92210 CLICHY', '01 47 28 75 21', 'alzassoo@gmail.com', NULL, 1, 2, 28, 95998, NULL),
+(290, '2025-02-06 10:03:34', '2025-02-06 10:03:34', 'D_STRUCTXXSADXX', 'GALAAD AUTONOMIE 95 / BIEN CHEZ VOUS GRACE A NOUS / BCVGN', 'PRIVELUC', 'SE', 'CD', '34 rue Jean Jaurès', '', '01 39 88 59 45', 'contact@bcvgn.fr', NULL, 1, 2, 28, 95019, NULL),
+(291, '2025-02-06 10:03:34', '2025-02-06 10:03:34', 'D_STRUCTXXSADXX', 'O2 SANNOIS', 'PRIVELUC', 'SE', 'CD', '65 Boulevard Charles de Gaulle', '', '02 43 72 02 02', 'amina.kadi@o2.fr', NULL, 1, 2, 28, 95582, NULL),
+(292, '2025-02-06 10:03:34', '2025-02-06 10:03:34', 'D_STRUCTXXSADXX', 'AD SENIORS 95', 'PRIVELUC', 'SE', 'CD', '32 Boulevard du Port', '', '01 34 02 36 76', 'ads95nord@adseniors.com', NULL, 1, 2, 28, 95127, NULL),
+(293, '2025-02-06 10:03:34', '2025-02-06 10:03:34', 'D_STRUCTXXSADXX', 'HANDICAP AUTISME PRESTATION PROFESSIONNALY SERVICES A LA PERSONNE / HAPPY SAP', 'PRIVELUC', 'SE', 'CD', 'Tour Europa Avenue de l Europe', '94320 THIAIS', '06 20 47 15 70', 'jferjul@gmail.com', NULL, 1, 2, 28, 95998, NULL),
+(294, '2025-02-06 10:03:34', '2025-02-06 10:03:34', 'D_STRUCTXXSADXX', 'AADSP NOVAL / CLEO GROUP', 'PRIVELUC', 'SE', 'CD', '7 RUE DU PETIT ALBI', '', '01 34 22 02 44', 'contact@cleo-group.fr', NULL, 1, 2, 28, 95127, NULL),
+(295, '2025-02-06 10:03:34', '2025-02-06 10:03:34', 'D_STRUCTXXSADXX', 'AADSP CEVAL / CLEO GROUP', 'PRIVELUC', 'SE', 'CD', '38 rue de la Station', '', '01 34 22 02 44', 'contact@cleo-group.fr', NULL, 1, 2, 28, 95252, NULL),
+(296, '2025-02-06 10:03:34', '2025-02-06 10:03:34', 'D_STRUCTXXSADXX', 'APEF SERVICES / CERGY VEXIN HOME SERVICES', 'PRIVELUC', 'SE', 'CD', '9 place de la piscine', '', '01 34 20 79 20', 'Sawsene.FERHAT@apef.fr', NULL, 1, 2, 28, 95500, NULL),
+(297, '2025-02-06 10:03:34', '2025-02-06 10:03:34', 'D_STRUCTXXSADXX', 'ELICS SERVICES 78', 'PRIVELUC', 'SE', 'CD', '7 RUE DU FOSSE', '78600 MAISONS LAFITTE', '01 75 93 80 31', 'contact78@pro-seniors.fr', NULL, 1, 2, 28, 95998, NULL),
+(298, '2025-02-06 10:03:34', '2025-02-06 10:03:34', 'D_STRUCTXXSADXX', 'AXE2VIE (A2V)', 'PRIVELUC', 'SE', 'CD', '32 rue Eugène sue', '', '06 22 97 15 44', 'axe2vie@yahoo.fr', NULL, 1, 2, 28, 95680, NULL),
+(299, '2025-02-06 10:03:34', '2025-02-06 10:03:34', 'D_STRUCTXXSADXX', 'O2 ENGHIEN LES BAINS', 'PRIVELUC', 'SE', 'CD', '65 Boulevard Charles de Gaulle', '', '07 75 21 53 45', 'axel.geridan@o2.fr', NULL, 1, 2, 28, 95582, NULL),
+(300, '2025-02-06 10:03:34', '2025-02-06 10:03:34', 'D_STRUCTXXSADXX', 'CATHY SERVICES', 'PRIVELUC', 'SE', 'CD', '22 RUE CARNOT', '', '09 50 69 62 90', 'cathy.service@gmx.fr', NULL, 1, 2, 28, 95199, NULL),
+(301, '2025-02-06 10:03:34', '2025-02-06 10:03:34', 'D_STRUCTXXSADXX', 'GDS 78-95 SERVICES / GENERALE DES SERVICES', 'PRIVELUC', 'SE', 'CD', '187 avenue du Maréchal Foch', '78700 CONFLANS ST HONORINE', '01 39 22 01 18', 'gonnet@generaledesservices.com', NULL, 1, 2, 28, 95998, NULL),
+(302, '2025-02-06 10:03:34', '2025-02-06 10:03:34', 'D_STRUCTXXSADXX', 'DELTA SERVICES / TOUT A DOM SERVICES', 'PRIVELUC', 'SE', 'CD', '56 avenue Marcel Perrin', '', '01 84 28 01 96', 'k.delmon@toutadomservices.com', NULL, 1, 2, 28, 95394, NULL),
+(303, '2025-02-06 10:03:34', '2025-02-06 10:03:34', 'D_STRUCTXXSADXX', 'ET APRES SERVICES', 'PRIVELUC', 'SE', 'CD', '1 PLACE CHARLES DE GAULLE ', '78180 MONTIGNY LE BRETONNEUX', '06 48 09 43 78', 'a.metayer@etapres-service.fr', NULL, 1, 2, 28, 95998, NULL),
+(304, '2025-02-06 10:03:34', '2025-02-06 10:03:34', 'D_STRUCTXXSADXX', 'APPRENDRE AU QUOTIDIEN /  DECCLIC', 'PRIVELUC', 'SE', 'CD', '14 AVENUE DE L\'EUROPE', '', '06 19 49 14 89', 'contact@declicc.fr', NULL, 1, 2, 28, 95680, NULL),
+(305, '2025-02-06 10:03:34', '2025-02-06 10:03:34', 'D_STRUCTXXSADXX', 'AUXILIADOM', 'PRIVELUC', 'SE', 'CD', '12 RUE DES CHAUFFOURS', '', '09 72 47 59 03', 'nbelaloui@auxiliadom.com', NULL, 1, 2, 28, 95127, NULL),
+(306, '2025-02-06 10:03:34', '2025-02-06 10:03:34', 'D_STRUCTXXSADXX', 'AMELIS  GROUPE SODEXO', 'PRIVELUC', 'SE', 'CD', '118 chaussée Jules César', '', '01 84 28 01 99', 'contact-eaubonne@amelis.services.fr', NULL, 1, 2, 28, 95203, NULL),
+(307, '2025-02-06 10:03:34', '2025-02-06 10:03:34', 'D_STRUCTXXSADXX', 'LE PSAD-AZAE-GISORS', 'PRIVELUC', 'SE', 'CD', '46 rue du général Roguet', '92110 CLICHY', '01 41 06 04 03', 'celine.francisco@azae.com', NULL, 1, 2, 28, 95998, NULL),
+(308, '2025-02-06 10:03:34', '2025-02-06 10:03:34', 'D_STRUCTXXSADXX', 'NOUVEL HORIZON SERVICES', 'PRIVELUC', 'SE', 'CD', '14 allée Georges Pompidou', '94300 VINCENNES', '01 43 98 12 29', 'lamar@nouvelhorizon.fr', NULL, 1, 2, 28, 95998, NULL),
+(309, '2025-02-06 10:03:34', '2025-02-06 10:03:34', 'D_STRUCTXXSADXX', 'FAMILIA SERVICES', 'PRIVELUC', 'SE', 'CD', '93 AVENUE PIERRE SEMARD', '', '01 34 53 01 44', 'faroukzaoui@ymail.com', NULL, 1, 2, 28, 95680, NULL),
+(310, '2025-02-06 10:03:34', '2025-02-06 10:03:34', 'D_STRUCTXXSADXX', 'AVIDOM', 'PRIVELUC', 'SE', 'CD', '22 rue Henri Regnault ', '75014 PARIS', '01 45 43 88 40', 'marion.bouby@avidom.fr', NULL, 1, 2, 28, 95998, NULL),
+(311, '2025-02-06 10:03:34', '2025-02-06 10:03:34', 'D_STRUCTXXSADXX', 'SERENA', 'PRIVELUC', 'SE', 'CD', '118 avenue de Paris', '79000 NIORT', '09 69 32 83 27', 'arnaud.barais@ima.eu', NULL, 1, 2, 28, 95999, NULL),
+(312, '2025-02-06 10:03:34', '2025-02-06 10:03:34', 'D_STRUCTXXSADXX', 'PETITS-FILS (VALTEO)', 'PRIVELUC', 'SE', 'CD', '2 rue de Malleville', '', '06 34 06 51 92', 'antoine.lechatelier@petits-fils.com', NULL, 1, 2, 28, 95210, NULL),
+(313, '2025-02-06 10:03:34', '2025-02-06 10:03:34', 'D_STRUCTXXSADXX', 'GPAAD / BELUS VALERIE', 'PRIVELUC', 'SE', 'CD', 'PLACE DES LIBERTES', '27140 GISORS', '02 32 15 94 08', 'valerie.belus@gmail.com', NULL, 1, 2, 28, 95999, NULL),
+(314, '2025-02-06 10:03:34', '2025-02-06 10:03:34', 'D_STRUCTXXSADXX', 'QUATRE MAINS SERVICE A DOMICILE', 'PRIVELUC', 'SE', 'CD', '11 route de Beauvais', '', '01 34 66 67 78', '4mains.services@sfr.fr', NULL, 1, 2, 28, 95213, NULL),
+(315, '2025-02-06 10:03:34', '2025-02-06 10:03:34', 'D_STRUCTXXSADXX', 'TOUJOURS PRESENT POUR VOUS', 'PRIVELUC', 'SE', 'CD', '1 RUE DE L\'ESCOUVRIER', '', '09 72 81 06 68', '', NULL, 1, 2, 28, 95585, NULL),
+(316, '2025-02-06 10:03:34', '2025-02-06 10:03:34', 'D_STRUCTXXSADXX', 'ALTIDOM ALP', 'PRIVELUC', 'SE', 'CD', '54 route de Sartrouville ', '78230 LE PECQ', '01 30 15 09 00', 'contact@altidom.fr', NULL, 1, 2, 28, 95998, NULL),
+(317, '2025-02-06 10:03:34', '2025-02-06 10:03:34', 'D_STRUCTXXSADXX', 'LE COMPTOIR DES SERVICES A DOMICILE / TOUT A DOM SERVICES', 'PRIVELUC', 'SE', 'CD', '65 AVENUE GEORGES CLEMENCEAU', '60300 SENLIS', '03 44 56 47 22', 'f.gerard@toutadomservices.com', NULL, 1, 2, 28, 95999, NULL),
+(318, '2025-02-06 10:03:34', '2025-02-06 10:03:34', 'D_STRUCTXXSADXX', 'APA / ALLIANCE VIE', 'PRIVELUC', 'SE', 'CD', '142 RUE DE PARIS', '', '01 39 32 12 94', 'taverny@alliance-vie.com', NULL, 1, 2, 28, 95607, NULL),
+(319, '2025-02-06 10:03:34', '2025-02-06 10:03:34', 'D_STRUCTXXSADXX', 'PETITS-FILS PONTOISE', 'PRIVELUC', 'SE', 'CD', '28 RUE DE LA BRETONNERIE', '', '01 84 27 06 85', 'evelyne.rigatti@petit-fils.com', NULL, 1, 2, 28, 95500, NULL),
+(320, '2025-02-06 10:03:34', '2025-02-06 10:03:34', 'D_STRUCTXXSADXX', 'JUSTADOM', 'PRIVELUC', 'SE', 'CD', '11 Boulevard de la résistance', '', '01 76 29 50 34', 'contact@justadom.com', NULL, 1, 2, 28, 95018, NULL),
+(321, '2025-02-06 10:03:34', '2025-02-06 10:03:34', 'D_STRUCTXXSADXX', 'AQUARELLE SERVICE PONTOISE / DOMILOU', 'PRIVELUC', 'SE', 'CD', '5 PLACE DU GRAND MARTROY', '', '06 23 82 19 51', 'm.iratene@aquarelle-service.fr', NULL, 1, 2, 28, 95500, NULL),
+(322, '2025-02-06 10:03:34', '2025-02-06 10:03:34', 'D_STRUCTXXSADXX', 'AXEO SERVICES MARINES / JMJU SERVICES', 'PRIVELUC', 'SE', 'CD', '45 BOULEVARD CHARLES DE GAULLES', '', '01 34 18 11 39', 'taverny@axeoservices.fr', NULL, 1, 2, 28, 95370, NULL),
+(323, '2025-02-06 10:03:34', '2025-02-06 10:03:34', 'D_STRUCTXXSADXX', 'AXEO SERVICES / GLSAP', 'PRIVELUC', 'SE', 'CD', '92BIS BOULEVARD CHARLES DE GAULLE', '', '01 39 61 50 49', '', NULL, 1, 2, 28, 95582, NULL),
+(324, '2025-02-06 10:03:34', '2025-02-06 10:03:34', 'D_STRUCTXXSADXX', 'O2 BEAUMONT', 'PRIVELUC', 'SE', 'CD', '1 RUE LEON GODIN', '', '07 75 27 40 17', 'beaumont@o2.fr', NULL, 1, 2, 28, 95052, NULL),
+(325, '2025-02-06 10:03:34', '2025-02-06 10:03:34', 'D_STRUCTXXSADXX', 'HETEP YAOUT SERVICES / HIS', 'PRIVELUC', 'SE', 'CD', '37B /39 Avenue du Général Leclerc', '', '01 43 52 64 23', 'his@donnerlavieauxannees.com', NULL, 1, 2, 28, 95598, NULL),
+(326, '2025-02-06 10:03:34', '2025-02-06 10:03:34', 'D_STRUCTXXSADXX', 'GIMS - GROUPEMENT INTERPROFESSIONNEL D INTERET MEDICO-SOCIAL', 'PRIVELUC', 'SE', 'CD', '111 BOULEVARD DU GENERAL DELAMBR', '', '06 58 80 77 68', 'contact@giims.org', NULL, 1, 2, 28, 95018, NULL),
+(327, '2025-02-06 10:03:34', '2025-02-06 10:03:34', 'D_STRUCTXXSADXX', 'ADENIOR CERGY PONTOISE - ASKALOA', 'PRIVELUC', 'SE', 'CD', '6 PLACE DE LA CORNE', '', '06 98 64 23 89', 'aloreau.askaloa@gmail.com', NULL, 1, 2, 28, 95500, NULL),
+(328, '2025-02-06 10:03:34', '2025-02-06 10:03:34', 'D_STRUCTXXSADXX', 'AMD SAUSSERON', 'PRIVELUC', 'SE', 'CD', '1bis rue THIEBAULT', '', '07 71 35 31 00', 'amdsausseron@outlook.fr', NULL, 1, 2, 28, 95446, NULL),
+(329, '2025-02-06 10:03:34', '2025-02-06 10:03:34', 'D_STRUCTXXSADXX', 'LA GIRANDIERE - RESIDE ETUDES SENIORS', 'PRIVELUC', 'SE', 'CD', '7 RUE PAUL EMILE VICTOR', '', '01 30 17 48 00', 'marie-helene.ah-yu@reside-etudes.fr', NULL, 1, 2, 28, 95476, NULL),
+(330, '2025-02-06 10:03:34', '2025-02-06 10:03:34', 'D_STRUCTXXSADXX', 'RESIDENCE ADAMOISE SENIOR / LES ESSENTIELLES', 'PRIVELUC', 'SE', 'CD', '15 AVENUE DE PARIS', '', '01 82 40 02 99', '', NULL, 1, 2, 28, 95313, NULL),
+(331, '2025-02-06 10:03:34', '2025-02-06 10:03:34', 'D_STRUCTXXSADXX', 'VILLA BEAUSOLEIL CORMEILLES', 'PRIVELUC', 'SE', 'CD', '1 RUE LEOPOLD MOURIER', '', '01 34 50 11 11', 'melanie@villabeausoleil.com', NULL, 1, 2, 28, 95176, NULL),
+(332, '2025-02-06 10:03:34', '2025-02-06 10:03:34', 'D_STRUCTXXSADXX', 'DOMITYS GALILEE', 'PRIVELUC', 'SE', 'CD', '7 RUE DES MARJOBERTS', '', '01 88 26 02 00', 'gauthier.pare@domitys.fr', NULL, 1, 2, 28, 95127, NULL),
+(333, '2025-02-06 10:03:34', '2025-02-06 10:03:34', 'D_STRUCTXXSADXX', 'TRISKELL SERVICES / VIVA SERVICES', 'PRIVELUC', 'SE', 'CD', '18 AVENUE DU GENERAL LECLERC', '', '01 39 32 02 95', 'agence.beauchamp@vivaservices.fr', NULL, 1, 2, 28, 95051, NULL),
+(334, '2025-02-06 10:03:34', '2025-02-06 10:03:34', 'D_STRUCTXXSADXX', 'AGE D OR SERVICE L\'ISLE ADAM / SERVICES D OR', 'PRIVELUC', 'SE', 'CD', '80 ROUTE DE CREIL', '', '09 62 63 84 97', 'memlik98@gmail.com', NULL, 1, 2, 28, 95058, NULL),
+(335, '2025-02-06 10:03:34', '2025-02-06 10:03:34', 'D_STRUCTXXSADXX', 'DOMALIANCE VIARMES', 'PRIVELUC', 'SE', 'CD', '73 RUE DE PARIS', '', '01 34 09 81 16', 'resp-viarmes@domaliance.fr', NULL, 1, 2, 28, 95652, NULL),
+(336, '2025-02-06 10:03:34', '2025-02-06 10:03:34', 'D_STRUCTXXSADXX', 'O2 CERGY', 'PRIVELUC', 'SE', 'CD', '12-14 rue des chauffours', '', '06 73 45 52 43', 'touriaberrabah@o2.fr', NULL, 1, 2, 28, 95127, NULL),
+(337, '2025-02-06 10:03:34', '2025-02-06 10:03:34', 'D_STRUCTXXSADXX', 'ASSOCIATION MIEUX VIVRE CHEZ SOI', 'ASSO', 'SE', 'CD', '51 rue Carnot', '', '01 39 84 99 61', 'mieuxvivrechezsoia@free.fr', NULL, 1, 2, 28, 95427, NULL),
+(338, '2025-02-06 10:03:34', '2025-02-06 10:03:34', 'D_STRUCTXXSADXX', 'PRESENCE 2000', 'ASSO', 'SE', 'CD', '63 rue des Chauffours', '', '01 30 17 12 23', 'info@presence2000.fr', NULL, 1, 2, 28, 95127, NULL),
+(339, '2025-02-06 10:03:34', '2025-02-06 10:03:34', 'D_STRUCTXXSADXX', 'FAMILY SERVICES', 'ASSO', 'SE', 'CD', '11 rue Ferdinand de Lesseps', '', '01 39 35 10 94', 'familyservices95@free.fr', NULL, 1, 2, 28, 95091, NULL),
+(340, '2025-02-06 10:03:34', '2025-02-06 10:03:34', 'D_STRUCTXXSADXX', 'ASSOCIATION BEL AGE ET SERVICES', 'ASSO', 'SE', 'CD', '5 AVENUE DU STADE', '', '01 39 90 65 51', 'belageservices@orange.fr', NULL, 1, 2, 28, 95229, NULL),
+(341, '2025-02-06 10:03:34', '2025-02-06 10:03:34', 'D_STRUCTXXSADXX', 'EQUIPE FAMILIALE', 'ASSO', 'SE', 'CD', '50 bis rue Charles de Gaulle', '', '01 39 83 02 25', 'equipefamiliale@yahoo.fr', NULL, 1, 2, 28, 95197, NULL),
+(342, '2025-02-06 10:03:34', '2025-02-06 10:03:34', 'D_STRUCTXXSADXX', 'ARIAF (ASSOCIATION REGIONALE INTERCOMMUNALE AIDE FAMILIALE', 'ASSO', 'SE', 'CD', '32 rue de la Mare des Noues', '', '01 34 44 00 95', 'ariaf95@orange.fr', NULL, 1, 2, 28, 95252, NULL),
+(343, '2025-02-06 10:03:34', '2025-02-06 10:03:34', 'D_STRUCTXXSADXX', 'ADMR - ASSOPEP', 'ASSO', 'SE', 'CD', '5BIS ROUTE DE SAINT LEU', '', '01 34 05.22.61', 'ckoudrine@fede95.admr.org', NULL, 1, 2, 28, 95427, NULL),
+(344, '2025-02-06 10:03:34', '2025-02-06 10:03:34', 'D_STRUCTXXSADXX', 'FAMILLES SERVICES', 'ASSO', 'SE', 'CD', '14 rue Puisaye', '', '01 39 59 14 74', 'corfa.familles-services@orange.fr', NULL, 1, 2, 28, 95210, NULL),
+(345, '2025-02-06 10:03:34', '2025-02-06 10:03:34', 'D_STRUCTXXSADXX', 'RE-SOURCE', 'ASSO', 'SE', 'CD', '1 rue Jean Moulin', '', '01 30 10 25 90', 're.source@wanadoo.fr', NULL, 1, 2, 28, 95428, NULL),
+(346, '2025-02-06 10:03:34', '2025-02-06 10:03:34', 'D_STRUCTXXSADXX', 'ADMR - PRO ALLIANCE 95', 'ASSO', 'SE', 'CD', '17-19 avenue du Général de Gaulle', '', '01 34 17 20 34', 'proalliance95@free.fr', NULL, 1, 2, 28, 95598, NULL),
+(347, '2025-02-06 10:03:34', '2025-02-06 10:03:34', 'D_STRUCTXXSADXX', 'AMAD ENGHIEN', 'ASSO', 'SE', 'CD', '57 rue du Général de Gaulle', '', '01 34 12 96 24', 'amad_enghein@hotmail.fr', NULL, 1, 2, 28, 95210, NULL),
+(348, '2025-02-06 10:03:34', '2025-02-06 10:03:34', 'D_STRUCTXXSADXX', 'ADMR VEXIN-CERGY AGGLO', 'ASSO', 'SE', 'CD', '4 Grande Rue', '', '01 34 78 09 20', 'admr-nucourt@fede95.admr.org', NULL, 1, 2, 28, 95651, NULL),
+(349, '2025-02-06 10:03:34', '2025-02-06 10:03:34', 'D_STRUCTXXSADXX', 'AMICIAL', 'ASSO', 'SE', 'CD', '8 rue Maurice Dampierre', '', '01 34 30 80 40', 'maja.milosevic@amicial.fr', NULL, 1, 2, 28, 95572, NULL),
+(350, '2025-02-06 10:03:34', '2025-02-06 10:03:34', 'D_STRUCTXXSADXX', 'PROXIM AIDE ASSISTANCE', 'ASSO', 'SE', 'CD', '2 rue Berthelot', '', '01 39 87 57 48', 'apaa2@hotmail.fr', NULL, 1, 2, 28, 95268, NULL),
+(351, '2025-02-06 10:03:34', '2025-02-06 10:03:34', 'D_STRUCTXXSADXX', 'ARPAVIE@DOM', 'ASSO', 'SE', 'CD', '2 Rue de Chantepuits', '', '01 34 18 11 24', 'info@association-familia.fr', NULL, 1, 2, 28, 95306, NULL),
+(352, '2025-02-06 10:03:34', '2025-02-06 10:03:34', 'D_STRUCTXXSADXX', 'ADMR PLAINE DE FRANCE', 'ASSO', 'SE', 'CD', '7 rue de Paris', '', '01 30 35 40 47', 'madmrdelaplainedefrance@sfr.fr', NULL, 1, 2, 28, 95652, NULL),
+(353, '2025-02-06 10:03:34', '2025-02-06 10:03:34', 'D_STRUCTXXSADXX', 'ADMR MONTSOULT  ET SES ENVIRONS', 'ASSO', 'SE', 'CD', '21 rue de la Mairie', '', '01 34 73 11 89', 'admr-montsoult@fede95.admr.org', NULL, 1, 2, 28, 95430, NULL),
+(354, '2025-02-06 10:03:34', '2025-02-06 10:03:34', 'D_STRUCTXXSADXX', 'ALDS SAP', 'ASSO', 'SE', 'CD', '25 avenue des Aulnes ', '78250 MEULAN', '01 34 74 80 60', 'gheriba.yakini@alds.org', NULL, 1, 2, 28, 95998, NULL),
+(355, '2025-02-06 10:03:34', '2025-02-06 10:03:34', 'D_STRUCTXXSADXX', 'ASSOCIATION DES SENIORS DU 95', 'ASSO', 'SE', 'CD', '10 bis Avenue Paul Valéry', '', '06 39 93 92 66', 'association.as95@yahoo.fr', NULL, 1, 2, 28, 95585, NULL),
+(356, '2025-02-06 10:03:34', '2025-02-06 10:03:34', 'D_STRUCTXXSADXX', 'FAMILLE ET CITE', 'ASSO', 'SE', 'CD', '1 RUE DU PRE SAINT GERVAIS', '93500 PANTIN', '01 56 56 43 50', 'secretariat75@famille-et-cite.asso.fr', NULL, 1, 2, 28, 95998, NULL),
+(357, '2025-02-06 10:03:34', '2025-02-06 10:03:34', 'D_STRUCTXXSADXX', 'AB SERADOM / ACCOMPAGNEMENT PAR LE BIEN ETRE PAR LES SERVICES A DOMICILE', 'ASSO', 'SE', 'CD', '34 avenue de l Escouvrier ', 'ZA - Bât.BSN', '01 34 04 10 08', 'abseradom@gmail.com', NULL, 1, 2, 28, 95585, NULL),
+(358, '2025-02-06 10:03:34', '2025-02-06 10:03:34', 'D_STRUCTXXSADXX', 'ACCOMPAGNEMENT INSERTION DEVOIRS ESTHETIQUES SERVICES / AIDES 78', 'ASSO', 'SE', 'CD', '1 ALLEE DES PINSONS ', '78200 MAGNANVILLE', '09 61 67 19 93', 'aides78@hotmail.fr', NULL, 1, 2, 28, 95998, NULL),
+(359, '2025-02-06 10:03:34', '2025-02-06 10:03:34', 'D_STRUCTXXSADXX', 'AFAD / ASSOCIATION AIDE FAMILIALE A DOMICILE', 'ASSO', 'SE', 'CD', '3 PASSAGE PAUL ELUARD', '', '01 39 91 92 00', 'l.monlouis@afad-idf.asso.fr', NULL, 1, 2, 28, 95199, NULL),
+(360, '2025-02-06 10:03:34', '2025-02-06 10:03:34', 'D_STRUCTXXSADXX', 'SERVICE ET CONFORT POUR LA PERSONNE AGEE / SCPA', 'ASSO', 'SE', 'CD', '14 avenue de l Europe', '', '06 58 28 09 17', 'association.scpa@outlook.fr', NULL, 1, 2, 28, 95680, NULL),
+(361, '2025-02-06 10:03:34', '2025-02-06 10:03:34', 'D_STRUCTXXSADXX', 'ASSOCIATION VIVRE MIEUX CHEZ SOI', 'ASSO', 'SE', 'CD', '36 rue Auguste Pollain ', '93200 ST DENIS', '01 48 21 67 90', '', NULL, 1, 2, 28, 95998, NULL),
+(362, '2025-02-06 10:03:34', '2025-02-06 10:03:34', 'D_STRUCTXXSADXX', 'ESPERANCE UNIVERS PLUS / EUP', 'ASSO', 'SE', 'CD', '27 avenue Jean Moulin ', '93140 BONDY', '01 41 55 31 48', '', NULL, 1, 2, 28, 95998, NULL),
+(363, '2025-02-06 10:03:34', '2025-02-06 10:03:34', 'D_STRUCTXXSADXX', 'PRESENCE A DOMICILE', 'ASSO', 'SE', 'CD', '11 RUE ERNEST GOUIN', '78290 CROISSY SUR SEINE', '01 39 76 31 32', '', NULL, 1, 2, 28, 95998, NULL),
+(364, '2025-02-06 10:03:34', '2025-02-06 10:03:34', 'D_STRUCTXXSADXX', 'ASSOCIATION AMFD / AIDE AUX MERES ET AUX FAMILLES A DOMICILE', 'ASSO', 'SE', 'CD', '1 AVENUE SALVADOR ALLENDE ', '93800 EPINAY SUR SEINE', '01 48 17 78 50', 'ajarrige@amf.fr', NULL, 1, 2, 28, 95998, NULL),
+(365, '2025-02-06 10:03:34', '2025-02-06 10:03:34', 'D_STRUCTXXSADXX', 'ASSOCATION FAMILIALE DE SERVICES A LA PERSONNE', 'ASSO', 'SE', 'CD', '53 rue Mirabeau', '', '01 39 80 66 29', 'felicite.vincent@afasep.fr', NULL, 1, 2, 28, 95063, NULL),
+(366, '2025-02-06 10:03:34', '2025-02-06 10:03:34', 'D_STRUCTXXSADXX', 'LAVICADO 78', 'ASSO', 'SE', 'CD', '13 impasse Emile Zola', '78200 MANTES LA JOLIE', '09 73 64 34 38', 'lavicado_78@yahoo.fr', NULL, 1, 2, 28, 95998, NULL),
+(367, '2025-02-06 10:03:34', '2025-02-06 10:03:34', 'D_STRUCTXXSADXX', 'AMI SERVICES', 'ASSO', 'SE', 'CD', '31 cours Albert 1er', '', '01 39 59 22 33', 'association@ami-services.fr', NULL, 1, 2, 28, 95203, NULL),
+(368, '2025-02-06 10:03:34', '2025-02-06 10:03:34', 'D_STRUCTXXSADXX', 'TREMPLIN 95', 'ASSO', 'SE', 'CD', '6 allée des promeneurs', '', '01 39 91 18 10', 'tremplin@tremplin95.fr', NULL, 1, 2, 28, 95199, NULL),
+(369, '2025-02-06 10:03:34', '2025-02-06 10:03:34', 'D_STRUCTXXSADXX', 'CCAS ARGENTEUIL', 'PUBLIC', 'SE', 'CD', '12-14 Boulevard Léon Feix', '', '01 34 23 44 97', 'marielaure.anton@ville-argenteuil.fr', NULL, 1, 2, 28, 95018, NULL),
+(370, '2025-02-06 10:03:34', '2025-02-06 10:03:34', 'D_STRUCTXXSADXX', 'CCAS ARNOUVILLE', 'PUBLIC', 'SE', 'CD', '15-17 rue Robert Schuman', '', '01 34 45 97 00', 'ccas@ml.arnouville95.org', NULL, 1, 2, 28, 95019, NULL),
+(371, '2025-02-06 10:03:34', '2025-02-06 10:03:34', 'D_STRUCTXXSADXX', 'CCAS BEZONS', 'PUBLIC', 'SE', 'CD', '2 rue de la mairie', '', '01 34 76 72 39', 'n.stacino@mairie-bezons.fr', NULL, 1, 2, 28, 95063, NULL),
+(372, '2025-02-06 10:03:34', '2025-02-06 10:03:34', 'D_STRUCTXXSADXX', 'CCAS EAUBONNE', 'PUBLIC', 'SE', 'CD', '1 rue d Enghien', '', '01 34 27 26 72', 'jboudier@eaubonne.fr', NULL, 1, 2, 28, 95203, NULL),
+(373, '2025-02-06 10:03:34', '2025-02-06 10:03:34', 'D_STRUCTXXSADXX', 'CCAS GONESSE', 'PUBLIC', 'SE', 'CD', '1 rue Pierre SALVI', '', '01 30 11 55 20', 'sthemiot@mairie-gonesse.fr', NULL, 1, 2, 28, 95268, NULL),
+(374, '2025-02-06 10:03:34', '2025-02-06 10:03:34', 'D_STRUCTXXSADXX', 'CCAS MONTMORENCY', 'PUBLIC', 'SE', 'CD', '17 avenue Charles de Gaulle', '', '01 34 17 60 99', 'ccas@ville-montmorency.fr', NULL, 1, 2, 28, 95428, NULL),
+(375, '2025-02-06 10:03:34', '2025-02-06 10:03:34', 'D_STRUCTXXSADXX', 'CCAS ROISSY EN FRANCE', 'PUBLIC', 'SE', 'CD', '2 rue Jean Moulin', '', '01 34 38 52 01', 'eliazord@ville-roissy95.fr', NULL, 1, 2, 28, 95527, NULL),
+(376, '2025-02-06 10:03:34', '2025-02-06 10:03:34', 'D_STRUCTXXSADXX', 'CCAS ST GRATIEN', 'PUBLIC', 'SE', 'CD', 'Place Gambetta', '', '01 34 17 84 58', 'v.berment@mairie-saintgratien.fr', NULL, 1, 2, 28, 95555, NULL),
+(377, '2025-02-06 10:03:34', '2025-02-06 10:03:34', 'D_STRUCTXXSADXX', 'CCAS ST OUEN L\'AUMONE', 'PUBLIC', 'SE', 'CD', '2 place Pierre Mendès-France', '', '01 34 21 25 34', 'tony.martins@ville-soa.fr', NULL, 1, 2, 28, 95572, NULL),
+(378, '2025-02-06 10:03:34', '2025-02-06 10:03:34', 'D_STRUCTXXSADXX', 'CCAS SANNOIS', 'PUBLIC', 'SE', 'CD', 'Place du Général Leclerc ', '', '01 39 98 35 16', 'aide.a.domicile@sannois.org', NULL, 1, 2, 28, 95582, NULL),
+(379, '2025-02-06 10:03:34', '2025-02-06 10:03:34', 'D_STRUCTXXSADXX', 'CCAS SARCELLES', 'PUBLIC', 'SE', 'CD', '4 place de Navarre', '', '01 34 38 20 88', 'madsarcelles@yahoo.fr', NULL, 1, 2, 28, 95585, NULL),
+(380, '2025-02-06 10:03:34', '2025-02-06 10:03:34', 'D_STRUCTXXSADXX', 'CCAS ST BRICE SOUS FORET', 'PUBLIC', 'SE', 'CD', '14 rue de Paris', '', '01 34 29 42 16', 'adom-ccas@saintbrice95.fr', NULL, 1, 2, 28, 95539, NULL),
+(381, '2025-02-06 10:03:34', '2025-02-06 10:03:34', 'D_STRUCTXXSADXX', 'CCAS GARGES LES GONESSE', 'PUBLIC', 'SE', 'CD', '8 place de l\'hôtel de ville', '', '01 34 53 32 00', 'accueilccas@villedegarges.com', NULL, 1, 2, 28, 95268, NULL),
+(382, '2025-02-06 10:03:34', '2025-02-06 10:03:34', 'D_STRUCTXXSADXX', 'TEAM-AIDE', 'PRIVELUC', 'SE', 'CD', '39 BOULEVARD DE LA MUETTE', '', '01 34 04 25 22', 'contact@team-aide.fr', NULL, 1, 2, 28, 95268, NULL),
+(383, '2025-02-11 14:39:49', '2025-02-11 14:39:49', 'HS', 'HôPITAL PRINGSTON', 'HOSP', 'ET', 'CDARS', '22 Rue DesVignes', NULL, '012345', 'pringston.plainsbourreau@example.com', NULL, 1, 5, 27, 95470, 165);
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `etablissement_user`
+--
+
+DROP TABLE IF EXISTS `etablissement_user`;
+CREATE TABLE IF NOT EXISTS `etablissement_user` (
+  `etablissement_id` int UNSIGNED DEFAULT NULL COMMENT 'Relation vers users',
+  `user_id` int UNSIGNED DEFAULT NULL COMMENT 'Relation vers etablissements',
+  KEY `etablissement_user_id_foreign` (`etablissement_id`),
+  KEY `user_etablissement_id_foreign` (`user_id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Déchargement des données de la table `etablissement_user`
+--
+
+INSERT INTO `etablissement_user` (`etablissement_id`, `user_id`) VALUES
+(1, 1),
+(1, 2),
+(1, 3),
+(1, 4),
+(1, 5),
+(1, 6),
+(1, 7),
+(178, 8),
+(204, 8),
+(25, 9),
+(229, 9),
+(235, 9),
+(160, 10),
+(194, 10),
+(159, 11),
+(131, 12),
+(19, 13),
+(147, 14),
+(192, 15),
+(67, 16),
+(244, 17),
+(243, 18),
+(33, 19),
+(9, 20),
+(84, 20),
+(60, 21),
+(140, 21),
+(151, 21),
+(201, 21),
+(12, 22),
+(187, 23),
+(191, 23),
+(150, 24),
+(37, 25),
+(125, 25),
+(101, 26),
+(233, 27),
+(236, 28),
+(102, 29),
+(163, 30),
+(98, 31),
+(7, 32),
+(45, 32),
+(41, 33),
+(146, 33),
+(49, 34),
+(75, 34),
+(5, 35),
+(28, 36),
+(43, 36),
+(44, 36),
+(119, 37),
+(94, 38),
+(185, 39),
+(144, 40),
+(145, 40),
+(120, 41),
+(26, 42),
+(27, 42),
+(172, 43),
+(175, 43),
+(117, 44),
+(115, 45),
+(116, 45),
+(217, 46),
+(61, 47),
+(66, 47),
+(223, 47),
+(30, 48),
+(164, 49),
+(152, 50),
+(141, 51),
+(208, 52),
+(161, 53),
+(127, 54),
+(48, 55),
+(32, 56),
+(72, 57),
+(97, 57),
+(182, 58),
+(183, 58),
+(123, 59),
+(31, 60),
+(57, 61),
+(221, 61),
+(170, 62),
+(193, 62),
+(104, 63),
+(213, 64),
+(220, 64),
+(179, 65),
+(62, 66),
+(63, 66),
+(64, 66),
+(198, 67),
+(122, 68),
+(55, 69),
+(4, 70),
+(206, 70),
+(38, 71),
+(87, 71),
+(89, 71),
+(103, 72),
+(153, 73),
+(171, 74),
+(53, 75),
+(73, 75),
+(218, 75),
+(71, 76),
+(137, 76),
+(2, 77),
+(136, 77),
+(240, 77),
+(241, 77),
+(10, 78),
+(132, 78),
+(56, 79),
+(226, 79),
+(108, 80),
+(20, 81),
+(21, 81),
+(22, 81),
+(216, 82),
+(105, 83),
+(166, 84),
+(118, 85),
+(23, 86),
+(88, 86),
+(378, 86),
+(379, 86),
+(100, 87),
+(189, 88),
+(51, 89),
+(165, 90),
+(95, 91),
+(96, 91),
+(190, 92),
+(203, 93),
+(156, 94),
+(85, 95),
+(92, 96),
+(242, 97),
+(214, 98),
+(155, 99),
+(154, 100),
+(86, 101),
+(237, 102),
+(1, 103),
+(124, 104),
+(246, 104),
+(381, 105),
+(212, 106),
+(121, 107),
+(380, 107),
+(54, 108),
+(65, 108),
+(225, 108),
+(232, 109),
+(167, 110),
+(173, 111),
+(135, 112),
+(199, 113),
+(200, 113),
+(6, 114),
+(139, 115),
+(18, 116),
+(219, 116),
+(126, 117),
+(188, 118),
+(202, 118),
+(138, 119),
+(106, 120),
+(107, 120),
+(197, 121),
+(174, 122),
+(195, 122),
+(180, 123),
+(169, 124),
+(34, 125),
+(230, 125),
+(99, 126),
+(158, 126),
+(186, 126),
+(58, 127),
+(76, 127),
+(134, 128),
+(228, 128),
+(17, 129),
+(69, 129),
+(70, 129),
+(129, 130),
+(205, 130),
+(176, 131),
+(133, 132),
+(157, 133),
+(184, 134),
+(181, 135),
+(11, 136),
+(35, 136),
+(112, 136),
+(114, 136),
+(128, 136),
+(234, 136),
+(16, 137),
+(148, 138),
+(196, 139),
+(143, 140),
+(80, 141),
+(42, 142),
+(177, 143),
+(238, 144),
+(90, 145),
+(91, 146),
+(111, 147),
+(162, 148),
+(113, 149),
+(29, 150),
+(82, 151),
+(83, 151),
+(207, 151),
+(382, 151),
+(231, 152),
+(3, 153),
+(40, 153),
+(81, 153),
+(239, 153),
+(24, 154),
+(36, 154),
+(109, 154),
+(168, 155),
+(110, 156),
+(245, 156),
+(14, 157),
+(52, 157),
+(130, 158),
+(93, 159),
+(1, 160),
+(1, 161),
+(1, 162),
+(1, 163),
+(86, 164),
+(86, 165);
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `etats`
+--
+
+DROP TABLE IF EXISTS `etats`;
+CREATE TABLE IF NOT EXISTS `etats` (
+  `id` tinyint UNSIGNED NOT NULL AUTO_INCREMENT,
+  `libelle` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `failed_jobs`
+--
+
+DROP TABLE IF EXISTS `failed_jobs`;
+CREATE TABLE IF NOT EXISTS `failed_jobs` (
+  `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT,
+  `uuid` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `connection` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `queue` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `payload` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
+  `exception` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
+  `failed_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `failed_jobs_uuid_unique` (`uuid`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `faqs`
+--
+
+DROP TABLE IF EXISTS `faqs`;
+CREATE TABLE IF NOT EXISTS `faqs` (
+  `id` int UNSIGNED NOT NULL AUTO_INCREMENT,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `question` text COLLATE utf8mb4_unicode_ci,
+  `reponse` text COLLATE utf8mb4_unicode_ci,
+  `actif` tinyint(1) NOT NULL,
+  `catfaq_id` int UNSIGNED NOT NULL COMMENT 'Relation vers Catégorie FAQ',
+  PRIMARY KEY (`id`),
+  KEY `catfaqs_faqs` (`catfaq_id`)
+) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Déchargement des données de la table `faqs`
+--
+
+INSERT INTO `faqs` (`id`, `created_at`, `updated_at`, `question`, `reponse`, `actif`, `catfaq_id`) VALUES
+(1, '2025-02-10 12:19:10', '2025-02-10 12:19:10', 'Comment enregistrer mon signalement ', NULL, 1, 1);
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `jobs`
+--
+
+DROP TABLE IF EXISTS `jobs`;
+CREATE TABLE IF NOT EXISTS `jobs` (
+  `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT,
+  `queue` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `payload` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
+  `attempts` tinyint UNSIGNED NOT NULL,
+  `reserved_at` int UNSIGNED DEFAULT NULL,
+  `available_at` int UNSIGNED NOT NULL,
+  `created_at` int UNSIGNED NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `jobs_queue_index` (`queue`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `job_batches`
+--
+
+DROP TABLE IF EXISTS `job_batches`;
+CREATE TABLE IF NOT EXISTS `job_batches` (
+  `id` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `name` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `total_jobs` int NOT NULL,
+  `pending_jobs` int NOT NULL,
+  `failed_jobs` int NOT NULL,
+  `failed_job_ids` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
+  `options` mediumtext COLLATE utf8mb4_unicode_ci,
+  `cancelled_at` int DEFAULT NULL,
+  `created_at` int NOT NULL,
+  `finished_at` int DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `migrations`
+--
+
+DROP TABLE IF EXISTS `migrations`;
+CREATE TABLE IF NOT EXISTS `migrations` (
+  `id` int UNSIGNED NOT NULL AUTO_INCREMENT,
+  `migration` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `batch` int NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM AUTO_INCREMENT=34 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Déchargement des données de la table `migrations`
+--
+
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
+(1, '0001_01_01_000001_create_cache_table', 1),
+(2, '0001_01_01_000002_create_jobs_table', 1),
+(3, '2021_06_22_150000_create_communes_table', 1),
+(4, '2021_07_12_000000_create_users_table', 1),
+(5, '2021_07_12_082610_create_categories_table', 1),
+(6, '2021_07_12_082610_create_etablissements_table', 1),
+(7, '2021_07_12_082610_create_options_table', 1),
+(8, '2021_07_12_082610_create_rubriques_table', 1),
+(9, '2021_07_12_082610_create_secteurs_table', 1),
+(10, '2021_07_12_082610_create_sections_table', 1),
+(11, '2021_07_12_082610_create_signalements_table', 1),
+(12, '2021_07_12_083044_create_password_resets_table', 1),
+(13, '2021_07_12_101756_create_permission_tables', 1),
+(14, '2022_03_28_083300_add_destinataires_to_signalements_table', 1),
+(15, '2022_03_28_083300_add_dispositions1_to_signalements_table', 1),
+(16, '2022_03_28_083300_add_dispositions2_to_signalements_table', 1),
+(17, '2022_03_28_083300_add_dispositions3_to_signalements_table', 1),
+(18, '2022_03_28_083300_add_dispositions4_to_signalements_table', 1),
+(19, '2022_04_04_082610_create_catfaqs_table', 1),
+(20, '2022_04_04_112610_create_faqs_table', 1),
+(21, '2022_04_04_152610_create_action_signalements_table', 1),
+(22, '2022_04_14_083300_add_etablissements_to_users_table', 1),
+(23, '2022_05_09_083300_add_consequences1_to_signalements_table', 1),
+(24, '2022_05_09_083300_add_consequences2_to_signalements_table', 1),
+(25, '2022_05_09_083300_add_consequences3_to_signalements_table', 1),
+(26, '2022_07_13_103300_add_prefet_to_signalements_table', 1),
+(27, '2022_07_13_153300_add_question2_to_action_signalements_table', 1),
+(28, '2022_07_25_103300_add_commentaire_to_signalements_table', 1),
+(29, '2022_07_25_122610_add_delai_secteurs_table', 1),
+(30, '2022_10_17_122610_add_resp_secteurs_table', 1),
+(31, '2022_10_28_122610_add_gest_etablissements_table', 1),
+(32, '2023_06_22_105550_create_etats_table', 1),
+(33, '2023_07_18_141400_add_actif_to_categories_table', 1);
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `model_has_permissions`
+--
+
+DROP TABLE IF EXISTS `model_has_permissions`;
+CREATE TABLE IF NOT EXISTS `model_has_permissions` (
+  `permission_id` bigint UNSIGNED NOT NULL,
+  `model_type` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `model_id` bigint UNSIGNED NOT NULL,
+  PRIMARY KEY (`permission_id`,`model_id`,`model_type`),
+  KEY `model_has_permissions_model_id_model_type_index` (`model_id`,`model_type`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `model_has_roles`
+--
+
+DROP TABLE IF EXISTS `model_has_roles`;
+CREATE TABLE IF NOT EXISTS `model_has_roles` (
+  `role_id` bigint UNSIGNED NOT NULL,
+  `model_type` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `model_id` bigint UNSIGNED NOT NULL,
+  PRIMARY KEY (`role_id`,`model_id`,`model_type`),
+  KEY `model_has_roles_model_id_model_type_index` (`model_id`,`model_type`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Déchargement des données de la table `model_has_roles`
+--
+
+INSERT INTO `model_has_roles` (`role_id`, `model_type`, `model_id`) VALUES
+(1, 'App\\Models\\User', 1),
+(1, 'App\\Models\\User', 2),
+(1, 'App\\Models\\User', 165),
+(2, 'App\\Models\\User', 5),
+(2, 'App\\Models\\User', 6),
+(2, 'App\\Models\\User', 161),
+(3, 'App\\Models\\User', 8),
+(3, 'App\\Models\\User', 9),
+(3, 'App\\Models\\User', 10),
+(3, 'App\\Models\\User', 11),
+(3, 'App\\Models\\User', 12),
+(3, 'App\\Models\\User', 13),
+(3, 'App\\Models\\User', 14),
+(3, 'App\\Models\\User', 15),
+(3, 'App\\Models\\User', 16),
+(3, 'App\\Models\\User', 17),
+(3, 'App\\Models\\User', 18),
+(3, 'App\\Models\\User', 19),
+(3, 'App\\Models\\User', 20),
+(3, 'App\\Models\\User', 21),
+(3, 'App\\Models\\User', 22),
+(3, 'App\\Models\\User', 23),
+(3, 'App\\Models\\User', 24),
+(3, 'App\\Models\\User', 25),
+(3, 'App\\Models\\User', 26),
+(3, 'App\\Models\\User', 27),
+(3, 'App\\Models\\User', 28),
+(3, 'App\\Models\\User', 29),
+(3, 'App\\Models\\User', 30),
+(3, 'App\\Models\\User', 31),
+(3, 'App\\Models\\User', 32),
+(3, 'App\\Models\\User', 33),
+(3, 'App\\Models\\User', 34),
+(3, 'App\\Models\\User', 35),
+(3, 'App\\Models\\User', 36),
+(3, 'App\\Models\\User', 37),
+(3, 'App\\Models\\User', 38),
+(3, 'App\\Models\\User', 39),
+(3, 'App\\Models\\User', 40),
+(3, 'App\\Models\\User', 41),
+(3, 'App\\Models\\User', 42),
+(3, 'App\\Models\\User', 43),
+(3, 'App\\Models\\User', 44),
+(3, 'App\\Models\\User', 45),
+(3, 'App\\Models\\User', 46),
+(3, 'App\\Models\\User', 47),
+(3, 'App\\Models\\User', 48),
+(3, 'App\\Models\\User', 49),
+(3, 'App\\Models\\User', 50),
+(3, 'App\\Models\\User', 51),
+(3, 'App\\Models\\User', 52),
+(3, 'App\\Models\\User', 53),
+(3, 'App\\Models\\User', 54),
+(3, 'App\\Models\\User', 55),
+(3, 'App\\Models\\User', 56),
+(3, 'App\\Models\\User', 57),
+(3, 'App\\Models\\User', 58),
+(3, 'App\\Models\\User', 59),
+(3, 'App\\Models\\User', 60),
+(3, 'App\\Models\\User', 61),
+(3, 'App\\Models\\User', 62),
+(3, 'App\\Models\\User', 63),
+(3, 'App\\Models\\User', 64),
+(3, 'App\\Models\\User', 65),
+(3, 'App\\Models\\User', 66),
+(3, 'App\\Models\\User', 67),
+(3, 'App\\Models\\User', 68),
+(3, 'App\\Models\\User', 69),
+(3, 'App\\Models\\User', 70),
+(3, 'App\\Models\\User', 71),
+(3, 'App\\Models\\User', 72),
+(3, 'App\\Models\\User', 73),
+(3, 'App\\Models\\User', 74),
+(3, 'App\\Models\\User', 75),
+(3, 'App\\Models\\User', 76),
+(3, 'App\\Models\\User', 77),
+(3, 'App\\Models\\User', 78),
+(3, 'App\\Models\\User', 79),
+(3, 'App\\Models\\User', 80),
+(3, 'App\\Models\\User', 81),
+(3, 'App\\Models\\User', 82),
+(3, 'App\\Models\\User', 83),
+(3, 'App\\Models\\User', 84),
+(3, 'App\\Models\\User', 85),
+(3, 'App\\Models\\User', 86),
+(3, 'App\\Models\\User', 87),
+(3, 'App\\Models\\User', 88),
+(3, 'App\\Models\\User', 89),
+(3, 'App\\Models\\User', 90),
+(3, 'App\\Models\\User', 91),
+(3, 'App\\Models\\User', 92),
+(3, 'App\\Models\\User', 93),
+(3, 'App\\Models\\User', 94),
+(3, 'App\\Models\\User', 95),
+(3, 'App\\Models\\User', 96),
+(3, 'App\\Models\\User', 97),
+(3, 'App\\Models\\User', 98),
+(3, 'App\\Models\\User', 99),
+(3, 'App\\Models\\User', 100),
+(3, 'App\\Models\\User', 101),
+(3, 'App\\Models\\User', 102),
+(3, 'App\\Models\\User', 103),
+(3, 'App\\Models\\User', 104),
+(3, 'App\\Models\\User', 105),
+(3, 'App\\Models\\User', 106),
+(3, 'App\\Models\\User', 107),
+(3, 'App\\Models\\User', 108),
+(3, 'App\\Models\\User', 109),
+(3, 'App\\Models\\User', 110),
+(3, 'App\\Models\\User', 111),
+(3, 'App\\Models\\User', 112),
+(3, 'App\\Models\\User', 113),
+(3, 'App\\Models\\User', 114),
+(3, 'App\\Models\\User', 115),
+(3, 'App\\Models\\User', 116),
+(3, 'App\\Models\\User', 117),
+(3, 'App\\Models\\User', 118),
+(3, 'App\\Models\\User', 119),
+(3, 'App\\Models\\User', 120),
+(3, 'App\\Models\\User', 121),
+(3, 'App\\Models\\User', 122),
+(3, 'App\\Models\\User', 123),
+(3, 'App\\Models\\User', 124),
+(3, 'App\\Models\\User', 125),
+(3, 'App\\Models\\User', 126),
+(3, 'App\\Models\\User', 127),
+(3, 'App\\Models\\User', 128),
+(3, 'App\\Models\\User', 129),
+(3, 'App\\Models\\User', 130),
+(3, 'App\\Models\\User', 131),
+(3, 'App\\Models\\User', 132),
+(3, 'App\\Models\\User', 133),
+(3, 'App\\Models\\User', 134),
+(3, 'App\\Models\\User', 135),
+(3, 'App\\Models\\User', 136),
+(3, 'App\\Models\\User', 137),
+(3, 'App\\Models\\User', 138),
+(3, 'App\\Models\\User', 139),
+(3, 'App\\Models\\User', 140),
+(3, 'App\\Models\\User', 141),
+(3, 'App\\Models\\User', 142),
+(3, 'App\\Models\\User', 143),
+(3, 'App\\Models\\User', 144),
+(3, 'App\\Models\\User', 145),
+(3, 'App\\Models\\User', 146),
+(3, 'App\\Models\\User', 147),
+(3, 'App\\Models\\User', 148),
+(3, 'App\\Models\\User', 149),
+(3, 'App\\Models\\User', 150),
+(3, 'App\\Models\\User', 151),
+(3, 'App\\Models\\User', 152),
+(3, 'App\\Models\\User', 153),
+(3, 'App\\Models\\User', 154),
+(3, 'App\\Models\\User', 155),
+(3, 'App\\Models\\User', 156),
+(3, 'App\\Models\\User', 157),
+(3, 'App\\Models\\User', 158),
+(3, 'App\\Models\\User', 159),
+(4, 'App\\Models\\User', 3),
+(4, 'App\\Models\\User', 4),
+(4, 'App\\Models\\User', 7),
+(4, 'App\\Models\\User', 160),
+(4, 'App\\Models\\User', 162),
+(4, 'App\\Models\\User', 163);
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `options`
+--
+
+DROP TABLE IF EXISTS `options`;
+CREATE TABLE IF NOT EXISTS `options` (
+  `id` int UNSIGNED NOT NULL AUTO_INCREMENT,
+  `libelle` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `ordre` smallint UNSIGNED NOT NULL,
+  `actif` tinyint(1) NOT NULL,
+  `section_id` int UNSIGNED NOT NULL COMMENT 'Relation vers Section',
+  `rubrique_id` int UNSIGNED NOT NULL COMMENT 'Relation vers Rubrique',
+  PRIMARY KEY (`id`),
+  KEY `sections_options` (`section_id`),
+  KEY `rubriques_options` (`rubrique_id`)
+) ENGINE=MyISAM AUTO_INCREMENT=178 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Déchargement des données de la table `options`
+--
+
+INSERT INTO `options` (`id`, `libelle`, `ordre`, `actif`, `section_id`, `rubrique_id`) VALUES
+(1, 'Canicule', 1, 1, 1, 1),
+(2, 'Départ de feu', 2, 1, 1, 1),
+(3, 'Incendie', 3, 1, 1, 1),
+(4, 'Inondation', 4, 1, 1, 1),
+(5, 'Tempête', 5, 1, 1, 1),
+(6, 'Rupture d\'accès à l\'établissement/domicile', 6, 1, 1, 1),
+(7, 'Autre', 7, 1, 1, 1),
+(8, 'Défaillance de la qualité de l\'eau', 1, 1, 1, 2),
+(9, 'Epidémie', 2, 1, 1, 2),
+(10, 'Intoxication', 3, 1, 1, 2),
+(11, 'Fuite de Gaz', 4, 1, 1, 2),
+(12, 'Légionnelles', 5, 1, 1, 2),
+(13, 'Panne ascenseur', 6, 1, 1, 2),
+(14, 'Panne chauffage/climatisation', 7, 1, 1, 2),
+(15, 'Panne prolongée électricité', 8, 1, 1, 2),
+(16, 'Rupture eau', 9, 1, 1, 2),
+(17, 'Rupture électricité', 10, 1, 1, 2),
+(18, 'Maladies infectieuses', 11, 1, 1, 2),
+(19, 'Autre', 12, 1, 1, 2),
+(20, 'Absence imprévue de plusieurs professionnels', 1, 1, 1, 3),
+(21, 'Conflits/menace de conflits sociaux', 2, 1, 1, 3),
+(22, 'Préavis de grève', 3, 1, 1, 3),
+(23, 'Difficulté de recrutement', 4, 1, 1, 3),
+(24, 'Insuffisance de personnel', 5, 1, 1, 3),
+(25, 'Vacance de poste prolongée (encadrement)', 6, 1, 1, 3),
+(26, 'Sanction disciplinaire et/ou procédures judiciaires envers un professionnel', 7, 1, 1, 3),
+(27, 'Turn over important', 8, 1, 1, 3),
+(28, 'Autre', 9, 1, 1, 3),
+(29, 'Absence, erreur ou retard de prise en charge ou de traitement', 1, 1, 1, 4),
+(30, 'Accidents corporels (chutes & fractures)', 2, 1, 1, 4),
+(31, 'Déshydratation', 3, 1, 1, 4),
+(32, 'Dénutrition', 4, 1, 1, 4),
+(33, 'Erreur administration du médicament', 5, 1, 1, 4),
+(34, 'Escarres', 6, 1, 1, 4),
+(35, 'Fausse route', 7, 1, 1, 4),
+(36, 'Non-respect de la prescription médicale', 8, 1, 1, 4),
+(37, 'Traitement inadapté', 9, 1, 1, 4),
+(38, 'Autre', 10, 1, 1, 4),
+(39, 'Activités illicites', 1, 1, 1, 5),
+(40, 'Conflit important ou obstacle à la prise en charge', 2, 1, 1, 5),
+(41, 'Défiance vis-à-vis du personnel', 3, 1, 1, 5),
+(42, 'Demandes inadaptées', 4, 1, 1, 5),
+(43, 'Menaces répétées à l\'encontre des professionnels', 5, 1, 1, 5),
+(44, 'Autre', 6, 1, 1, 5),
+(45, 'Décès ', 1, 1, 1, 6),
+(46, 'Décès accidentel', 2, 1, 1, 6),
+(47, 'Décès au cours d\'une disparition inquiétante', 3, 1, 1, 6),
+(48, 'Décès suite à une chute', 4, 1, 1, 6),
+(49, 'Décès suite à un accident de contention', 5, 1, 1, 6),
+(50, 'Autre', 6, 1, 1, 6),
+(51, 'Décès usager par suicide', 1, 1, 1, 7),
+(52, 'Décès professionnel par suicide ', 2, 1, 1, 7),
+(53, 'Tentative de suicide usager', 3, 1, 1, 7),
+(54, 'Tentative de suicide professionnel', 4, 1, 1, 7),
+(55, 'Comportement d\'emprise', 1, 1, 1, 8),
+(56, 'Défaut d\'adaptation des équipements aux personnes à mobilité réduite', 2, 1, 1, 8),
+(57, 'Isolement vis à vis des proches', 3, 1, 1, 8),
+(58, 'Négligence grave et/ou erreurs successives', 4, 1, 1, 8),
+(59, 'Privation de droit', 5, 1, 1, 8),
+(60, 'Violence à caractère sexuel (agression, attouchements, viol)', 6, 1, 1, 8),
+(61, 'Violence verbale (menaces, insultes)', 7, 1, 1, 8),
+(62, 'Violence physique (altercation, coups & blessures)', 8, 1, 1, 8),
+(63, 'Violence psychologique/morale (intimidation, privation, harcèlement)', 9, 1, 1, 8),
+(64, 'Vols', 10, 1, 1, 8),
+(65, 'Autre', 11, 1, 1, 8),
+(66, 'Disparition et retour sans mobilisation des services de recherche ', 1, 1, 1, 9),
+(67, 'Disparition avec intervention des services de recherche ', 2, 1, 1, 9),
+(68, 'Non-respect des règles de vie en collectivité', 1, 1, 1, 10),
+(69, 'Pratiques ou comportements inadaptés ou délictueux', 2, 1, 1, 10),
+(70, 'Violence à caractère sexuel (agression, attouchements, viol)', 3, 1, 1, 10),
+(71, 'Violence physique (altercation, coups & blessures)', 4, 1, 1, 10),
+(72, 'Violence psychologique/morale (intimidation, privation)', 5, 1, 1, 10),
+(73, 'Violence verbale (menaces, insultes)', 6, 1, 1, 10),
+(74, 'Autre', 7, 1, 1, 10),
+(75, 'Détériorations volontaires (locaux, équipements, matériel)', 1, 1, 1, 11),
+(76, 'Vols', 2, 1, 1, 11),
+(77, 'Autre', 3, 1, 1, 11),
+(78, 'Aucune', 1, 1, 2, 12),
+(79, 'Aggravation de l\'état de santé', 2, 1, 2, 12),
+(80, 'Blessure', 3, 1, 2, 12),
+(81, 'Changement de comportement ou d\'humeur', 4, 1, 2, 12),
+(82, 'Décès', 5, 1, 2, 12),
+(83, 'Hospitalisation', 6, 1, 2, 12),
+(84, 'Soin en interne', 7, 1, 2, 12),
+(85, 'Autre', 8, 1, 2, 12),
+(86, 'Aucune', 1, 1, 2, 13),
+(87, 'Arrêt maladie', 2, 1, 2, 13),
+(88, 'Décès', 3, 1, 2, 13),
+(89, 'Impossibilité de se rendre sur le lieu du travail', 4, 1, 2, 13),
+(90, 'Organisation d\'une prise en charge médicale et/ou soutien psychologique', 5, 1, 2, 13),
+(91, 'Autre', 6, 1, 2, 13),
+(92, 'Aucune', 1, 1, 2, 14),
+(93, 'Difficultés d\'approvisionnement', 2, 1, 2, 14),
+(94, 'Difficultés d\'accès à l\'établissement ou au lieu de prise en charge', 3, 1, 2, 14),
+(95, 'Nécessité d\'évacuation des résidents', 4, 1, 2, 14),
+(96, 'Suspension d\'activités', 5, 1, 2, 14),
+(97, 'Fonctionnement en mode dégradé', 6, 1, 2, 14),
+(98, 'Autre', 7, 1, 2, 14),
+(99, 'Oui', 1, 1, 3, 15),
+(100, 'Non', 2, 1, 3, 15),
+(101, 'Refus de l\'usager', 3, 1, 3, 15),
+(102, 'Autre', 4, 1, 3, 15),
+(103, 'CVS ou groupes d\'expression', 1, 1, 4, 16),
+(104, 'DAC (Dispositif d\'Appui à la Coordination)', 2, 1, 4, 16),
+(105, 'Famille et proches', 3, 1, 4, 16),
+(106, 'Les Points Conseil (du Département)', 4, 1, 4, 16),
+(107, 'Personne.s concernée.s', 5, 1, 4, 16),
+(108, 'Professionnels', 6, 1, 4, 16),
+(109, 'Personne de confiance', 7, 1, 4, 16),
+(110, 'Responsable légal', 8, 1, 4, 16),
+(111, 'Autre', 9, 1, 4, 16),
+(112, 'Aucune', 1, 1, 5, 17),
+(113, 'Adaptation des soins/de la prise en charge', 2, 1, 5, 17),
+(114, 'Fin de prise en charge', 3, 1, 5, 17),
+(115, 'Orientation vers autre établissement/service', 4, 1, 5, 17),
+(116, 'Orientation vers Dispositif Personnes Qualifiées', 5, 1, 5, 17),
+(117, 'Révision du projet de vie', 6, 1, 5, 17),
+(118, 'Soutien psychologique', 7, 1, 5, 17),
+(119, 'Transfert/hospitalisation', 8, 1, 5, 17),
+(120, 'Autre', 9, 1, 5, 17),
+(121, 'Aucune', 1, 1, 5, 18),
+(122, 'Action de formation', 2, 1, 5, 18),
+(123, 'Action de sensibilisation', 3, 1, 5, 18),
+(124, 'Mesure conservatoire', 4, 1, 5, 18),
+(125, 'Mesure disciplinaire', 5, 1, 5, 18),
+(126, 'Soutien psychologique', 6, 1, 5, 18),
+(127, 'Autre', 7, 1, 5, 18),
+(128, 'Aucune', 1, 1, 5, 19),
+(129, 'Fonctionnement en mode dégradé', 2, 1, 5, 19),
+(130, 'Mise en place/à jour de procédures', 3, 1, 5, 19),
+(131, 'Révision de planning', 4, 1, 5, 19),
+(132, 'Autre', 5, 1, 5, 19),
+(133, 'Aucune', 1, 1, 5, 20),
+(134, 'Activation d\'une cellule de crise ou d\'un plan', 2, 1, 5, 20),
+(135, 'Aménagement ou réparation des locaux et/ou équipements', 3, 1, 5, 20),
+(136, 'Demande d\'aide ou d\'appui à l\'autorité administrative', 4, 1, 5, 20),
+(137, 'Information interne et/ou externe', 5, 1, 5, 20),
+(138, 'Autre', 6, 1, 5, 20),
+(139, 'Direction', 1, 1, 6, 21),
+(140, 'Entre pairs', 2, 1, 6, 21),
+(141, 'Groupe qualité', 3, 1, 6, 21),
+(142, 'Autre', 4, 1, 6, 21),
+(143, 'Appel', 1, 1, 7, 22),
+(144, 'Courriel', 2, 1, 7, 22),
+(145, 'Courrier', 3, 1, 7, 22),
+(146, 'Instruction sans suite', 4, 1, 7, 22),
+(147, 'Convocation établissement', 5, 1, 7, 22),
+(148, 'Visite-Contrôle', 6, 1, 7, 22),
+(149, 'Ami', 1, 1, 8, 23),
+(150, 'Anonyme', 2, 1, 8, 23),
+(151, 'CVS', 3, 1, 8, 23),
+(152, 'Direction', 4, 1, 8, 23),
+(153, 'Famille', 5, 1, 8, 23),
+(154, 'Profession extérieur', 6, 1, 8, 23),
+(155, 'Résident', 7, 1, 8, 23),
+(156, 'Salarié', 8, 1, 8, 23),
+(157, 'Stagiaire', 9, 1, 8, 23),
+(158, 'Tutelle', 10, 1, 8, 23),
+(159, '3977', 1, 1, 8, 24),
+(160, '3977 + Autres moyens', 2, 1, 8, 24),
+(161, 'Courrier CD', 3, 1, 8, 24),
+(162, 'Courriel CD', 4, 1, 8, 24),
+(163, 'Courrier ARS', 5, 1, 8, 24),
+(164, 'Courriel ARS', 6, 1, 8, 24),
+(165, 'Courrier CD ARS', 7, 1, 8, 24),
+(166, 'CT CD', 8, 1, 8, 24),
+(167, 'Fugue', 1, 1, 1, 25),
+(168, 'Autre', 1, 1, 1, 26),
+(169, 'Direction', 1, 1, 9, 27),
+(170, 'Paramédical', 2, 1, 9, 27),
+(171, 'Médical', 3, 1, 9, 27),
+(172, 'Educatif', 4, 1, 9, 27),
+(173, 'Pourriez-vous nous envoyer des éléments complémentaires relatifs à l\'évènement ?', 1, 1, 7, 28),
+(174, 'Pourriez-vous nous faire un retour sur la situation ?', 2, 1, 7, 28),
+(175, 'Pourriez-vous nous transmettre les suites des faits et/ou les éléments complémentaires ?', 3, 1, 7, 28),
+(176, 'Question libre', 4, 1, 7, 28),
+(177, 'Autre', 7, 1, 1, 1);
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `password_resets`
+--
+
+DROP TABLE IF EXISTS `password_resets`;
+CREATE TABLE IF NOT EXISTS `password_resets` (
+  `email` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `token` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `created_at` datetime DEFAULT NULL,
+  KEY `password_resets_email_index` (`email`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `password_reset_tokens`
+--
+
+DROP TABLE IF EXISTS `password_reset_tokens`;
+CREATE TABLE IF NOT EXISTS `password_reset_tokens` (
+  `email` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `token` varchar(200) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`email`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `permissions`
+--
+
+DROP TABLE IF EXISTS `permissions`;
+CREATE TABLE IF NOT EXISTS `permissions` (
+  `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT,
+  `name` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `guard_name` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `roles`
+--
+
+DROP TABLE IF EXISTS `roles`;
+CREATE TABLE IF NOT EXISTS `roles` (
+  `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT,
+  `name` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `guard_name` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Déchargement des données de la table `roles`
+--
+
+INSERT INTO `roles` (`id`, `name`, `guard_name`, `created_at`, `updated_at`) VALUES
+(1, 'Administrateur', 'web', '2025-02-06 10:03:34', '2025-02-06 10:03:34'),
+(2, 'Gestionnaire', 'web', '2025-02-06 10:03:34', '2025-02-06 10:03:34'),
+(3, 'Opérateur', 'web', '2025-02-06 10:03:34', '2025-02-06 10:03:34'),
+(4, 'Utilisateur', 'web', '2025-02-06 10:03:34', '2025-02-06 10:03:34');
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `role_has_permissions`
+--
+
+DROP TABLE IF EXISTS `role_has_permissions`;
+CREATE TABLE IF NOT EXISTS `role_has_permissions` (
+  `permission_id` bigint UNSIGNED NOT NULL,
+  `role_id` bigint UNSIGNED NOT NULL,
+  PRIMARY KEY (`permission_id`,`role_id`),
+  KEY `role_has_permissions_role_id_foreign` (`role_id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `rubriques`
+--
+
+DROP TABLE IF EXISTS `rubriques`;
+CREATE TABLE IF NOT EXISTS `rubriques` (
+  `id` int UNSIGNED NOT NULL AUTO_INCREMENT,
+  `libelle` varchar(200) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `ordre` smallint UNSIGNED NOT NULL,
+  `section_id` int UNSIGNED NOT NULL COMMENT 'Relation vers Section',
+  PRIMARY KEY (`id`),
+  KEY `sections_rubriques` (`section_id`)
+) ENGINE=MyISAM AUTO_INCREMENT=29 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Déchargement des données de la table `rubriques`
+--
+
+INSERT INTO `rubriques` (`id`, `libelle`, `ordre`, `section_id`) VALUES
+(1, '1-Sinistre ou événement climatique', 1, 1),
+(2, '2-Accident/incident lié à défaillance technique et évènement en santé environnementale', 2, 1),
+(3, '3-Perturbation dans l\'organisation du travail et la gestion des ressources humaines', 3, 1),
+(4, '4-Accident ou incident lié à une erreur ou un défaut de soin ou de surveillance', 4, 1),
+(5, '5-Perturbation de l\'organisation ou du fonctionnement liée à des difficultés relationnelles récurrentes avec une famille ou un proche', 5, 1),
+(6, '6-Décès accidentel ou consécutif à un défaut de surveillance ou de prise en charge d\'une personne', 6, 1),
+(7, '7-Suicide ou tentative de suicide (usager ou professionnel)', 7, 1),
+(8, '8-Situation de maltraitance envers les usagers', 8, 1),
+(9, '9-Disparition inquiétante', 9, 1),
+(10, '10-Comportement violent au sein de l\'établissement (entre usagers et/ou envers un professionnel) - Manquement grave au règlement de fonctionnement', 10, 1),
+(11, '11-Actes de malveillance au sein de l\'établissement', 11, 1),
+(12, 'Pour la ou les personnes prise(s) en charge', 1, 2),
+(13, 'Pour les professionnels', 2, 2),
+(14, 'Pour l\'organisation et le fonctionnement de l\'établissement', 3, 2),
+(15, 'Demande d\'intervention des secours', 1, 3),
+(16, 'Information aux proches, familles et personnes concernées', 1, 4),
+(17, 'Concernant les usagers', 1, 5),
+(18, 'Concernant les professionnels', 2, 5),
+(19, 'Concernant l\'organisation de travail', 3, 5),
+(20, 'Concernant l\'établissement', 4, 5),
+(21, 'Groupe d\'analyse', 1, 6),
+(22, 'Motif action', 1, 7),
+(23, 'Lien avec la victime', 1, 8),
+(24, 'Mode de contact', 2, 8),
+(25, '12-Fugue', 12, 1),
+(26, '13-Autre', 13, 1),
+(27, 'Fonctions déclarant', 1, 9),
+(28, 'Question action', 2, 7);
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `secteurs`
+--
+
+DROP TABLE IF EXISTS `secteurs`;
+CREATE TABLE IF NOT EXISTS `secteurs` (
+  `id` int UNSIGNED NOT NULL AUTO_INCREMENT,
+  `code` varchar(3) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `libelle` varchar(30) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `email` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `email2` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `delai_relance` tinyint UNSIGNED DEFAULT NULL,
+  `responsable_id` int UNSIGNED DEFAULT NULL COMMENT 'Relation vers users',
+  PRIMARY KEY (`id`),
+  KEY `secteur_user_id_foreign` (`responsable_id`)
+) ENGINE=MyISAM AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Déchargement des données de la table `secteurs`
+--
+
+INSERT INTO `secteurs` (`id`, `code`, `libelle`, `email`, `email2`, `delai_relance`, `responsable_id`) VALUES
+(1, 'AF', 'Accueil Familial', 'doms-secretariat@valdoise.fr', NULL, 1, 162),
+(2, 'DOM', 'Domicile', 'doms-secretariat@valdoise.fr', NULL, 4, 4),
+(3, 'ENF', 'Enfance', 'incidents.enfance@valdoise.fr', NULL, 3, 160),
+(4, 'PA', 'Personnes Agées', 'doms-secretariat@valdoise.fr', NULL, 2, 4),
+(5, 'PH', 'Personnes Handicapées', 'doms-secretariat@valdoise.fr', NULL, 1, 162),
+(6, 'BT', 'Bureau', 'bureau.test@example.com', 'bureau2.test@example.com', 2, 1);
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `sections`
+--
+
+DROP TABLE IF EXISTS `sections`;
+CREATE TABLE IF NOT EXISTS `sections` (
+  `id` int UNSIGNED NOT NULL AUTO_INCREMENT,
+  `libelle` varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Déchargement des données de la table `sections`
+--
+
+INSERT INTO `sections` (`id`, `libelle`) VALUES
+(1, 'Nature des Faits'),
+(2, 'Conséquences'),
+(3, 'Secours'),
+(4, 'Informations'),
+(5, 'Dispositions'),
+(6, 'Analyse'),
+(7, 'Action'),
+(8, 'Réclamation'),
+(9, 'Fonctions déclarant');
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `sessions`
+--
+
+DROP TABLE IF EXISTS `sessions`;
+CREATE TABLE IF NOT EXISTS `sessions` (
+  `id` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `user_id` bigint UNSIGNED DEFAULT NULL,
+  `ip_address` varchar(45) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `user_agent` text COLLATE utf8mb4_unicode_ci,
+  `payload` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
+  `last_activity` int NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `sessions_user_id_index` (`user_id`),
+  KEY `sessions_last_activity_index` (`last_activity`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Déchargement des données de la table `sessions`
+--
+
+INSERT INTO `sessions` (`id`, `user_id`, `ip_address`, `user_agent`, `payload`, `last_activity`) VALUES
+('GXD5SWAtEEpuoMxDXRUxR52kmcJNmS1NnjdN4rbe', 165, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36', 'YTo3OntzOjY6Il90b2tlbiI7czo0MDoiVnA0cnpnV2dZSDRUdTRyVTdBOXFFNmpzcWl0czVueVpYaU5zNXBIQyI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6NDA6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9hZG1pbi9zaWduYWxlbWVudHMiO31zOjM6InVybCI7YTowOnt9czo1MDoibG9naW5fd2ViXzU5YmEzNmFkZGMyYjJmOTQwMTU4MGYwMTRjN2Y1OGVhNGUzMDk4OWQiO2k6MTY1O3M6MTc6InBhc3N3b3JkX2hhc2hfd2ViIjtzOjYwOiIkMnkkMTIkcXBXWXRSblZSVlRRRFphamN1SnJyT0Q2a0pJMUk0V0E1ay5YU2QvTnR0dzBvLzVwR2I3SEciO3M6ODoiZmlsYW1lbnQiO2E6MDp7fX0=', 1739356984);
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `signalements`
+--
+
+DROP TABLE IF EXISTS `signalements`;
+CREATE TABLE IF NOT EXISTS `signalements` (
+  `id` int UNSIGNED NOT NULL AUTO_INCREMENT,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `date` timestamp NULL DEFAULT NULL,
+  `date_evenement` timestamp NULL DEFAULT NULL,
+  `secteur_id` int UNSIGNED NOT NULL COMMENT 'Relation vers Secteur',
+  `etablissement_id` int UNSIGNED NOT NULL COMMENT 'Relation vers Etablissement',
+  `statut` varchar(10) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `type` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `competence` varchar(10) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `categorie_id` int UNSIGNED DEFAULT NULL COMMENT 'Relation vers Categorie',
+  `commune_id` int UNSIGNED DEFAULT NULL COMMENT 'Relation vers Commune',
+  `territoire` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `public` varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `etat` varchar(12) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `complet` tinyint(1) DEFAULT NULL,
+  `civilite` varchar(3) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `nom` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `prenom` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `email` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `tel` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `fonction_id` int UNSIGNED NOT NULL COMMENT 'Relation vers Option',
+  `ars_info` tinyint(1) DEFAULT NULL,
+  `ddpp_info` tinyint(1) DEFAULT NULL,
+  `dtpjj_info` tinyint(1) DEFAULT NULL,
+  `prefet_info` tinyint(1) DEFAULT NULL,
+  `rub_nature1_id` int UNSIGNED DEFAULT NULL COMMENT 'Relation vers Rubrique',
+  `nature1_id` int UNSIGNED DEFAULT NULL COMMENT 'Relation vers Option',
+  `rub_nature2_id` int UNSIGNED DEFAULT NULL COMMENT 'Relation vers Rubrique',
+  `nature2_id` int UNSIGNED DEFAULT NULL COMMENT 'Relation vers Option',
+  `nature1_autre` longtext COLLATE utf8mb4_unicode_ci,
+  `nature2_autre` longtext COLLATE utf8mb4_unicode_ci,
+  `description` longtext COLLATE utf8mb4_unicode_ci,
+  `eig` varchar(3) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `periode_eig` varchar(30) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `periode_eig_autre` longtext COLLATE utf8mb4_unicode_ci,
+  `victimes_pec` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `victimes_pro` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `victimes_autre` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `perex_pec` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `perex_pro` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `perex_autre` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `consequence1_autre` longtext COLLATE utf8mb4_unicode_ci,
+  `consequence2_autre` longtext COLLATE utf8mb4_unicode_ci,
+  `consequence3_autre` longtext COLLATE utf8mb4_unicode_ci,
+  `secours_id` int UNSIGNED DEFAULT NULL COMMENT 'Relation vers Option',
+  `secours_ide` tinyint(1) DEFAULT NULL,
+  `secours_medecin` tinyint(1) DEFAULT NULL,
+  `secours_medecin2` tinyint(1) DEFAULT NULL,
+  `secours_police` tinyint(1) DEFAULT NULL,
+  `secours_samu` tinyint(1) DEFAULT NULL,
+  `secours_pompiers` tinyint(1) DEFAULT NULL,
+  `secours_non` longtext COLLATE utf8mb4_unicode_ci,
+  `secours_autre` longtext COLLATE utf8mb4_unicode_ci,
+  `mesure1` longtext COLLATE utf8mb4_unicode_ci,
+  `mesure2` longtext COLLATE utf8mb4_unicode_ci,
+  `mesure3` longtext COLLATE utf8mb4_unicode_ci,
+  `mesure3_info` tinyint(1) DEFAULT NULL,
+  `mesure3_soutien` tinyint(1) DEFAULT NULL,
+  `mesure3_reunion` tinyint(1) DEFAULT NULL,
+  `information` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `information_non` longtext COLLATE utf8mb4_unicode_ci,
+  `information_autre` longtext COLLATE utf8mb4_unicode_ci,
+  `disposition1_autre` longtext COLLATE utf8mb4_unicode_ci,
+  `disposition2_autre` longtext COLLATE utf8mb4_unicode_ci,
+  `disposition3_autre` longtext COLLATE utf8mb4_unicode_ci,
+  `disposition4_autre` longtext COLLATE utf8mb4_unicode_ci,
+  `suite1` varchar(3) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `suite2` varchar(3) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `suite3` varchar(3) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `evolution` longtext COLLATE utf8mb4_unicode_ci,
+  `media1` varchar(3) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `media1_oui` longtext COLLATE utf8mb4_unicode_ci,
+  `media2` varchar(3) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `media2_oui` longtext COLLATE utf8mb4_unicode_ci,
+  `media3` varchar(3) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `media3_oui` longtext COLLATE utf8mb4_unicode_ci,
+  `maitrise` varchar(10) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `analyse` varchar(3) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `analyse_car_event` varchar(30) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `analyse_collect` varchar(3) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `analyse_groupe_id` int UNSIGNED DEFAULT NULL COMMENT 'Relation vers Option',
+  `analyse_groupe_autre` longtext COLLATE utf8mb4_unicode_ci,
+  `commentaire` longtext COLLATE utf8mb4_unicode_ci,
+  `user_id` int UNSIGNED NOT NULL COMMENT 'Relation vers User',
+  PRIMARY KEY (`id`),
+  KEY `secteurs_signalements` (`secteur_id`),
+  KEY `etabs_signalements` (`etablissement_id`),
+  KEY `categories_signalements` (`categorie_id`),
+  KEY `communes_signalements` (`commune_id`),
+  KEY `option8_signalements` (`fonction_id`),
+  KEY `rubrique1_signalements` (`rub_nature1_id`),
+  KEY `option1_signalements` (`nature1_id`),
+  KEY `rubrique2_signalements` (`rub_nature2_id`),
+  KEY `option2_signalements` (`nature2_id`),
+  KEY `option6_signalements` (`secours_id`),
+  KEY `option7_signalements` (`analyse_groupe_id`),
+  KEY `users_signalements` (`user_id`)
+) ENGINE=MyISAM AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Déchargement des données de la table `signalements`
+--
+
+INSERT INTO `signalements` (`id`, `created_at`, `updated_at`, `date`, `date_evenement`, `secteur_id`, `etablissement_id`, `statut`, `type`, `competence`, `categorie_id`, `commune_id`, `territoire`, `public`, `etat`, `complet`, `civilite`, `nom`, `prenom`, `email`, `tel`, `fonction_id`, `ars_info`, `ddpp_info`, `dtpjj_info`, `prefet_info`, `rub_nature1_id`, `nature1_id`, `rub_nature2_id`, `nature2_id`, `nature1_autre`, `nature2_autre`, `description`, `eig`, `periode_eig`, `periode_eig_autre`, `victimes_pec`, `victimes_pro`, `victimes_autre`, `perex_pec`, `perex_pro`, `perex_autre`, `consequence1_autre`, `consequence2_autre`, `consequence3_autre`, `secours_id`, `secours_ide`, `secours_medecin`, `secours_medecin2`, `secours_police`, `secours_samu`, `secours_pompiers`, `secours_non`, `secours_autre`, `mesure1`, `mesure2`, `mesure3`, `mesure3_info`, `mesure3_soutien`, `mesure3_reunion`, `information`, `information_non`, `information_autre`, `disposition1_autre`, `disposition2_autre`, `disposition3_autre`, `disposition4_autre`, `suite1`, `suite2`, `suite3`, `evolution`, `media1`, `media1_oui`, `media2`, `media2_oui`, `media3`, `media3_oui`, `maitrise`, `analyse`, `analyse_car_event`, `analyse_collect`, `analyse_groupe_id`, `analyse_groupe_autre`, `commentaire`, `user_id`) VALUES
+(6, '2025-02-12 09:36:16', '2025-02-12 09:36:16', '2025-02-11 23:00:00', '2025-02-11 23:00:00', 2, 133, 'PRIVE', 'ET', 'CD', 12, 95470, NULL, 'PH', 'Ouvert', 1, 'M.', 'MAMERI', 'HEDDY', 'heddy.mameri@valdoise.fr', '444444', 169, 0, 0, 0, 1, 2, 5, 1, 1, 'eyJpdiI6IitPejY0MjBZbmt1UmFZYW1oNFo2OFE9PSIsInZhbHVlIjoiZEd1Wjcza3MxVzFOU3lBbnU3VWxkQT09IiwibWFjIjoiNjE2MWZhODUyYzZhM2JiOWQxZDkzNmU2YTVjOTNiNDVhZDFkNjk5NDYzZmM3Yzc5YjZlYjc0MGNlYmM5ZTRkYiIsInRhZyI6IiJ9', 'eyJpdiI6Im96dm9lSXlYVEI0QnhvdFhxVkRDc2c9PSIsInZhbHVlIjoiRnUxeU1DckpXS2M3Q3VuTU45VWE3Zz09IiwibWFjIjoiODJhZWMxNWRlOGM3MmI1NzAwOWI1N2FlMGVmMzNkMDk4NWMxY2JhOTM4NzY4YzBmMGVkM2MzZGI0ODIzMGZlNyIsInRhZyI6IiJ9', 'eyJpdiI6ImhCbk1uenE3ZURKbXljZlc2eHhNZ0E9PSIsInZhbHVlIjoiNXhma2d2UGI4ME9wakFjSWF5U3pFT3FsZVpjRktiVWdDNVBxWU12OEs5a3BpT1pPWEIxMW95ZWxudHB6b1VJTCIsIm1hYyI6ImE5Nzc5MGUxMGM1YzZmODMxYTg5MTNjYWYxZWYyMDViYTBmZTAwMTJkYjBjZWI3NjI0NmY1YjhlNWYzYWJhMzUiLCJ0YWciOiIifQ==', 'Oui', 'Un jour férié', NULL, 'Une', 'Aucune', 'Aucune', 'Une', 'Aucune', 'Aucune', NULL, NULL, NULL, 99, 0, 0, 0, 0, 1, 1, 'eyJpdiI6IjBncHFPNTNJNW9QakF0dDJIN0VoaUE9PSIsInZhbHVlIjoicUUyVTluamNMRU40Q0VqOGtPc0dtUT09IiwibWFjIjoiNTE0ODhhZDk0YjQzNDRkMTExYjMyMTExYmQxYmY1ZmZmYWUwMjZjZDljNzk3OTZlMmUyOTZlYWM0YmJlYjNjNyIsInRhZyI6IiJ9', 'eyJpdiI6ImRtbjVQOTArb1JoOXBvZ3FseVVZNnc9PSIsInZhbHVlIjoiU2ZoRkx0QmY5dEI0WUpjR2hiQnU3Zz09IiwibWFjIjoiYzA0OTZmMzk2YTM5YjFlNjFiNTBmMDE0MjRjMDExODJiYzI0NGFmYmIxMmQ0NTJmMzRjMjcyMGJkMWViZTY1ZCIsInRhZyI6IiJ9', 'eyJpdiI6IjdmY2Z0U3VZMDFQcEFkbHkyOHNjeEE9PSIsInZhbHVlIjoiMG1aNHhlSUM4RTd2M2FlRkxVOFZKcUNVNDV6ZkNXWk5uczhrM1F1a244VT0iLCJtYWMiOiI2MDJkYmY2MzNlM2ZiMmNmMzE5MWMzODkwYTFhNzFlNmE1ZWVkY2NkZTQ4MjI3ZGU0NzhhYmQ5OTM3M2UwYjgwIiwidGFnIjoiIn0=', 'eyJpdiI6IkI4dW9GNmdQUFo5R1g3QXcxRGh2aFE9PSIsInZhbHVlIjoiMjh0MnFIbDZqakFORVNMcmplNTl1bzVmcGhjSnRhQk9BcXpJMDluek5zUk5yeXhPVWM3S1ZZN2tYN0VuMnJGbSIsIm1hYyI6IjIzODc0NTExMTBkOTJhOWZlZGMzMjUzZDIyMzZhYTAyYjlhM2M4ZTE5ZDdjMzBkY2JhNjBmYTM3YjZmMDMyOWYiLCJ0YWciOiIifQ==', 'eyJpdiI6Im1wWnJwOXl1c0pzU20zeXEwT3plMUE9PSIsInZhbHVlIjoiNnBWM0V0Y3VnM29Rdmd4b2ZVS3hBTDJ4c2dTUFJNSUljZXNaNEIzL3ZmQT0iLCJtYWMiOiJmZWVmNDgwM2Y1Mzg4ZDA4ZjY1MjhjNGJmODY3MjIxNzEyNzIyYzQ3MDY3OTJlZmQ5YmI4ZjM3NDQ4MDY2YjQ4IiwidGFnIjoiIn0=', 0, 0, 0, 'Sans objet', NULL, NULL, NULL, NULL, NULL, NULL, 'Non', 'Non', 'Non', 'eyJpdiI6Ijg4M3Q5L1pIQk5xS3kzYjRGdmxDMFE9PSIsInZhbHVlIjoiSXY2bnluU2dtS2xKQVV5M01zZFI0MFc0U0RRYVNzU2FLMFNiaHZhQmh3ND0iLCJtYWMiOiJkMjljMDdkNDljMzZjMjVmZTAyMzQ1YmM5NGQ1ODQ4MTAzZjk3YTNmMzVmMGQxMTk4ZGUzYjIzODJkOWY1OGE1IiwidGFnIjoiIn0=', 'Non', NULL, 'Non', NULL, 'Non', NULL, 'Oui', 'N', 'Inévitable', 'Non', 142, NULL, 'eyJpdiI6InZMSzFQYVMvZTVzZzV4eFlReWl0VEE9PSIsInZhbHVlIjoiejg0NUphd0JwZ0F4Ui9LYjJhWTdYTnhDbmN2bHVrUmgyUUkzY1piT0xRQmxEVmJ2dWw0YzE0MmJkTExLODdOWSIsIm1hYyI6ImJmZWMzMjcyOTY3NTcyZDViNDVlNGE3YjgzZWM2YmMwYWJlYWZiMWU3MzI3ZjE2YmJiY2VkMDVlOGY3OTI3NmUiLCJ0YWciOiIifQ==', 165),
+(2, '2025-02-10 14:36:04', '2025-02-12 09:42:17', '2025-02-09 23:00:00', '2025-02-09 23:00:00', 3, 383, 'HOSP', 'ET', 'CDARS', 27, 95470, NULL, 'Enfant', 'Ouvert', 1, 'M.', 'MAMERI', 'HEDDY', 'heddy.mameri@valdoise.fr', '012345', 171, 0, 0, 0, 0, 26, 18, 14, 24, 'eyJpdiI6ImJlck9iR09mWWpVdk1hcktQR0tBNHc9PSIsInZhbHVlIjoiZys2dThmTGxuV0xRUVZqTlZ1a3RJR1p0ZzU5aHZ0MUxwVHQxbU9TUUZZQ2ZRV0ZsOTVEZTV6ZjRxM2RkVEZEYmNKRWI1Ym5jQ2IrRSt4RS9jY0N0cndLMm43SWNScWJacy9zSWhETWdQbWE1L0ZTZTVjSHJTK3RveEVaUTFTVDJMRlNPeStna1dsV0hibjlDNFcwNlF3TE85VjFjbDdORldubk5mWmpJbENvdFdRa3hWL1lNR25KUUxQSVJHUFMwN3JBMms1TDJyT0cwUnVIZkRFTzJNaWplNjYvVVZwb0V3a2JOR2p2SEJKUTVuajhsbGFJeW80L3V5MGNFZ1pCWjVYZTFrMGJ4V04wcy9rVjFPdVR3bVBLVThiQjJCL3RHc3RLNW9lZUE0L2lvU2MvTFp0MGVJU3ZFUWFxNTgxelQiLCJtYWMiOiI0N2I1YzZmZjZlYTdmMWUxYWE5Y2Y1MmMwMzM2MTQ4ZDcwMTY1MzlkNzY1Nzg0MDQ5ZGQ1NzIyOTdjMjNkNDljIiwidGFnIjoiIn0=', 'eyJpdiI6InBHTUpiaGxHUmFmL01yOGxLTlRka0E9PSIsInZhbHVlIjoiREdEK0Rtem0rK0hWOXVIbEhVMWphL3JBcnBXaW1hQjNKSE1FNHd0cXB4R3VRL1ZoU20yZkd4dW1SdjdkOHNJRElsWm5jaWJpYlNJbDVmcTFjK3dSSTU1VEptTGFrRUJxRUxieEY3VTQ5YmIzZlE1VGljNnpzenZJcXp2d0VVbVpvenF0NDFocVpvYkczSkNVaFFoajNVcHNjbHpib3hrK29GSkpmVGFtcnRTdCttYUwxRGZyaHN5TGUrYVdQanozQmRFZEtBY1lYd1dwbkJsUVl5cU12S0p1cE8yL3IvMlVnMlljUG8vQVFDcnZBVjk0NFBUOEljbFpVbTBrblZuOElDYytXMENiNVJHbVhPcmovOGQvc09aUytMRmYrcnBqZXVYdkQ4TnFkWEU9IiwibWFjIjoiMDVjZTNmZmM1ZTk5MTliMDMzODk4MDliOTk1YTFkMTgxYWViNGMyYzhiMzVlMGU1Y2IxNmNhYTQ1NDQzNTMzYSIsInRhZyI6IiJ9', 'eyJpdiI6Ik1mblg2V1hTK2xXWm8wS3BZNldiSWc9PSIsInZhbHVlIjoiTGlORGZpV2UzaUtvaXRTNVpYM3Jsd0NuTUcvV3dNc1Rta1dYT3RYVklkVEpnMmxqQ2FBZ3ZQcHIrSFFzaHJwL2RmWG1XamNMQUtOUWVnWU9vVkduSXByYlQyM3laZ2VhRlJJMUprUlV5WEZOY0hCN2xtT04yVmFqU2txZFlCYktrcW1vVFp4N1Y0bkZudml1clc3Z0ljT2s2alY4S1RIUjVwd2lLcGJWbVhaUVFUZ2pkTWlYSTZyTzl1NzA0MHhoUHdLRnRxYXJjd2NBNXFFNkJOZ3Fla3YwUDdRbWt5ZlViTDBBVldwVW44TEdWLzBEbVFidjVsZjhNN3lsK21mbkNaSldvU0NtOUduRWFhMUlXWk53T0pXZjJ0RnJqUXVyU2Y2UTBYYmoyODluQitTei9UcnExaG5WQTBwWUo4ZUZDa3V1cVd0MG9vVmtxYW1SeklVdjVQcXFkS2pSV09yNWF1aS9tamZtRTBBeGxrTElLbUI0b3AxMmIrejhQaHVlcEpYMzc5dkUveFBuRlpPMzVrVGc2M29qTnlVdkRZRng3dnljVDhYbHBPQWh2S0V0d0EvN24wT0pkVWlZbzI4Ui9paFpOWHg1ZDhkMnhVcmJMdkMwT3pwcVN0aVc0Mm1sdG5zeFhwN0xHK29zRjA3YXFnVVBUYXljbXArWDJHSGoiLCJtYWMiOiJmYTFlMmQzMWUzZmYxOWU4YTAyMjJiYzJjM2UwYTUxYjg3NmEyMjNlMDgwMjdlMDgwNzFmYTkyYzM5YTMyYzNlIiwidGFnIjoiIn0=', 'Oui', 'Un jour férié', NULL, 'Trois', 'Aucune', 'Aucune', 'Aucune', 'Aucune', 'Aucune', NULL, NULL, NULL, 99, 0, 0, 0, 0, 0, 0, 'eyJpdiI6InYzWGNPV3hPQ1NIa09DaFVxV2lCM0E9PSIsInZhbHVlIjoielk2Smw1NmUvdlV3SkxlUys3MEJIY3I0N2dZQXgvVGF1U0htODM0bDJnZXJET0g5V1dIQ0Q5bWlHcHFac0l6OTEySUFWMkdvUFhMN2NUYmxRdTJRSHhLZ1Q5R3lFeWtnMVZBRDZGZ1V6eTdXbThadzBpUVloK25ZeUczME55UnlISk1uRzh6REtsQTB0bWEzemwrdmdiUzZBTTZBdHVzYkpzRmYrcytNWHdsVStXUW5nS3Q4YmI5TTEzdTgwR3hjeFh0RDlUVUxMMy9ZRWt3aGh1aG5CUUFvK0RRSGlVbCszOTZ6M2dsZkZiM1B4SEcyWHhNY1Q5cm5jUnZRdjRUNzc3YU92RmNwTmQ0aUtEaUFQbDFpYmwvRlpKZE91T0tYUW41em9vQUc2TE09IiwibWFjIjoiOGRmNmVkZWYyZGM5NGJhNDNjOWI1N2E2ZjQ4ODZlNzllYWQ0YjFiOWVjMWMyNDNiZDk4NzRkMjkzZjUzNjhlNSIsInRhZyI6IiJ9', 'eyJpdiI6IjFvcVNENW5kS0ZUekw2VW0vZDVPaWc9PSIsInZhbHVlIjoiejY4bmN5RVlVZnJxUGhmRVhwSU41MmQ1bmpURTBSWDBvWjV2SG8wYWdSNEgwdlh0VTMwZDZIVDZRVFBzVHowMWhqb2dlU0EvcXhQeWNkR0FJOHVhNjY0QXdkaktES3MvSVJXSDdsRFJkVUlIM09jRGE3RHlQcmVMditxYzN0SGQxRnlrYTVGLy9QbXNObmxxQy9xVit2Y2JXV0hLSlIwOHI4OWcwMTNFYXdQVUxIK3Jyc1cvQnZqQ1dhRmVxL2dJRHN6OERhU3l3ajRMZ01QRkZKOEhqTzNBbHRtZTlVZGR4MEZtRGlqSnZYV1RzdFNwemt0dmV2eFJtTXh1cnFLRDJLSjZZRGozMjBHU1E4eXZ2SlI5VUdsUDlDdU5seDU3YXZUdjVZTmF2QkU9IiwibWFjIjoiN2JiMjRkYWE1ODgzZmFlMTQ2MWQ2Y2E0MjZkOWM5YmVkZTUwMGMzZDBhZWYxNDc2MTc3ODljODYzYTc4MGJhOCIsInRhZyI6IiJ9', 'eyJpdiI6ImkyRU41a094ZHBrMUFETXN3QTZJTmc9PSIsInZhbHVlIjoiREdtdXN3ZDZqYXh0STRTK3dSalJOejlDN2R4NlNCNDhSTDl6Nnc5UTM0cUV3TkM1STNHSVZWdVN6MGhrbzBVLzFGNFpmVi93YVdZbmQzbU8vU1pjWC9LVTFWNHA1NlVEZ2RVN2YraFJLQzdIT3BvV3RNRjczNTIyUDZ3TFBSMnBueTVhVndrNEhFVFBhVDhpREYwd3J0SityejFYL25zdG9QOHF0OFNINDVUSHkyRUVrekZsKzR1K2xJWTJ1RGZ1eFFDSFpJN1R1aDJRblJ6b09IcUJLNWJvYW1EYVordVIwVy8wTUZaQ25nbkxYM3RYZitXWitGSk8xT3A0VWxpNld1RU5GZ2l5YVU0a1BIQ09OZkxOTW1qeUI3dFpPRUxySFlPYTl3cysxQU5NSzdLcm0zbnVJRm5IQ0p5aitlYk8rRS8rRjRxTjB4dXBmWHNyejNiMU5nTDNBZkJlQlc5RHo5cjVuZEZxNkxFPSIsIm1hYyI6IjZkZDM1Nzk5YjdlMjBiNzA0Mjk0OGRkMmYzMGU0OTFlNDg2MTQ4ZDU5YzYwNzQxMTQ4MDQyZjM4MzJlY2NlMDMiLCJ0YWciOiIifQ==', 'eyJpdiI6ImR0RGJPM3QyRTRyS0IvaGFaY2QzMHc9PSIsInZhbHVlIjoiVjFvYlpZWHpLZmcvYURzK3dWSXVSN2tPLy9WdjF0eC9wWDFTeisrdEJseGU3bWtoSERBcUFtRXdlVHZuK1c0RnR4NnJ1SXdjdFhnbkhPdTFMa0hrSzZoejRVRlpWUnFDNzFaUnNkbWQ1R1k0VFlpWWZXRjZaYTQ1TS9rN3ltYmJpaGZPaitscWlZSTVXd2M5NTI1QStNZnFBRWlCMEp2UkFnOWw2NHBEMkVCSCtEUjh3c1JlbVAra3E5RjJIUm9GZGE0VWJYKzlYdkEvU2gxSlNBMVNHV2hUTWVjZ0hPK3ZLdkQrc3lTSThWVkNTTE0xZ3g5aVE2SXZyS2Njd1VNSXg2UFEzdWxLV3Z1cEpIWjI4cXdiU256SG5KSVFFM3JicytTQTJyendDNTdXYUZsL01sODdVY0F4T0hsYUlyemVscWFVVXVwRU81MlFRcVRUc3BIendGMFVpRGNUSGh3aG14THUrL0g1dnM2WTZtVHlGOXRJQlN1UlZzdGUrL3M0aWJWVDFxUGhyVDRubG11MmFYYkNHdz09IiwibWFjIjoiNzgzNTFhOTI0ZjhjZDQzYWUyNDI4ZGM3YWE0YzU0MzI3MGE1ZGY1ODUwOGNjYTVkMGYwNDgzZTlhNTIyOTY4NyIsInRhZyI6IiJ9', 'eyJpdiI6ImpSVlRFQnNzQjdja0U2OFhCazc5eFE9PSIsInZhbHVlIjoiYVAxWGRXdlI4N0NTL1pkbUkwaFI2RFIzdk9oTkt4b0NqWWwyUFRIQms0TnJESUt5SExYQnA1VnBkVHhTeVgrS3BFelBxK1JZaExZNWlpd05na1NSeUcrdW91YTcxZDV6WDRrS0svM3pDVjgzZFZXckdmckxtNitlWkJBbUVNOHFLazVBMndoYTJDRUpmV3d4ZG5DRDNEbFAxSlVTTkxNc091VHBTV3VXeFFVb1FPOTNsemJ3cEZDQkFUWCtpN045SHJWZi9idXd2TzdVOW5uVTRvTTJhOFdWblZtNEs3cGNqL2crL1Jjdm9mTkNCd1hFa0E1YzhWTThZZy9CWnVxU3lRb0JuR09Kc2NTVkdOZFBDNVF3N0Q3RCtZaFFENWVXUGlNMHFzQlNvT3p6ZG5jYVRhazl5V25hcHJqYVNaUUhuZ0c0VytzNmE2RFY2SGFJVk5KZzJ5K2pkNzk1R2dBODZSVlZFQVVmOG1QQndIY2ZRYjRCcjA2UEpscnljalhnMFdOc1AyWGFNaUhhQ251NU5BRjN5UT09IiwibWFjIjoiMmMzODNlMmMwM2FhOWE1OGJlMDRlNTk1NzNkOTJmOTBmZjliOGYzYjY1NDQ1MDk1M2FjNTk0MzI0MDFkMWU3YyIsInRhZyI6IiJ9', 1, 1, 1, 'Oui', NULL, NULL, 'eyJpdiI6IkNJOFJ1YWNwL3hjQmVqSnY3ZnZvekE9PSIsInZhbHVlIjoiVTlha3kxRTd3T1lhL2t2RXUzZE5qcGRQSEc4RURQUldqcGNRTTkrN0JFNnZ5eDl2WFg2WVc4TmVvWjE3NTA0Ni9icUhLd1A3MWk3Z2M2bUlpdlpwMVE9PSIsIm1hYyI6ImYyMjhjMjMwNzA0ODU5OGJhYmY5ODg2YjczNzNlZTdjNzZiZTFlNDFjZDNlZjJhMjQzNGZiZDkwOTcyZGE0YmEiLCJ0YWciOiIifQ==', 'eyJpdiI6Inl1TktMWUkxRXlPT0Z3cFNSZDVlL3c9PSIsInZhbHVlIjoiYWdqWTlLWUdDVmlacldJQ3NmbDltWCtYQmJpNllCRnoxSEE3TWFtVE90bz0iLCJtYWMiOiJiOTgxODdkNGZmMjJmMWIxMjFlNTI1MDAxYTE4OWYxNzE4ZWUxZWNhMTg0NDQxZTc4NzAwMDViMGU4Y2UyODVlIiwidGFnIjoiIn0=', 'eyJpdiI6IlhEc01HNktrNThoY2tUdVU5a0JXbmc9PSIsInZhbHVlIjoieVM2NE43b2hIdXRiWlBwQ1dyTHdvMVZwVk05dWtrL3FRQkdZNkpnQnhod2NIMmZmMGNTemhnUVFtVFF6Ni9TektyTWR1d0lqdVhvYlRtcTRRRDVkS2c9PSIsIm1hYyI6IjJjODMzMDIyMmQyMTg2ZGExNWNlZDQ1YjU5NjllYzlkNTUxMmQyMTBhZGY2ZmQyYTI3NDkxNzY5ZTU5OTUwMjIiLCJ0YWciOiIifQ==', 'eyJpdiI6ImVVS2ZuNE13VDVlTFZMdlJoWFZoVnc9PSIsInZhbHVlIjoiU2piTTdwcThwcjIyUWZyckVtS3pMMTdJaXE3ZEpwSVFDWk1XYXJSNzJXV1lKUVlQcjJ1aGhsd3UyWXl4WmpBMyIsIm1hYyI6IjAzY2VkOWQ5ZGRmMzljYzkzNGNjYmY0MTE5MmFmYWEzYzY2OTVjNmVmMWYyNGZkMzdjYTQ5N2FkYTZlYWRiMjMiLCJ0YWciOiIifQ==', 'Non', 'Non', 'Non', 'eyJpdiI6ImdSSlI2Uk9xWEtEQkwrdkI3MXFSRXc9PSIsInZhbHVlIjoiV21KNjlBakh6S25XZUFDdHJSR2FkcS9wUStPalRqTFhUNW83aWZudVI4ZGlCYzNnaUFzRld6Z1NybDBBSit1WExxQVhvekpKSm5jNEFyaWxoZXlpakRnbG51RS9hRUpyRkJEYm1nNzJhZEN2bjMxVEgrNVRMUzhXQ2JFdHR2TmFUY1RPeWJRMkliNWR4RDNrdjdEQTVjOEpEdFhxNG9KVlNJYmRUalVTS0dWbnByMkNVWlBnSy9xYkZjLzhlclFuS1FKVXI5WVR6QWJBdlY0QTNuS1Rrc1dCL08rTHU4NWtuMGlocitkQnc1bW81UFR3OFR1WG42bzIrR2JSZVdNZE5uQkIyczBzNWJxUklqbDN2cEVPcEZyeGZBQWd2MEc5ZWRPM2cwUVgzbmpBZ1drc0xJdDlHbFRqcHVsTGpBSnd5bjBnamVqT3dFdkpPcktLOXFwVnZqcjUxRnlNaXEzQThQUlRBY0lPVUdZPSIsIm1hYyI6Ijk0MTI0YjYwNmIxNGY1MTZkZDc5N2RiM2I3ZWFkNzY5YmU4OWVjMzI0NGE3MzFjZTU2ZTQxNDYzOWQ2N2U2MjciLCJ0YWciOiIifQ==', 'Oui', 'eyJpdiI6IlFyckNWU3VsVEhuejBSM01TbCtZanc9PSIsInZhbHVlIjoieDR6RmM1clBOR2w5Y2ZOc3dkaklzL2VvU3RNYW85Yk4weVlNcEJ2OGJORnhyd0V4UitqMHVTSkE1eXBpMURxQWhJbDk1bldKZjV1cUhrWkt1dVA4YURlUE11YnA0clduVTB3Q090QlpEamVMNmdNQVFURmEyQUkzRHlRSjREQ293S1hDamFNWTdJeTBYY2lSUVBENFVObEduamZ5dHRpa2c1Rmk5NjVPYVhSdGVPVFI4dFBnYndZb0s4MWRaS2lkV01jVVRqY253VkxiTGJjWkw0QThCTEJpNndjMmppS2JJQnRudUJ4Q0YxQmpvUi8rSUFRZHpaYU5UZCtabjVWUWc4emtieE84NGF6SThOeWFMSjlwcnIwMXBkSkx5QkhKUWJjQStCZ2pPOXlxRWJxOFJ1d0JFSm55MU4zOWVlV1AiLCJtYWMiOiJhMjg1YjcwOGNkMTdjMTA2Mjg2ZjM3YzRlOGRjN2FkZjk0NTk5NDViZmEzMzdhOWE5NDZhYmE1ODJjM2E3Nzc4IiwidGFnIjoiIn0=', 'Oui', 'eyJpdiI6IjFENTA5MjhsRVV3LzBoU25HUXd3RXc9PSIsInZhbHVlIjoiQU9mQ1gwZ2M5ek1kQ3luWGQ5YzFSSFc3elhGSkExS2ZMMkMyQUhKYWh6aUtFaDRmM0hod2VCbURFcmR4L2I2bXNvbXBKbHNOdnl1OEVoNFRiMkpHSXQxREZTdi9WejIwc2lnVTJGRHh0V3p2OEVFS3l2VTRtQXlRTzlTN245cVhObWtZYmoyRW9KT1VXSEM1UHlqUFdVNHBmY242b1FzNmV0YXBhRVBnQWZWejZaTzBFL2U3RjZ3bVEvVklPUlJGZW95dHVyaDBCdWs2Um92VzFSbi9ySmZVbkQvZmRpenRCdHFkN0JZMllKazdWcGNZVk00V2p5bGVMSjhQUUtWYjVEY2xUdTQrUkd1WjhCYVd4alIwd0E1dmxGc1RsYm9pWVJVREFaVUxJS2Q5aFgzeElFRWhwbDRKRDhpc0xrc3UiLCJtYWMiOiI2YmNlMWEyMDFmMGQ5OThiMjYzNjZjZDU4YTQ2MThjMzgxOWFhYzNjZDJiNjk2NTVhNmM5ZDkzYWExZTEzZDJjIiwidGFnIjoiIn0=', 'Oui', 'eyJpdiI6Ikl6cHh5Y1c4R3ROZDc0QVovZnliVVE9PSIsInZhbHVlIjoiQWhYZFRpR3FJbytFZWU5ZDVPY2NvT3REQVZEd2VGcDhvS0VodVNMRUhXTjhVUWtKQXRZcFZycTgxQnhycStId2xHL1NMbG9CMTFzMzlKUG9CbVJtWGlneFFjWGV1UWEwVVNKR2E2T0llWGYxVisxb285aEIvcUFPWDBNSG1rK2RVYU1KUUoyVXhBdUlVU0RkN0NyK2FIM2R1NjZybFN0dnlmdmw4b3d6M3JoK0xnM0doRS9DTFIzREM1SEtKL0xMaFhNUTR1NEQ1UFF1U3crbWxyNXBCTXBGdlc4Tjlia1B0Q2J6ODVkRVdSTityc1lJZjFGZFFBTzB0bHRHelVkczZwWXFtN1l2UW1NR0pnUHpsOTlqS3BKaGovYlZ0cGtZYUFPeEpjOHdHbkJqb3o4RTk2S2d4OXU3THRuS1FaaVVSb0hJVDZoek9IZ0NOREhRdVRodUhaejNUQUhaYVB1UWxXcFFXMVVCajBCYnZzT1AyUlh3MWp4d0FEZTYzOFlXT2pPSnd2bllYemZsWlBDelQxU0Y0Z09lS1duRkI4KzFFYlRHb2lkbnBxc25Yc0N1dUtVZkR4c2FVdU84a3NJbSIsIm1hYyI6IjAxNTQyMzA5ZjMzZTQxNTk1NGYyMDM4MzA2ODFiNjUyMGEzYzU1ZjcwM2Y3N2U1NjFiYjRmNTdiZjJhYTU1M2QiLCJ0YWciOiIifQ==', 'Non', 'O', 'Inévitable', 'Non', NULL, NULL, 'eyJpdiI6Img5NTVxRmY3REJpTGN6WEh4UllsTlE9PSIsInZhbHVlIjoibzJuZHhuWUV4VFA2Q2tRZWZLUFhHbk14Vkc3SzIzYXlxQmc1d2lVZEVHUHZZVENOSFFRVGxjWUszTkxFSUJUdzZvY2xDaXREb1ZGREd4ajUwTE5uRWQ5RFhsb2RhT2t6RjZJSXFWdmp6aDlFbUkwTW5KN1E1LzBUSXgwejYxcG1ONStSWnFhVExzU1FXNmMwWDJqOWV6ZHhKcUtBU3R1Y2Q4UStsRG5SRGI4ditqY2Q4RjVTcWdqODI0OHlRdUFEVTgvZ1AyemxDUE9qaGMzbFhqNHN5Vk8vQVRuODRLaXBpQWQ2TU1pN2FRMmZtQS9PcEswanFEKzdXdFI0OWNXc0lEd1E3UGZPT1Brd25qMzlSc2F5WEprdDhwRGsrM2lmQld2V09ubXZzRjlwYkd4ZUU5enpLdXpuRmxXZGNvOHIiLCJtYWMiOiJjOGYzZmRhODQzNWVkNDk5MDBlMDI5MmM5OGY2Njg0M2UwMWMyODlhMTFlZjc3NzlhOTEwMDI1NTFkNzY1YTBiIiwidGFnIjoiIn0=', 165),
+(3, '2025-02-10 15:16:18', '2025-02-12 09:41:26', '2025-02-09 23:00:00', '2025-02-09 23:00:00', 4, 260, 'ASSO', 'SE', 'CD', 28, 95470, NULL, 'PA', 'Ouvert', 0, 'M.', 'MAMERI', 'HEDDY', 'heddy.mameri@valdoise.fr', '012345', 169, 0, 0, 0, 0, 1, 1, 20, 29, 'eyJpdiI6IkdISDdEandZZ2dxaU1xTU55ekNzMFE9PSIsInZhbHVlIjoidXcxN1VGdDJ5cExyVU92T0tqcUxMcFhBVUVWanFYQUpuMS96Vk1INkxkTEdiZFc0YlhQSkVGKzVjN0NVT0ErQzBMTkJjb3JXVHkrNWxEY3BXRlI2WjBqMnliTGRjRC80bEZRb1V5Y3VTOFpTTWFTSUtFT3N5c0w3Vi9TN3ZndHJSQmxFZldkRExxeHZHdDhaUUJUM0E5M2JmUlpVR0JWT3BHUUdQZ0EwVFA1UHNnbmh5YzBwUzhHWFIvSVRKRHNmREorTHRDbmlrN3VBWDRMY0pYamxRUjNwb21DeFJsL3k0Sy9VakMrV1NQbzZHekIrdTlIbjF0dW41TVFSSzVKYUx5YnJJblhhaFFnSEFnWUQ0YnQramNEZUdDYmxxZVlmY2NZbzkxdkh5dTY4ZXNkMUlOdmJRWWxUY1R1alFLTTFJK1lKVXpGZ0U0WVVac3VrbmZxRHpSRzB0OG8xKy9WUWxtM1ZBMHhPSGRMRkZCQWcyTlloNkwzNWNvM1c5ZGdtS1JHNUNhaWNVRjlLbDNUaTVvdzVhbWcwRzJCeTE3NEFsM0l5ZkpZYTBXY1ZYRi9wY1VBbFl0dWs3bmFkeUkxZUpCbEE2T3RRK1ltOVVhL3lPNkNDTGRBcDVUUS8yektGVDAyeUNIcC84OFJISHRQYjBQdm5ybjh0eVdyVEU2KzV5Um4yTmhXaVg5Wks3TUdNclhjSHZESlJpaWl2RUE1dFhaaktoTTlObVEwVmNvY0VsZ3U4WU9tREUzVjNrNWYrOTdPMTNnTkQvM0hkV2prcFBlOUEzTlhjZ1NBbmx1S2Y5UzFkVEF0Zmh3RXlrZk5RelBRdTI4M1E1WVF0VzluaEt5MnR0R2NlcVlZSXhqTUFzSHMzYXVLYWFOaW56VnJyeFkvZUtWOXdsQTVDVnpYWThnNHh0cjJCRi9ybWZkRnhqWmdDOVlkeGtwVlFFb2ZjeitvQm51WlJBQ1dQbVJzZWJrL3VnZjRpSFRJNWN3Y3J4MXhFVjVuanZqT0lYOFBxTmJmanJsejZMZjlaYUpFbWMzK3JDWlp2c1JDOEFzaDJ4cXJpL2FiNVRlYUJwS2xyM1pCVEkxTjZ2VkZyMnVGdkdvRW0ydGJsMWcreTIwdW5yUHBUdkNPVmxuVnRVZU5FSEcxR3Q4dGpVWkIrMWxtbU50bjVvVlNxeHJ5K2Z1clUiLCJtYWMiOiI0N2M4ZDg5MDJiOTNlY2JjODcwNGVjNzliYWQyNTA3Y2JiNGQwYzE4ZjkxNzZkYTZhYjFmNjYwMzY4MWM0MzhjIiwidGFnIjoiIn0=', 'eyJpdiI6ImtmM0hWZVJheGJBRGJKTFZCNEt1V3c9PSIsInZhbHVlIjoiV3Vlc3R6R21WNVFhMEdMckM5N0xnYXlRRzE5aVlPTE9Hd0NZanVEdHY2dVVxVnBXWldoV3djVE81cFlRYlVRSHhybGxNeG0wWWZ3bW9SUVpZRGxsVkxSSXpoSWxwMlo0b3FZMmdBYk9EZStHVFRHV2ZvM3cxbXFibU9zdllwSFhFQmoxNGNwL1dDWGdUWURiM0ZOWThuNUVmVTZsdXdiayswWWZReXVtNCtVQlB2VnFZbFlnYjFlZDFXdzdOd0JwSkpwSjBQTkp1eXVCYTVnb1hFOHQ2Z3AzN3RieWpMYnNzQjdZQVBnOGtoOC8zbC9kUkc2UlcvRTQ5cmJYY1h5bUlXbzA2VDIyOVNQekJ3NkticzBYNDNaSE82U0pGWGllUHVORER5ZytQSGNVZFFuQmEySk83VHNVbWprUEhuWVpBaEFNRm90YUUwUGlpbFAxLzg3TWc3Y2YyZ05vWGVVUjFrYzlYa0ltWU1wL0lzc1h5MXRsQSsrSkNGVnJOT0RZN2cvZzhadUpRWnlNcThoS1U3S3lpU3oxTUJCYnZRSTZyT3U2NUtTQjc1alo1TnJ1djljcVk4REErRlY2YWlFd21MRVJWSUM4YnBlQWZJR3BOMFpjYTNHWm9PUUdHM1hXa2lvNDI2b0duMmM0TFZGNjl3SUlPdWNnVHhmWHNQU0tNWDBMVVJSN2w2UnlpMUJjcGFDMTh2aDZraHFRTmRHZ3RUblBLbkx1enMreUxCVForYnV6bExiRy9RM1UxVEdDb1dvelF0aXIrUWUzaVhhNnZEMzRvUDd3UkVKejhrUy84WHNlNTFvb1NDOFZUakpDcHMwTWRuTHYvcU5Nc3ZLeFFoaU5PT2ZjVkhjb3BpVVRNblVldXBLZHVEbWdKbWQ4T2UrTDBkazNlMm15Y0NkcjBtQnNWNnN3WWdhczBLMHRCN0JLelJMekxOZjFqK0owQXltbm1iYkY2K3AzSEZzSzZHd0oyNWdqbEptWUlKVjlrVk5sL0sxWXZuZFhrdzdkL2tJMGRYcnZrbkxSY2JFYlYxcktEWFNJRCtMSVlTUDhrM21FK09xa1dLST0iLCJtYWMiOiJlZDk2N2IzYzU5NDM1YTI4Mzk0MzE4YWMzOTc3YTZkMzIyZTAwMTY0Mjc4NGY5MDRjMTg5ZTJmNzhkZDQxNGI4IiwidGFnIjoiIn0=', 'eyJpdiI6Iks3ZlVSRHFQbnBtRkxtbjRYWDdtRkE9PSIsInZhbHVlIjoiaXZKZ2p1ZTZZbURXcmVmeURNbUhRSGV0YURkK3J4bjVhdEltTmszQ2FYWG9hc0VoZFRsZGlOcHQvdit6MC9BOStsdEs1QzN5dkZuSFdIUWRqQ1ZOVmdmL2pjQWkwaTltTXFwL1pyaE1iRFVhY0hLL3RvdXZ0Q0l3R3M2Zk4vSHFqbmZUak0rODlBNXdJN3pnNVQ5NWpBUm52RTh0bEw1MXFvVGFpL2p6R1JnRlhUTVJPOFh5cXV4ai9tM3lWdjVxZFR1eHhhdDZWV2pCZnh2dnQzQkt2NUh1U21mS05TNHFMd1NHRm1DZkRQQ1l2NXJPYnArTFc0Sy9lMVBvRi9OYkdtWlBteVVXTmNWZ1BIL3IwT2hXSXdCSHFISUxic0F0Zi9sOXFIRHduMzFDVzRyZHdkaGwyYVVCNm5iWm1xL1pPSHRjVHpaVmFNMW4xUk16eXMrbytoeG1hUyswOVFMV0d6WWhsWDR6Wm5yMGExMmtWc0dqSU9NYnN1L1hmSGVISHluL2grUUZkYW85alNvSzRueWFmRDQ3bVpqcnhpMW1RWGliZ2VpV0dFQS93c3ZYWmd3NldzV2RUZFpvWlVEekJOVk44L2VLVnhJTUlFU2NVdFZONEdaRVUxcTRobnRJbndqNWg5dnRyY0tlSHNCUUVuSTBUMmhrVHpkNTJEUmxRWnJ6ZUIyUFVveG9FbWhZZW9IYWpSZklEV0FQMFRiVXFtUURLd0JQU2wzRU0zWVVTSnQybHhmQVRZQ09KSkVYMGppOXFQSnJPVHVTWjFROXhXc0ttTTBCTmorSDQrRWhOQzNLeC8xU0hzZWtHdnRaejIwcDRFckczZE1vRml5QU1GUUVYclBTaDZPM1FKK1RsRVZyd3lXdlE3ck9hM2NoUXAyUXhKZm9uNEIwbkpnT040UTBQbnFHTERhTzZlMEJEaFJ1OVNlRGV5QWoyZ29iYU00UTFtZzdzeXBkZkpiR2lTcXIvcjRqWVAyUDFFTkZvcWhqY3ZxZDV6MEcvT0ZHdDg2ck1mQzlYRXlSODdjanNIVlNCSjBIemFVeDJpdjNFU2Z2Vi8zOEloK1ovMGFIT2NBdzROaXhIaHR3eDNKcEFmdThXY0MxMjF0UWZhOFRUM2UvN1lvVHRqUVFkRVN5VUVGT1RoKytYWVp5dFBxY3N5c0ZJcGtBRUhUOWU5eGoxZnNHVFlCenJQTGg1RG1pNEZ2SE9uNStRWjJ3ZTJhcGhRUnNkM09odDdIeHZ1V1orV25wUjJwbWwvS3VOdDNpM0VpZjFydHIwNnkzUmd5Nnp2b05Wa3NTb3NTaktoazZiZ0FzUXQ4ODdJZVEvaWdFc2lQZ0Y2K2JhdXhmalBNM1dGOEx0YUpTcEJDZnU4SEVINWFtWDdxYUJGVmpoZU1FQ3VwVzJOaUNwZEYwUmVGWERuYVhIU2V4MHJZOTcwMTc2Y25SQ0N0KzNpdVZHeFZCK0h2WXNCa3FDc1J0NVF4bzRkWE1aZnVYdGNHMWwxWUFOQTc0TlZlMGxPK3crWGRzK3ZCR0RMdWhscWFrU2FWOHZzV1RhODlYeTU3bS9yc2dzcW5rVXFtREdDSmR3VjJPbGY5OVUzbGQ5eTQ3V0NuQ3poSEtPUWc5dFlrWjN1aEJxTG1aY0E9PSIsIm1hYyI6ImI4MjdlOWI2MjU5NzZiZWU3N2JiOGVjMThmZjMxZWVlMTJkMDgzYzI2YWUyZmE5ZjQ4YTlmOGVmM2U0YTBiMDUiLCJ0YWciOiIifQ==', 'Oui', 'Heure de changement d\'équipe', NULL, 'Tous', 'Tous', 'Tous', 'Aucune', 'Aucune', 'Aucune', NULL, NULL, NULL, 99, 1, 1, 1, 0, 1, 0, 'eyJpdiI6InNwVlhudnlPRGp2L1ArRTdwd1BGQ0E9PSIsInZhbHVlIjoiMzEwYjlUWml0bG9kRllkL3hQSmRBVTl4ZXRwNC80bnFxQms2Vit5YUptR05hSFZIZ01MWnA5REdzY0duK3FMWlBhQ1pJanJ1bWJVZy9vcVdhVmNHOFR0N255Q3BnSUtJNjI0TEpUMzZLd3VKNUJKVlNIVDNFR1JQeTVaN0xFVVl6UzV2dXB1NnR0RU9KYXZsSGhxZEx5VUZkNjc2T0IwNEVzeldoU0x2d3VianlBa0dSZU9JZlF3MEFJYTlsTDdpUWx2ZEU1R1VQVGlKNWRYbWJaUHhrZkVFMzFxRHNtQmw2cWZyalhQaEQxYjFONzAzc2pQSXhWWVBsbTMrNUhOZDhLbkJiS1lYTzg1SDRpditIa2hXMFdJN01LRFo2dE1BSUx0WVVnUVhrTXFZdUk4UzErY0duRDd6NTRzV1VidjNBTTl1ek1jS1JTTU8vdTlKN0tzZ2tTOXl6SGE3OWZwU2VpRlRxbU03amh6M2xtR1FUaTNiNzJDMHA1V2x6YkRYWldJcWxyaThhbzVKcHA1STVZb2Fad1Q2RFVDZGZmZjRxR1hmVHg1SjV3Y3dydkJvNkVOczhlbzhXUmUwZWEyUkhRcnlYQTQ2Y1ZkWk5FMUp0SUFvUDFBSHNrZURTbDY1eXgrYnlCZm94ZlFkNE1zQTdaaDJJU1dwb1ZkV1ZUUGVKeXRxcGtUblNwM0UxMW5PMzBORUpvMWFCalZYRlZHY0ZPRDV2QUpRYUUzbEJsQVliMGtON0tGYzJkZCs5Qzdkd3NLM1BuTGVNdUNEZWtEUGhaU2s5TWFMT1JxSU8rSm5Ic3g2a1hyNER1TTRpMVVZOXlQc1h0THEzVXRuL2tnYzM1Mlljblk3UHZ6WGdQczB5cCtyb2VmU0labG5HN2NSUllJUjEyTlcyNHduSlNMdUhMbGRUaVZPOGJiKzAvVmVSQWdqKzV0dDBlenVndnBZQ3JNNm5wZ2lDN1pvQkNoRW1Ob2ZBSk1NRDlxL0Z4YXNXM1BRU2w2OWFWb1p1SExQQ1gwYWR1L0dnZ3dENDBlMGpZSktOdz09IiwibWFjIjoiN2JjMzRkNWE4NDYzYzBmNjZmOWYyOGExMmNhNjc5YmQyODg0MDAxN2NmNTE4NDU5ZDNiNzI5MDViYjRhYzU3NSIsInRhZyI6IiJ9', 'eyJpdiI6IkJXYkg5YWcyRHlMZ1JHckRmcXRjZ2c9PSIsInZhbHVlIjoidTMxSTViTzdEZDdpK1RDbndCY2lGejJ0QzExOUxsL3NDVXdKYWN1RDBCOUZUalFycGdBL05qWEFucWUwM2tLdUNjeDVaaEpKeUdZQk1uQndBRk96V2lyenlPTVA4OVF5R1RRVXpNWFRKRlpDbmlxaFJMVkd4aVVIYVh3V1NrY1k2eVZwb3UvdFBTSmN3THlabFRtb3J5eHJWeFVYRzdEcTlwQWZNL2VhckgyT005a3JKekI2WFRLVVU3M1J6Y0hFMVE1R3FSUWRrNHJiTkk3ZGpQbWxZSEQwTm16ZVlWZFViNzgvUmdwRWRmTzd0dkpBWm16eVNEOTNtQ1EvTU51SnQ1KzZQRjVkSCszRFBudk85WHlrT2c4UkJPZkEvT1g1aVMwZ3ZrM2hqZnphODNlbmNnRFhrcnVkbmN0TGI4SUFGTFo4Z2VIQ3hQV2UxVFgyNTRhaCtNWGx4MGRmSWlVeE1UYmkvSVZqUXh5Ymc5WGlDNUcya1dXY0Z6TVFtUXpvdldHK0t6QlQzSFB5bStzMWJTRDRNc2d2cjNHeUhGT2UxVzdtcHZDY2JQT3hJVmZGMkltVXZubVhReWNCcC9WU00zeHpFa09KM01LeU9FZk9tUWFjWkUxMnhCNlNobWNlUUFoWmc1bFp6Vy9yVENKQTdtR0xDMzg5NUx1b2ZSMmxPT1lzRkdtdCtmRmhyZ0E1QVNmMnY1d216Z0FYcmRRMHRub1F5aEJkcEhQZG5qU2tZNDM3WXVtNG4zMzRlQXZuSGZjZVhzbXBBRHErQU84OFlWNXN4L1JZU0NmdmhXcmpnME9tRnNKbHRuRWZEUVltWWNqTCtvVmQwblNiV2tjL3N4SlVQbmNqSEdxb0p4blBtNVFHT0h1c0pVVXdaenQwdHBKQ2hwMmNraEVaZEFCSWdnN3VZUjhkTDVQL3FqU2swOXpvN1Nmd3BaaVlqa3lRR0FEQmxqTDRTZ05ZR1hmS1ZyRG5zVTBRaVNvdGhvMkNzdVBFd2M4WUtLOEt0c3UwK1pQelgyWDlBdkxtcjY2b3kxYVZZUT09IiwibWFjIjoiZGIwZDMwMDgzNmE0MWVmZjQ4YmM4MDkxOTNkYTcyZDEyNTlmYTExNzRkYjc3NGU3NDQzMDkxNzIzMzM4MTFiZiIsInRhZyI6IiJ9', 'eyJpdiI6ImZnZnVFOC91RVhNOXM1eUNxQzRIT1E9PSIsInZhbHVlIjoiVTZEYTl5anh2V0FKQ25XNGpOajZhOFB6YkVrZ09ZUFBnZDE4WVZIWkdZL0NncDF4K2tHcGthTXZLQzlUaEZzZFdQZXhpVnlGZ1dKT1ZMd2J4cHdMNWVTN1JQcWVYeVVDeHNRbWx0QnZURHRTaWtvNnI2M0dEU3ZuQ3FlMHJVM21IVTJoNWFyZVBLWkJYRURBTEYwVDlZNk83bUQwbVNrNXpNdlVqa0RQVGMzNmhxRVg4SFZIVkhnVXd3OWRSUUZESWNhd3ByZ2V2WGFySjdzTVU3dFR5Z3pQSU5zWDJXNENGamtVOWo0SXphYjczVU1pRWs3bkFVNG1iOXVvdEtyWDE1NmJ6ZW1KVExLRnl2ZXZiSzFlVG1oVHlDdWp1TzZWWVVyUzIwS3A0QU1KVDN1c0ZVUjJOSnBIRlRmZFdLZkhwREJybVFKT21TWXBMWUIremR2SHQrRDZuMnB1VU1QUyt1ZlBNOCtIdFF2OVhCQ3NDd1Ewd2RTRzVYeTI3WU44Z3F5Z2hmQW95cWtwN3BnbVUzTXE0NFdjaGJsMHY0eFowL0hvNCthTDY2RDlUUzBNcGtxZ0J3TFRwZDdFbWdKTFJ3UmIzS0twbHFBT0ZFZFFWNGVUWDZFRC9nL1pYVEZMekxZVDUzYlVHaDBmZHJoRHVzZEZ4cEhZOE9PNmpsTldUVWZ2Um1ZZ3NuZGx5MVk0NnBvMzAzMit2YkpVZ1pRM3hFYWIybEZpTFB4UlFQRCtzVFh1aVdPUDM2MlBxU3NleitZRnh3eEIwMXJhU1V2dlgvQk1uMGlWN3IwVnVvTUtwRWtTcWJDem5tQzV2OUFnVVA2ZnRDMWV0U2FQS1h6NzcrdVkvb0lET0ZlY0RPNjNkVUZ2aXdUVEtTQThOSExnZW53UVJqR045SWVXUm1IaDFGb2FNaHJqYmVzZFJuRnc3eFBCaCtsNGszR0NDR0M1d2w2YnZGQkc3MXJldm1nOUV6bFJvVTROMzVvUkQwdHdUTk9OMDF2cVJIcC9kN1E4U3NobEtLajF4MVYxZnRmRFVtSG00NXBMSFZSQVh4QjRuUDFOOElkWU11az0iLCJtYWMiOiIzNmU1NmUzZjRiYWViMTExYjUyNjI2ZmNmM2YxODdmNGI3NTkxOGRmYTdiNWY1MTZkMGFmZTc3YzFkYWMzZTE3IiwidGFnIjoiIn0=', 'eyJpdiI6IlRnQmxVdkhKQ3NoRHcwYk1IcDhucGc9PSIsInZhbHVlIjoiT2U5YU9GUEpqSmh2Ui9yVkdiai8vTWU0TFpmUHVHbnFDMjBaQUlEQzdJWjdaMlRRM0w0eWJBc1VtZW0xVHNqRXVOZUVXYVFVcHVmQS96SldXZnpnOHZBR0k2UW51OVNqV2NoRXN3T08xaW45UVNLQUUwUEJLR2xZc3JtOVlzbDNBKzJiNWJUa3ZlMlRraUR1UTY1anRSWTZ3UUxRYmVOZTI2Z3pUS1Z4eC9MQkZnaWlUUDVCYjFWc3o4L2ZjVDFzc3NuSldBcEtBWG9FcHpEenM0K1QrUDA5V3FpVCtuZlB0SXVkZG5VUEt2SG9WblF3dFpoZjZVeHF4enB4Kzk5QTZhSXR2dzlqb3ZnUndrNjV2TnRVSkl1YzhKNmEvZnovcnRtNlRwdDFvVDROV1RERUVDcmNGVVlxaUJlR01HS2lsWDQ5MHB0aXZtWllMeVl4Y1FiWjdyM1VVTG9kR0szRnhmMllwZ2FCTFYwRzZmaGNmRDgvMUhSbTlVSzFXUjZzK1UrNStLb3B4NDBWZE9vRWQ2c08rQTE2Y2ZyVllUQ0p2elkrNnpRM2p1VXBnYm9MelZOZlpHN2IybHdFUTUwVExoNTNsano0QjVtSllsMnRsWWlUV2VBZ0VyR3RoZmlHT3h1a21tUlpqdDBZODlYK1B6SVJjYnNzd3czQ3VaSlBDdXhxNDlvNW42dGFKQkt4ZytVWkVPTG1UNmRuRHhuUEhmWVg1bURXc1I0NFdsVUdxYU5KU012VVU0SStuc29ZcjZ5aGNJOENyM1Vyc01UcXpKSEVIR2pqTkRKWU1jYVFwejQ0WU5WaEtVaFdtQXZsUmppMTM0S01ycnBzbVgvT2g0WVlVUmxaVldydDZpalZoaE9vK1FJQk5xMHNFVlpyTFpUNVQwcW5uSzFoY1o0ZEwyRUs0K252NlptSXB4Ui9ZRjA5S0tMbmtZNUxxcHNrcUNlcXhET3hBZ3JuZFZWbGx1MWpUZFBiZ0ZnWi93ckR3YW9IalhZOTRYRHBCWENWaEsvOW5UU3d2NFFGeGVCTnowcGtIazFZSXFCSFgwaWozZEtIQmNjcXdrTT0iLCJtYWMiOiJlMjNkNmE1YzYyOGZjN2EwNTJmZjYyZGM3NzA0YWNiODc2YmU2ZDg2OTM4MDEyNzU5ZDAyMmNhOWRmY2ZkMjVhIiwidGFnIjoiIn0=', 'eyJpdiI6InRQTXFjYnIyTVYrOHNIVERDUTM2MVE9PSIsInZhbHVlIjoid1NlRVpTajcwNzVtdGtrYm1rZGVBNzNVQndtYVFycjhvSUFZclZwQkg5YUN2VUdRWEJsRWttNFRkUUdKaTVBMURKRlFndERQcVR3SHQwQlZBYmVXOWdkWlJuK0dKZlowSEY0bm84YTl0ZUhvbVhQb0Fxb1lRVTNvVCtUUW1LakNEdlRNMmZLeHJYR0xaQWd5akdRWnBndHNoc21NUkFodlBGUlhpbDBLUTVrZDFzYkppZ1c1NGlJM1gyaVpRdW9jTUxIOW14MHJycXNxTEdOU2lhSEhQU1E3VlFFaEgrRmpKQ0huWmg0elBKWmN6RFpFay9rN3dJbzJ0akJicDMydEtkV0I1NG8yY2l5TERHV0RVQ1RkLzV6OGRyTEY3QjNxTGt4STFDWVRKWG5PRGtXWkVodE5hYnMyTXV6SDhhQkdETDRuZW0zblZQaERETGVMb3JMY0NseWxPbEhTWTlEaFZjUUxvZnljZUg1aFZETlFueEN1NFMwdFVGOTEzU3lRZHFKWjM3UjdGUHlETXZqUmlyVWROdVQxMWNjK3NFMERTNmtYYXNKcWVwMnpBT3hZcUxlSVU4QjJWQUhDVkEvNnNTaWdYaEpZS05OOWxVK05PSjZSK0VUS05MeklqeDJFWmRlRUozVDN6aE1TcHJSbmMvYThjUEVUSmxxaENWajhxN1B6RHBoc0g3NHJ5R3NqeVJmeDdlMmNpOFRPNjVMRThyTWx2UkxQLzlmdkllSERaWnlQazJnbTVzV2dkQzdWbXUrQkpxdzkyQkpTbHZ0OTM1QXBIaE02QjVEWlRIMWJzSFJGOTQ3LzNXWXl0UmV5c24wc1laTTBMMjhpMVZKdUVYRzBHTTBVR3JnM1ZPZ0JCV2JJblVEYWhrT0RZZ3VTdUVwVTlObW5COUxadktENGRmZlJpS2lMZG9BaWZ4TEg4NWp5UE16VHh1UnQzMnEwcFNuYmJLdDB5M3FuNVpPb0ZIcExhYTNEYmFxU0o3amF5djlIaDlSZjBWZFp4NkZ4d3g1KzArc3VjZm13R01SLzNDVGhSb3M5NElyb2hZQWxMbS9hZFIveFovYz0iLCJtYWMiOiJlZjBmNDViMDA1ZTQyZGY5NTNmMDk0ZDJhMzRiOWNiOGJjM2E0YzQwZTAyOTFmMjUyNWRhNzZlODRkYjNmYzQ5IiwidGFnIjoiIn0=', 1, 1, 1, 'Oui', NULL, NULL, 'eyJpdiI6ImRDTlptek4rT1YycDh5aUFVUFBxTVE9PSIsInZhbHVlIjoidzJPdVV6eE8zS2F4a092b2R2YXhQTTdTVVFxU1RHUkUzcWQwTis2ZTV0SExWbkRndmhJOG9ORFRiYjRCazZ1TXAzR1NFR2tIaFJNWW9OenU3UXZydHpYWFY4K0NhcXZqeFp4Z0l2dVhhZUVWNXBLOFpXN0xNSGErcENCc2FBVTNHakFoMG41d004SzVJMHgrSWFCcjdkdktSVUNuTTlWRnZ1ZWxETm9VOVAzcHdMMUxSRVpsY3ByUkxrRDl5M1Bwbm1EVkFuMzQvL1VIeDA5N3k4T1VmR1gxUkhZYXNYei9tZVZjQU1oRWtwREpnYjU2U1ExemZCZGNLbjh1ZmNBNi8wOW9BaDRoaWREZ05TY1dodi9HSllxRTBZczBCQUYzaTVFYTFnMDhMc0NPSzhhblIxWEpJME5KY3U4QUw4N3oiLCJtYWMiOiIyZTk5ZTk4ZWY0ZWVkYTJmOWYxZjViNTk2MTZiYTdmNmEwMTQ3YTY0OGY3Njk2YTVmYzZmMGY2ZmIxNmY4ZDg4IiwidGFnIjoiIn0=', 'eyJpdiI6IlZaN2NIeGxTRTVwUERyeHVhY0F2VlE9PSIsInZhbHVlIjoiYUZsRW9nYng1d3g3WDloNzhDOWNuR2JVaTd0RXA5SVRIMmVaTmlYRlU4WGptRXZRLzErcW1KVGgvbFpQeG9zN1puM0VWSUpUT01MVTgxWUx5aGVyTElkT29BamZGUHk1N1NIRlF6eDF6SW5hbXVLU2paUWVlWm1RSWV1SGRhcmhFQXZicEsydEJQa0ZHRGsrUm95Ri9xMi9GQ3dDdE9TRHBrZmM3djEydWM1bHlvOHVTa3FhUUVZRzRtcnJSUlZFNkx2VGhkT2VIbHFlQWN6c05iYUpyRGFzKzNUV0g5cTBScDZWQWo2dG5nT1V1UE12N0ZQTkVBN0hpT1FLSmhHd1R4RytOWTFhUlFCbFVWT0hjMko3SVZIZWR3enB1dTJYNjBzZEd6S09udnBSRW5lUXoxZmZVTEpYb0Z2RXkxRGoiLCJtYWMiOiJkNTgzNjBjYmU1YWU3OWMwNDA5ZTNkY2NmOTIyZDlkYzI3MzMzOGQ1M2YzZTA3ZTJjYTcwZGRiMjU3YzQyY2IwIiwidGFnIjoiIn0=', 'eyJpdiI6Ik5LblRzNktVNittajV5SFc3U2JvNlE9PSIsInZhbHVlIjoiZCtaWWZRenRlQW1DUHRLRnhBTE5HQ2tBemE4RWxaVllaWWFBZFkyalIva1Rka0xuYmx4WG1qWlZkOElldlFRRSs1OGF4WTdkUnJJejBQNmJZN2svRFZPaGlBTlFQTWxKMzdUdWY1VFVabktVNUZxQ2hDOUNVQ0pLRzlKVHJmWTBpUW85YldSNzBzVm9zbjhMK2tsYVRqRlVKVU1qcHVRaDkwUVpzS1pEcmFMVDAxQW5NQ0VjL1JPc2M1U1FHSGhmdyt3UGt3bHJsSnRVZjhDRjZaZHR5Z2EvYWhka3EwbWE4MTZtZ0N5SHZ1YzFmaTJJYlhMY2FOU0ppVzNsY3ZaWWlmQkpLc25kcTVuek9XeUxLWklXN3VkSlRUbGlJVXo4RkRVUE1HekNIQzlhcnNWZmsyV0Zsc2tLbHZBU3lzbWUiLCJtYWMiOiI0NDg5YjZlZjhkNGZmMjIyZmQyMjQ0YzM1NTZmNTQ2NjRlNjhiNzA2YmJjMDlmNGNlMWQyN2JiM2E0YWY3ODcyIiwidGFnIjoiIn0=', 'eyJpdiI6Im5lR1RTK21NZnZ2RXVGbnRxS1hCaFE9PSIsInZhbHVlIjoiaWJ1S3hJZkt4UThNMW5Pd2FNbUtESTltTWo3U1NLNmo4eElGNTJ5QjA0S1hvWUI4LzNaRFNOdTdiRC9WU014cGs1bXg5ZEx5TFczMCtEZnpkcndCWTJVeG9MOVA4ZC9RejlMSFllSFQyUjNreHZJcXlHLzlSNlBnS010c2g5dzRmcThWM2taT2xaMi9mT1QvelY2bHNVMzRWeWRaV2hwNFZQWUV4VzROUWsrZW5wU2J5dGJ0SFkrQzd1WitzNGJEN0xpZ2lEWmdkdGZ3SmZqTy8wcGp1bk1zRGYvZTcrM01ISklCT3haNE8yZGMwdnhCYTRzbEV5UjhreXZxaVRqTVFpNVE3NlpIbHpzZ0w4MWJpL0pjTXpRV0lVcmpuWGQwY3JrbTlBbHpDZ2kzczdvbno2UTFjMnErRE9IMFdVVkkiLCJtYWMiOiI3MGM2NDNmODVhMzMwZTIyYzZkOTgwY2I5MThhNTc1ODljY2ZjYzY3OTUzN2RlNTQwMDU2NDVlZGViYjIwNzQxIiwidGFnIjoiIn0=', 'Non', 'Non', 'Non', 'eyJpdiI6IitvdHMzUk14eFlUanFKS01YbzQzZkE9PSIsInZhbHVlIjoiUHFhSVFmOUx2bXJjTjJ4cjNPL0hzRCtlUzNZc2MxKytwckYyWG5lZDJ5OTFSSkg4VTBieENNVmw1d082cGlNRFN1YUxGVEFGb09MdHkvcStybC9nU0hVajZkRHZETnNuMzdXOGRiVUd6THg5WWxnVThvdGlVcGROOEhOWitvMDhIcjA5YWxrTVYvL0JpWnhNRVUrNzFHSEQzQktZaERMdUhPTXQzdUY0WC81YmQvVGxjMG5pdElwQXhNRDBrRytqdlc4UldzOWJGZnJlRENKdE1uWFV5UW81SEZrWDNDcUdrQXlac1VWNEhYd0N1NW5yVEJtL2VUVkY0Q2FXRlVqVjIvOWtMZmM0MWF4VDE5VERDcVhsTkFUWW5LUXlySEMrUThDb01pQkFReURWUloyTHc4dW1EbVlYQ2hvd05MREVqTG5sQVpERE92OTYzZ1BqcDNCemIyVWFuS29XRXQvS2Fiaktqa09QNzRRazJabnRoZHZYakRvcDc2elQvY00wcFBlZHBBWUZjT1NRbWhuVEsxZXBZRld4QzZnbnBIMWJ6QlUvSkUxYVFKWGhVUWJMQ0N2cGc1YklZeHowYnM1bDVYR0w2SWNpWEFGYzBUTVBoK2F5RTFLT2wyUTdOazZJNnFjRUFpcEUwVlBDWUxlV1VTdjVvbzVET01jWGk2VW42b014c2RZMmdvNWxWTFlQQ2ViQUdXVTJCNlRDMmxlcjNNVVhxTEp3TDQ5NnVJVWZ6d0F2VkhNbnhTSUJPWlBtVUU4NkthWDJiYXg5YnlLU1ZoRE5WZmdORjRWRDZPbCtsVUgvNkVZK01aaXFLMGorak1mOTZnVk4zSkdSOUZBd2dNZlRhdEU1TjllR21CWEo2T3hTQllyekZsRU5NL0ZXWWgyc1lOZjBEaUJZZGI3N2NVK2FtNTRXakZDL1gwR3BoR0xaMU1aTUlDMFo1eXhoU2Q0SjA4MHkydDlkQ2Ezd09aaXBwRkl0RDF4VmFnZ2NuMW5hV3hQTTRudURaS3hMeDVOMlNGUjlSTkpRMVBSa1IyVVdKK0ROUy9kSzZZdXZkYmZkRWhIYUVjTT0iLCJtYWMiOiI5ZDdjMDJhODk2ZmZiOTJmMjkxZDlmM2E5MmQ3Y2YxNDc2YjExNGYyY2I1OGNiZGUxYWQ1Zjk0MDU2MGYzZmI3IiwidGFnIjoiIn0=', 'Non', NULL, 'Non', NULL, 'Non', NULL, 'En cours', 'O', 'Inévitable', 'Non', 141, NULL, 'eyJpdiI6IktpRTRFWTBmTUowK2RIeHpiMmJraGc9PSIsInZhbHVlIjoiL3RLYklLeHZQOUdhN3FZVnJDMC9qVy8yWVlCNXZDY2Z3MDgydWhYU2lEWXdHL0Q0TmhwMndOeEluUnJkS1FRZmJMbzFIRGxDamNJNkJMSkpDM1NPd2FVZzZ4dGg4Q2JsS1dSZWV4SncrdjZEdGVPbGZwS0lpS1BVbFNjWXN5Q2ZkRzZYazV1LzZncUR4SHRvQ2V0R052SFlGZkhmZjVMa3dWQzVzWTA0NW5tVHdrRW9Ma2ZONUp5VElRSm5DUnVFRmpiMDlmcURWL1FQMVYwNFgrZWpqL01keTJvUjR2UHg3dzl2OEhLVmVKM2NrYjNtU0ZPdEJQOEhoMmhTQ3crbHFtc3ZjY2p5cDZNeEhqRzJrbS9heDBDbVRpS0lWcnZsOUdMTDJPQklXZG1xTEJBZEc2cFFmZWlkOEhla0JYVW1JK2JyWURqQVJYd2F3Y3FLN0ZEZkpjd0J4Zjk3STBlNmRvRm5WanM1bVZqNE1KN0ZXNit3ZExvSnowcVlqZ3N0ejA5TE80SzRKbGU3ZTlJQTl3MythRHBOZU5WRGNTSFFVVnNEV3BYSUZyeWpuUnVKWS93bjQyem0xRlc3cHY0dGxTQldYN1U0NlBxa0tsclFuQm9haWxlalJ4TjFWbzZHRC9FNFVmU1diTm9YVjBxeXJlZ2szT1FSTkZoZWY0MG1nclkxTXlINXZXbVY5cDJkYTNnMCtOaUFKYnlPZ0ZwM1NtM3JienoralNkdnYvYmxJcjNUTlJrZmJFbzQxTExGYWJJZHdoRHZNSzQxMW1NR3QyUHhQdE5lTGxCQ05uQkNHMmVOZXY1d0RQV0dTU0lmRVpCRUlPYnhBZTVZUHA1ZGZ4c3BIVFBvWHJsSjJWaU4rcHl4SkdKTHQ3SVlPdkRzcVk1NXNCb0JCbEZSczVNdVZac1p2QkdpK2tXMWdKNm9XQjlBY0lpY00vMnFicDVXWUl0Y3hBWEV1akRjODF3WE92eWwyeXVsR3FTaFQrUG5VaWwvc1dLdGtKT0szdUg2ZmQzbHp4cVBrN1JVTEdNTEt3QTRZZ2JFVCs5ZDIyS2I1T05iWnQvSEZxdz0iLCJtYWMiOiJlNzY5NWY3MmY4NjJkMDE0Y2NmNDYxZDNlODI2NDk4NjY3MmE2ZGYxZGU5YjE2YzU4MzkwNTlhNzU0NDc2MDJjIiwidGFnIjoiIn0=', 165),
+(4, '2025-02-11 15:17:28', '2025-02-12 09:38:49', '2025-02-10 23:00:00', '2025-02-10 23:00:00', 5, 383, NULL, 'ET', 'CDARS', 27, NULL, NULL, 'PH', 'Ouvert', 0, 'M.', 'MAMERI', 'HEDDY', 'heddy.mameri@valdoise.fr', '01010101', 171, 1, 0, 0, 0, 11, 39, 4, 55, 'eyJpdiI6IitibWgrL0lib0F0WUx0eEZkOFY1bGc9PSIsInZhbHVlIjoiYjNYdG1TejB1WHpuZzQvbEpLemR5ek5VRExNaU5PM21qbXJzQlJqZjdYVThML0x1d2kvNktpQ3Z0U0owVGtRZWUyamhYOHRWdEh6SEE3aFIyV0luUHY3SXBSK3d1am5ZNDgwbjF5dG5mS2VQbENkc3dUcjFFc3RlYmNtbUNtemYzbE5ubGQzQ08rYnhodVJ3NkNLU0NUN256ajltL0dVbVdvTmhyRDkzVTFCeEdOajVNREJiTDBjRnhYZkJ3MnA4MnV4ejZnU2pxWXIxaUVzYWxBWW5WTXlEb00vMmFtZzNDbGlCU3YvZlBxOEZGUytOU1V3Y01ZY1dRS3NqcnNYbnlKM29pRmtEMVEvVURBdE1DTGtGeTJuRk9LNTQvVWNhZjBzY3N1M1E0SGc9IiwibWFjIjoiNTVhNWY0YzI2OGFhMjJjMWVjZjAyZDljNWViMDRmNTYzNjE0MzRhYjQ2NjhiY2M2YWUzZmRmNzRmNjQ1NjNlMCIsInRhZyI6IiJ9', 'eyJpdiI6IkVDQ0t4Z1IvRzlRTGRCNUJzWnM3ZlE9PSIsInZhbHVlIjoiUk5Ianh0RW9NZFJIbEVmVkl5cVNmWDlXd2l4aFh6NGYxRlc1Q3lsUE5QVzFKSmd3aHd5OXVhOGNEM0t5cE81YmZzMTRJeVlBbmdoeFpIQ1lDVzRMN3ZhcnAzUzc2YjJmMmZNMFZEQ3RTSUFVbXEwelJaWVBxbGYrRjREdjEzK0Z1cmJOa3IyUm9jZHZ3M0RUTHJkQlFDUzJleHo3UE9IT2FBWmt0Z0VjZS9IMWc5VnBoM1BCNE5jNUIxSzZvSk1ZVGNqOFdReWdrSDBjMmlhWEhOMG9tMEduWjJNQUxDcHM0MStueERlYWorWVVKTnd5alVuRnhDek1KN3lqSE5mekxoZ3ZRRGJOYWFkWW10RVU2czdJenpMSHI1YnhtM1dseVdUOXg5UGVuSWM9IiwibWFjIjoiMzQ0MzIyMTMyYmE4NDRlNzU1ODQyOTE1ZTNmYzM3MTA3MTkzOWUyZDhmZDdiOTlmMGU4ZTRkODc1MjMxMzg5ZiIsInRhZyI6IiJ9', 'eyJpdiI6ImZ1dVVTZ0F3YXJhVm0rb2N6TUFya0E9PSIsInZhbHVlIjoiM0w3MG9iN2tMWTZabzllOE1XYlZDcVhHcnJaRmNOYVVCdzcrWG1OWmNtNXRodEdaZUQyS2VWbGFvTE9KcEdvVlJFMFJ5TjR1V0RVckdVVms4M29MbXpoRkpjVEttazhnQkpiTktQdU1ETUErUTVZMGFLTkl3Tnc1NU8vVElKQlpEejhPQ0RETjBaVEJNUjhaVmttRG9JMGs1T09HbGJEMkRZOEtrTDFTOE81bldWTWlxYjJyRHhBRHpBZFhGNGFYN3l6RUxqRDRRU1RWOFNLb3ppTjRLb0xJbkhNVEtUNUlDRVNIZkVkUUxsY0hKZS9aQkVSZUVQQjJPR0sxaG5xak9ybjUzN0dudFA0UEI3c2RseFRXWFpBSkNva0Z0Z3pXVDdDdEFhejZld0x6clJOeDVKRTM5N1JjcVZWRzhNUzZvdHF3UTRJdDFtNmJUYWs4NkF4NWppQ0xDTmt2aHQ3S3RwVHBpUWphRjViNEp2QjZWSnJMYXZ1MkxNL0xHZ0Fqd1Z2Wk5qOGpQRWdYcWJTNUFtaCtpQkdIR3lEUXduV0JyYTdyTkR0d2dqazUybVdrZmJ0OWhwa05JeUdwUXZRNSIsIm1hYyI6IjIxNDVlYjJjYWM0MGY0NzRhNmU2YjZiNmUzNWYxOTYyOGI5YTA3ZGI4ZDUzMTgwY2IzNTAyODk0MTU2NzBhZmUiLCJ0YWciOiIifQ==', 'Oui', 'Durant la nuit', NULL, 'Aucune', 'Aucune', 'Aucune', 'Aucune', 'Aucune', 'Aucune', NULL, NULL, NULL, 101, 0, 0, 0, 1, 0, 0, 'eyJpdiI6ImdzQXJvUzJiV2RkMS9ZV0IxbjI1WGc9PSIsInZhbHVlIjoib3czQlJmY3VaeDhjZG1WdDFkTWl3emZlenBDUXNON0RyNkxtTlVTaUwxOElnUk9EMms2QWJRNE9SN09vaG15c3RHdlBDL21FVTRsVTJSeGZ5dlEvK0IvbnBsMU9IYWljQlc2MktNSkJ4Z202cEZRa0hvbHBVQ2dGS05rU1o1TnVqUUt6WnFYcnRoMEFwWU16Ri80NzV4a2JqUXRCNVUzN1ZvY1AxMVVTTVRNWnRSalRSTXZQUmpmTVR2WGpmK1NQbkRDcm4vZ2s2TkVUUWE5V0ozQVlTSGFxaklNdFhvd1ptQWZ1Z09RM0h0TjM4MlRPalhFay9lVFZpMXNabHpzU3NKRDYxay83TndOdFJpeWR4NFBkWXJLcmw2VTI1ZGNXMUhhdVpkbU1MRG89IiwibWFjIjoiNGQzMWNiNzNjNzkyZTVjMGRiZWFlMzE4YmQyOWQ0MDRkMTI1MmVjZDU2ZGQyMTJjODFhZWI1NTFlNTliNWMzMCIsInRhZyI6IiJ9', 'eyJpdiI6ImJ5Q2U5U2UrTktvTExpT2JnUzdjSmc9PSIsInZhbHVlIjoiV1cyVjJqRHpTaktmdFRwVnlUVG9jTFZlVU5nVlhqc2Z1OG1jMjl3MU1NNEtVUzJRZnJHQ2VoMjFEdm45YVhFRCtGSGpPMFBQUS9qaEZDbWQreHAwa3YwcDZ2cEpqYm50TFQyM0Frc0VScEZpcmN3UXkrS1F1RXUybXhsZTRSR1J1ajA5anpMcWRSWE1mOFJFeTN2STMwWFZNT3U3TStrZzYwZVBVNjkzY2dUR0RMQVRUL3FDRk0wS1BzUzVzMG1HNUN5cUFid0xTTmlhMU0rVUNNMGdMZ1J3Nng4UzMvVFp6NS9abmJtaElvKzk1YVR4SExoVFQ1dEV0OVpJclhjdDZEOEYvLzBwbTczelllNTluRHFQc3hvOW5jQ1hGUXo1dFNZNEM0N2F5QkU9IiwibWFjIjoiZjk4ZmRjOTUxYjgwNzJkMGI0NTgyZjY2MTE4ZTMxNzExZTNjZWMwNGNiNDcxNDRiOTNhY2UxZmE3NmRlMzAxMyIsInRhZyI6IiJ9', 'eyJpdiI6InMvVDc3eXVQVDhybTlxVVVzVEFPUFE9PSIsInZhbHVlIjoieGFwQlByMTFWQVRyYnA2dlQvWFhZY1lMaVEzN1BvRThGOHNrTkc3WWlLUW1Fc0dvdlpOc3FNMFVvUFQ1RzY2NjlmTSs1c1drYmdkcjdHM01MOWpDSW9oVGNEWEVjbjBPa0ZZakNzZWNzK0xMNGVLYzZsbVh4SHFta29wQ0Iwc3hoUlNpWDlDOUNETmo2NSsrYXl4WXoyTXI1L2EvZXlXRDIyZ2RRVUNxN2dCc1dKWHBZQkdGOHV4NVVQWGNxK2NXRk9WR055cVF5ZU51MVJPOGhMME5BZ3psNy9ROTR6VUVKblVwc0hIRitRWFJyb3N4OVdjeFNCSzJEVGZrRG95cHluenlHbGV6V0VQb0hmRldHUG5iT29XUzMwMHQxb2pMUHZTbjh3eVRxWXM9IiwibWFjIjoiNjVmZjNjNWYxNzBhYjg3OTU3MTA4YTczNGUxZWQ2ZDkwMWM4NzY2ZWNhNTkwMzcwNzg0OTMyMTljZWU1MWU4NiIsInRhZyI6IiJ9', 'eyJpdiI6InArRFVESXlBaUk0OWJVWXVheGxVT0E9PSIsInZhbHVlIjoibFc3NFQzVE10MENwVkE3UXFYUHJPdUw4eG1Hcm9obHUrb25BdWlJNVJyQXZ3NUNLU0MyQjFvV2pjMVpqeGt4OEVpWCtiei9TcjNwK3M3eUtBMnFkUWdPOHR6aVNIZmg4R3BHdEhSOVowRDFabFpHdFdSM1MzdVk2VDdyOWNPVklpWjBneXYzd2JDZlJsOFZoOGlqakFyanUwWTdRQmpJQk56NHg0cmIrejhITGl2SEpyL3ZEZHdZb29HSWpZYkN2YUwraWN1SFh5YnRXVkpZdGhJQklDeG9FNlBMbHRGQTVLcU9ZRWNIYzdBT0ZpazhlUjhxeGhRNHR3d1NpeHhjeER0SUlWelF5NXpkNE1Ic3gwUDVVbzdmS3IvVS9RTXBCd0FBK1Vwa2pIOXc9IiwibWFjIjoiOTg0ZDkwMTYxYzIzMGVjY2Q2Y2FmOTVmZjJlMGMxZWRhMmYxYjgyMGYxMjc5OGNhODZhMjM2ZTBiMDE3YzA3YiIsInRhZyI6IiJ9', 'eyJpdiI6Im9tU3ZuS3QweWpnWWh0ZEk0a3NFNXc9PSIsInZhbHVlIjoic3dGVlMxRnFKbFdEVzJuLzBUOUgwR1RLRFNsNm1qMThPeXNISEMvLzdtU2pPN2dEdlQrV2dDL2MvL3YyejRjV0o2ZEl5R3pIbHI0ZlBsaCsyVURyeTRGU08wRlg2WFJhZGhFUkV0UDdBblphN21QZjVvNFdBUnJ0SzVaNWFFenBEN3NGMllHOUdnODRRYnB2VTNlRzduRFcwc3J3SzA2QTdIWUdRYjhxWFBsK1AyOHVXczJLb1V2aGExQjFaTno2cGhVTzJBam91RmpmbWhRdFFSS2k2cVI2YVJ0SkZQL29vNWY5eHJML0pSVFlBdGg2UWo1SVpJSUFrVDdpa2ZBdVNjdzROalNJWnVkbHJFZXdLejliYUQvQ0FiZFB1WktEelpOdTFuNFlPR2s9IiwibWFjIjoiM2MyZGRhZjE2ZTFiYWUzNWVjNzlkNTQ2NDc3MDZkM2Y1MjVjOGM2NzMxZjk3M2E2MTAyYWY4MmJjMmQ5YTU1NiIsInRhZyI6IiJ9', 1, 0, 1, 'Ne sais pas', NULL, NULL, NULL, NULL, NULL, NULL, 'Oui', 'Oui', 'Oui', 'eyJpdiI6ImhFcDZNeWZMZnRLZzNoNElRVW5Rb0E9PSIsInZhbHVlIjoiOTUxSkpVTGd2U0MzNHllKzZFemVBRDh4Rmlka3IvNVBNQ05JalRGQzdvNGl3VnJxZVpwS1ZiQlJQVUluckJBaTVKejRMZEFYU3pUMWhwRzh4bWE1MTZiN28yVjRkQTdXdTRSSkgyZHJVckhZNmRDYVduWkJBUHB1b0lKVVIrYzlWTmh6cHU0VkpOZnRENXRMcFVRWGdPSW13Tkt1cndlSXZxVkY1UzdkTDdWWnhlTEVDbFQxUHZ5aVNhVWRrdllTQm43VHhSU0hWMDV6Wm5TdkdyN3BQMlRHYWlMY3NuaG9lMnZvTWgyQU80Z21xU21FL0JVdE5tUWd4MDgyUml5MU9jY1Nwb1ZLYjJFRDRUdmxMaStTcnJFdGtlRzhxTkJQOEdjZVpWZExkWlU9IiwibWFjIjoiZDcyZDFiOTdlYTNiODQyZDY2NTQ4MjhjMjE2YWJmZjVmNTgxNzBiN2NlYmY0ZjhjMWJiOTJiNTgyYzA2ZTRmMSIsInRhZyI6IiJ9', 'Non', NULL, 'Non', NULL, 'Non', NULL, 'En cours', 'O', 'Evitable', NULL, NULL, NULL, 'eyJpdiI6InRLT2dvaUp0aVlSbk9IWGV3NmhsT3c9PSIsInZhbHVlIjoibTFzZi9Cc1U1ZFQ4VWZtYWFRbzVOc0tWbTVmLzlVdTJYWEJBTlZnNVY5MFY0djhHRXZNODRQL2tLaWdEYm9abDVPVWhVVC9JaktScEFDV1lFeHNNWTZZclNhOXVKRGFVanQwTEgwd0gzT3Fyb2wwcnRWTCtJd0kwNDBlTUlzZnplLzlzRGJ6a20wYnJnanl1MVpPM0dISDBEWWY5Skk1V1RVb3VHVjVTOWhRR0p0WXlpazVFTGtTQzFwckVJSXFNUFdSc0IyelRiMko4MUg0USs4Y3NjN1Fzazh1MXlGVmo4Lzh4Q2RjZUFiOE1OZFQrTHUwdVA2a0tMU0FBUnlFdVRLazF5UDc4M2o1N2Ezc3lkdk1jT1hnZFlLMmg2WWNTYWp2SnNhd1ZSbk09IiwibWFjIjoiNTNiNzE5NTE2ODZjZGZkYjkwZGJlMTE2NGMzMmE5NjMxNGZlZWEyMzBmYzBhODFiZDhlMDc1NTQ5MGY4NGZjMiIsInRhZyI6IiJ9', 165),
+(5, '2025-02-12 09:19:08', '2025-02-12 09:37:56', '2025-02-11 23:00:00', '2025-02-11 23:00:00', 3, 5, 'PRIVE', 'SE', 'CDDPJJ', 1, 95470, NULL, 'Enfant', 'Ouvert', 1, 'M.', 'MAMERI', 'HEDDY', 'heddy.mameri@valdoise.fr', '0202020', 172, 0, 0, 1, 1, 7, 51, 4, 81, 'eyJpdiI6InF0VnpFNk5tQ2tRNy9qQW0wZDJ4bFE9PSIsInZhbHVlIjoiRkY2TU9WbjViSG1MQkliZWdkU0VPK2lOTHl4cityMk9ib29qVG85bDI4Mk1jSHFmWGp1eCtyODk0MGpHTWtJTWUvWkEzTGsrVEZRNitvdjEwanowRkNwdDRKazVja0hHVkp2b1llTHZzRHpzTy9lcm9leFVaWkZpWFJFenZGbXdnSi8yYS9BVWVEbzZVeGpPdkowc1dGVUEvQUVCV3dCUHJIZERjREN0VnRkTk9DTzlRa010N292KzhuYXlaeUEwQ0lEZkRJZHovSmJPOE0zSlVzb1JSdHRGN3lLbk9QMi96cklwYzR1L0UwL2ZHUENZMnp2aTdZL0o5U1lrQ1FWV2FiUzc5Q3BQVkxKU3UyUk52VDBSZEExaEZhR0YzTzJhMW95eFUrUEdmQzQ9IiwibWFjIjoiMjZlZjZiMDM4OGVjMzRhMDA3MmE5MWU2OGExODM3NjkwN2M4MjhkNTEyMDgzMjNkMzhlODVjODA1MGQyMWNlYSIsInRhZyI6IiJ9', 'eyJpdiI6IllkN3ZFMFJ0QjR1U1ZXYXBNR0JEYUE9PSIsInZhbHVlIjoiWVBrdkFhUUZxZE9Md1VrYVo0YVowS28vbHdXYWRTUHA0aWgzTDAvOE8rM1hyVGlvNENZWVNUcHRlbjZ2dE9oUnVTZTBXT1ZRYmxWRWgvS2JkYisxV01HRHhpQzBYY29MdkZSQTMrOXlXb3V1RlRwaWN0ckJmS2pqT3NXejdqQWxyekpacUZqaDR0QldwWWd4RWpBSnlwczRGUCtlQm91WVFkcTBVRFdsQmY5YjM0TXVKSTRQc3VqWGxqSG9tRzVnQkVCZWNOWElmdlZ0MytwOWNXSnJEbzJlYjVwQXNSL0JzWDRXUlltL3pmSWtpUTRYa2s4ZGVlU1RrWG1GbGJoUWNVazFyOUZsTGRDSjVXblFnR1piNWtHL2tGM3JzRGhHdUpEOUh3L3BKTjQ9IiwibWFjIjoiYmExNGNlNzZjYmRmOGZlNWU4NDQ1MmFmMmNiOTJkOTcxNzc4Y2YyYzAxZjQyZWQ5MWY1MjM2ZWZlOGE1MGRmMCIsInRhZyI6IiJ9', 'eyJpdiI6InpGVTQ2RVpCRlliQkZEQmR4YUVPOFE9PSIsInZhbHVlIjoiU3Btb2ZpME9qMkc4TFc2WEcwcmNHTE12V3d4Y0RjSWIrNGUzZzByenZtSTFXN203UXlrV0N4SzZINmtiV1h1SmNRb01La0VDc3lyb0VkbXNkbVplNmhGRm9lOTRtWDZQb1JwMkUzb1FVK0dxa0kxbTdGKzhqTHFwRVJ4d0Jnc2sxWnhJdTd6NWJpa1MwNmEzWldWTUJmc1NTRUNrUlFiTmFRQWhSZnU1bFRSMUl4SDcvdVNRMzRHOXhPVHdwWkhaU2xiSWwydHhuZVBTbVRseTJoOEgvOXFWM3BRdjByNW5DTjk1cFRtbUU5a0FJT0JBM2NPRHRLWCt4Vjk5VnBKUWdBdmNRSzMwU1NMTTFveVo3VWpTYm9heXEvM043STBJZ1AwWEYxaTh6VUxmcERub0VSTDRFUTAycU82VldwdGRwZGRYc1JpR0xiRHN0K1NYeVhjRUNYOEd5NkpFandJaE1WOWN4TDlsMmFnZjYxNGVSbnhnUGJaNnZaUGVFNURpSU9XemFVMysyQ0pDUUR1UDVzMFVNeW9TMVBNWWlXS3dIRG9aaHE4UTY0Z3JkSzJ5ekwycElYU3R5b2xUZCs3bnRuQnFOUVlHZm5DZTIzQzBkanczRWc9PSIsIm1hYyI6ImJiMmQ5OWQyZDljZTZkOWY0ZjY2ZWE0ZGFhNzM2Nzk2MjZmOWI4NTQ5OGU1NTlkNjJmYTkyZjY2YWM3ZmEwZDgiLCJ0YWciOiIifQ==', 'Non', 'Autre', 'eyJpdiI6IlAvUEQ2MmJydU9VVUJiRG5qMEJ6a0E9PSIsInZhbHVlIjoiZndHUkJmSFg1UlRNbHUxdVFUaFhxZ1J6UmJSbU42aW9uNll3TEdMeDZBNHBMR25hdVNib1d6OE9GWkd3WHF5eW5Yb0FmMTl4VTU4UXFvS2Z0dHdnRWNBc1RQSzVYVnppK2RsTkQzYkVXWmVqLytCRUtqdTl5SzNLcnZuQUZ6SE5LZUdKNHJmRTV1ZDBta1g1R2k5SkVaVkJNWUYrdjZlVnZHMHJwb1E2VmRSMkVLUVR6UklzWkx3eUZyWW83MkNqelhIQ1Z0dWdCTTVHM1kvQ0xGWVh5T1d3SlhDNGlNWTRJeVlhZ1RnaGJJZTZ4SytXL0ovaW1RVFBVTCtpY2hoZWlrTzhVODhYTE55alN3dTRRb1oyU1JpemJFSHhFbkRuRkJQc2ZneURCcm1UaUlPQ1dWMTFIT1YxUTlHNmQ2VlUiLCJtYWMiOiI1YTcxNmNjYjU1MDJhZDdhMmVlNWM3ZWE0ZDEyYTczMzEyNzcwZDhiNDZkODhmYTRjODQwMGUwNzE5NDI1MmZjIiwidGFnIjoiIn0=', 'Une', 'Deux', 'Une', 'Quatre', 'Quatre', 'Quatre', NULL, NULL, 'eyJpdiI6IjVqdm5Bd2pYK3RoNWVWb3U0RktpVkE9PSIsInZhbHVlIjoieE15eEFDZ1A1TTNhTmxlOFdoM3IvMTB1RXB6Q3FsYXpRYjBybzIxK0duaz0iLCJtYWMiOiIxODJiMDY3NTQ1ZGZhMjQzODQwOTcyMzUzNTkwZDA1YWRkM2I5ZDBlNjdhZGUzZTI3NGZkMjQ4NGM0MGU1YTBjIiwidGFnIjoiIn0=', 99, 0, 1, 0, 0, 1, 0, 'eyJpdiI6InFBeDhUV2ZXMG51TkdHcHBXOEozY2c9PSIsInZhbHVlIjoiWHlZS3FRM1B4YkJSbk05QmZkMGxFRjJjYW5pQnZDdElyTkJDRkZ0dEMwKzBJa29ucUIyZElMRTUrM0JKNDdKRjFnSTJPSTFkWFNVS0RzK1FuUis4YlZhSW91a3kvM0YvcTJnTGl4L05mQlFQcTJQSU1IQTNGZiswUUpsZ3ZqQjd4Nk5xU2RRcFJ0UXdzU0tBcjNsSWJyZ1dPNmZZN3lUVmx5OHlxVmRCcTJpOFJtSTFqeTA4L1NCWm8xSlhld2pUb0ZWTTZxd0xDK1ZrUllQSExKMjA3ZXJUM1ZkbHBaTnY4VnI2U0tZdmxUdXFER1NxallLTU5mTDVLL1ZvL2FzZStjLzNhQkJ1QTVlSjdKdzI5NVlrMk5ERlIrd2dHa2JnS3ZNU21pZ3V4a2s9IiwibWFjIjoiNTcyMThhMWJmODc2ZTYxNzQ2OTEzNGZlNzc4ZjVmNDVhYzA0NTZjNzcwZDIxN2Y0MGRhMDdkNjYzZDYxNWNkMiIsInRhZyI6IiJ9', 'eyJpdiI6ImlSKzVqNG5VOVc0QmdwQ1JWUzdEblE9PSIsInZhbHVlIjoiOFRIV2xHakpzajNCYUtRSGdRT3NkTms5Ym5QclBxblNPQ3dBaHV1NkhwMkZhdmdVNGZwY3dockU2U3hGTWR5M2d3MzdGdTVwRXN6cTVoMmNpdnpzNVAyalIveWhJQzM1Y2V4T21JTDRlT3hpdFpCTmJTODN5cTgwNWZwM3VhQjl3ZW0xUE5BbWZheUIrSXMzd0p4SFJiaE12cUlJVHdraEl4aGdRY1NxNDVDaGtTOWkyUURuM2hYeUx2a3NOOGRFT3UrVWVlUlV0MnNqNXJ2WC9aa0xMWEdycGRZUlF0bHdHcUpNWkRCSUZnclZmSGJiRkNlYWo2cHdZWkNhMEpJVkY5UUgyd3JoeGpXaUpqd1VCelRibHFzMEUxY2c4UXRrQ251TmxDa0IrS1k9IiwibWFjIjoiMGYwZjdmM2FjMmE2NWViZWQ2M2IxNjZkY2Y1YjgwMDE3YmMxYjYxZGJkOWJjOTFiNzcwMzg5OTlhYzAwNDIxNCIsInRhZyI6IiJ9', 'eyJpdiI6InpNUldISkUrVk9Uci95MWdJQkVTSVE9PSIsInZhbHVlIjoiYUUrQ3ZTUUYvb1YxT0VKeFQ1eWhkK2U2YTZqLzF1Nm5yNStoeTRUd2FsVll5em1GcXZxbUI3NWZzd3V4Z1FhNW5hSFpoTzZ6ZEE3RXJCaDRpVGIrY2YzTG9MbzFqc2lwMnB4eXNvS09MYlJxb0orcEJlelQxOVNYajk0Yk9INm1xSnRqQmEzVUtnUHBsblNYSWJkbHNiMyttSnV4anowWDJxTjM1dVFVaFRqUGZWYzRhRTN0Q0RXTnRnZy9teGlBYlNodmFVK2dZMWVzNzhPVnM3U1F1eW1VbVVlU1BmZXNEc2FUNmNaVEtudGJ6ZUd1QVAvN3pINStNUHA3N1U5ak5Xa0xNOHFVOWVIL3JKMUZKS3c4K0pLRERPWFd1RGRGODNGMU5DVVU5aDVrMVZ5SythdDdudWZUbDlTS0dSeFYiLCJtYWMiOiJjN2FiOWFkYzczZWViYjBmMjdmNjRjMjg5MTIzYmEwM2VjODA0M2U0YjI2Y2UyOTE3OTllOGJjMjZhYzI1MmRmIiwidGFnIjoiIn0=', 'eyJpdiI6InMzQlhoMlhPVkJwQk1id3dXSFpFUVE9PSIsInZhbHVlIjoiaU9ESFZZNzNDRnN6bGZGTVl4VnF6b3ViSzRtd3R2bkhVb0h1VXF1UnNQZDNlcmV3YVVSZERzWHliS0JxVlRpR21kTGhvdCsrSytMcU5vV3ZoT2Y3bUtET25MQnl5SmhCek1aRDhLTWovV3hMSW5zSC9PcHhXWk52eEllem4ybTZSRDJVZVo0Z0xZb3pIOTJNWHpMbkVIakNjcXAwaDI2VW15Z29waXdPVk5GTE1rZHdzSEtFMEluZXRJRTF4UVVjdE5welNnTnh2amQ4NFJ5M1owK1cyQzdoVnlMc3hQMjh1akhvMWh3Y3pCd0J6TG1xb1pPei9xOUg2NThGaWJHWDJXQnZZakhKaHptbkQ4cWJNdmk2NkRWR3B6VlU4ejEwVmhmTk5sUmdRSGl2aHZyZklPV1dleUZNdGZ1R1ZBeWcrZlBhNWpkRjdSM1FlM2ZJUTlrYk1MWEhML3RLdU1uYUxZYUNSa2xWdTA4PSIsIm1hYyI6ImE1ZDFlMjU4YTQ5ZmNmZGZlYWM2OTQ4MWFhODk0ODk4MmE1NWRjNGY0NDZhMzYwMjUzM2Y3MzViZDlkNjhiZTMiLCJ0YWciOiIifQ==', 'eyJpdiI6ImREQ1plTjBMWFJXN2t4VjZ3QzVZTFE9PSIsInZhbHVlIjoidlV3U296eUptWXBQeXNyVTdoZGp0MlV1YU9haUZFQmR1UWNBdUlqNG1rVEplUUhwUHFwTkhSdnBZdEo0aElCd01ncnpIUmJRWjFIMG1KYlhSY1hDSFNldnhCMk5LNU1ReHNFVWt4OWZuSlFSS0llVEhmT1VpNnhEeWdIVGg1cjhCcFlibmUxdy9TTW5Vc2FXcGFDcUVHRnhubEtDbEF5K2xyZk5odUoxK1czMHEyU1JXTmlVZE5ZVTZqUTNuUDIvR3JOTWlXZmxyclkyT0FZSFQ0LzNHZUJnRGVCTWlpN0llYkZuN3Y5WlNYRjdaRlcyeHRtZ3lXYjJDRVlLWkJQNkV3R0p4Qzl5N1pUSG1haEN0bEVnU3l1WHFZc3BJaEpya3RTaGJnclFvdGVoUGEzUTQwQTNKSUNPSGhTYVE2d3VhZ3pUU2Q5RDkzbDV3ZnJ0cW5IQ2k2TkVTRjV0M2ZZcEc3RjZLVHdzWStZPSIsIm1hYyI6Ijc3ZjBjYjNlZjgzM2EyMWE4MWIzOGU3ZDE2YTRlODMyYTgzNmQ4MGUzMTE1MTk1ODlhOWEyODE3ZDU5OWQzYjIiLCJ0YWciOiIifQ==', 1, 1, 0, 'Oui', NULL, NULL, NULL, NULL, NULL, NULL, 'Oui', 'Non', 'Non', 'eyJpdiI6ImlBZHBmd2dFb25TOE5CZll2L28vaHc9PSIsInZhbHVlIjoieHFxYzR6TlZ4NnR1WHMxVDF0aEtBTFpKcFBaZmlwNmxpNHlQeG0yQlN4WTVPd2prWEx4NHk0eUJkbG12ejFZd3p1VkZjQlJOWHVwZTVseHFlTG56YldlczhyODJvczlqNDlTSlhXOEVoejM0cFZwaWwveWdoWTQ4TjVuNUZFYzdyWUxmM2t6ZVRJa0thK3RpS1ExYUN3TFdwVVVKRm02NS9ia3QyamRwMUNvd1pnZUlKVU41dmhWZGYxWW84b0krdml1UUoxSlI1OWFpbllmN2puOWUxWm5HNGJ3WkJ2bXpWOXdLRDVQa2s3ZEN5ZHhpM0VGaEFXOVZzdkMyMTAyVm9XcHNQaGxKYkhYcE9jdU9FOG0xYVgvVVdsOEpVSUVYZHdnNGNyUkF1cStkd2N5cGVZOUhJNW0xRVNZZm5TdmdqU0V4TGVKY0JBekRCcHNXVm9JZnY5dDBZbjJ1bDlvN3BuUWZodFI3dHZPZTVhSFJXeno4TzR6eTNBMXB4NWtWckJjdU45MmdwT05Dc0RtVTNNRUlSdz09IiwibWFjIjoiNjEzOTJmMDIzMWFhZmFkMmJmMDM2ODkzMWIyOTNlNjhjMmJhMGFjYTZlN2JkYjYzODIyZDgxNjI4MTE0NDcxNiIsInRhZyI6IiJ9', 'Non', NULL, 'Non', NULL, 'Non', NULL, 'Oui', 'O', 'Probablement inévitable', 'Oui', 141, NULL, 'eyJpdiI6InJXWUYrNjNDWFIxRnlwNkVEK0pDU2c9PSIsInZhbHVlIjoiYXNRclU0YjRWT1JWZ1FUY2hEbnk3RTRWMFpTb2lwK0ZXQnk0aHlCMG01ZU1VT0FmanFHdHFpSEdGNXlUWWxpUVBlU29hQUJvSWdnQkgvclFYaXk4Tm9VQ0RwTUw2bGFHd0htZy9OYWFaQ1cvaFBoSlNIV1pvSzhUN3dmb1VKWXBYK2JuNmt2NVczNEtOanRsbG9BZWw0UW40RDdlQ3FoR0tPUTg5STc4QysxVEpwaGZHL3l0Vld1L1J0TVB5N3VWL1pWMGNGZnVNcnF6V2FwTS85ZHpoVU1IVUE0U2VEc05PWGdscHpHdXVVNHFSY3lkb1UzTkRqVkRiMURzbzlNTUgraG1kdXZleDRQL3o0YkJQalhxTlhwWUV3WXdSOGc4eVAzeXVyZFV5QU09IiwibWFjIjoiYTg1YzI2YWRmODhhZGY3ZmI1OWI0MzhmMGM0NjIxOTY4YTc0YjNiYTE3N2ZkZGI2YzRhNDIzYjllOGQwNjg3MyIsInRhZyI6IiJ9', 165);
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `users`
+--
+
+DROP TABLE IF EXISTS `users`;
+CREATE TABLE IF NOT EXISTS `users` (
+  `id` int UNSIGNED NOT NULL AUTO_INCREMENT,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `name` varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `password` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `civilite` varchar(3) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'M.',
+  `nom` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `prenom` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `email` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `remember_token` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `actif` tinyint(1) NOT NULL,
+  `secteur_id` int UNSIGNED DEFAULT NULL COMMENT 'Relation vers Secteur',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `users_email_unique` (`email`),
+  KEY `secteurs_users` (`secteur_id`)
+) ENGINE=MyISAM AUTO_INCREMENT=166 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Déchargement des données de la table `users`
+--
+
+INSERT INTO `users` (`id`, `created_at`, `updated_at`, `name`, `password`, `civilite`, `nom`, `prenom`, `email`, `remember_token`, `actif`, `secteur_id`) VALUES
+(1, '2025-02-06 10:03:34', '2025-02-06 10:03:34', 'FOIRET', '$2y$12$Kqj2AOdbzuPcUqUPQaxxNuxEbu3Xl3S.VpeTt/YwTF45Iufq/9JNK', 'M.', 'FOIRET', 'CHRISTOPHE', 'christophe.foiret@valdoise.fr', NULL, 1, NULL),
+(2, '2025-02-06 10:03:35', '2025-02-06 10:03:35', 'BRAHIMI', '$2y$12$iiF6DxMHTib4rBsC5yoXU.Fylsjd1RzcM26G0e/M3wSIZQjbQAafa', 'Mme', 'BRAHIMI', 'ZAKIA', 'zakia.brahimi@valdoise.fr', NULL, 1, NULL),
+(3, '2025-02-06 10:03:35', '2025-02-06 10:03:35', 'NION', '$2y$12$ftToCc3sJ7cbIWLJpyUtGuRkQEnuQFOl2PY0NZq6ryHPmTx2dJHWa', 'Mme', 'NION', 'VALéRIE', 'valerie.nion@valdoise.fr', NULL, 1, NULL),
+(4, '2025-02-06 10:03:35', '2025-02-06 10:03:35', 'BROUTIN', '$2y$12$AgoACPA5y5a8F3DN9jt0seDl1mgz3S2tjp/Ihi3XAOwupilGUDzpG', 'M.', 'BROUTIN', 'MATTHIEU', 'matthieu.broutin@valdoise.fr', NULL, 1, NULL),
+(5, '2025-02-06 10:03:35', '2025-02-06 10:03:35', 'WERMUTH', '$2y$12$ofDi0ehiAbjynWD9l1jZweZfiU3z3R2K/yF38lfO47LWBErHJ9I0O', 'Mme', 'WERMUTH', 'OLIVIA', 'olivia.wermuth@valdoise.fr', NULL, 1, NULL),
+(6, '2025-02-06 10:03:35', '2025-02-06 10:03:35', 'TOUAUX', '$2y$12$glI11XjSCe.9teLkPaSFuOvim5hE46EXjGFtWdN/1z7SGkRB0Anem', 'Mme', 'TOUAUX', 'SéLéNA', 'selena.touaux@valdoise.fr', NULL, 1, NULL),
+(7, '2025-02-06 10:03:36', '2025-02-06 10:03:36', 'JUSZCZAK', '$2y$12$OPnZFpD3ISVuVEwrkjypUe.EJhJMM7jp1n4mAU0wUC/59ZVqEqjkq', 'Mme', 'JUSZCZAK', 'MéLANIE', 'melanie.juszczak@valdoise.fr', NULL, 1, NULL),
+(8, '2025-02-06 10:03:36', '2025-02-06 10:03:36', 'ABEL', '$2y$12$OHgE/Eh6LSTRj8LDKFM5r.8xcX8lAXEE1HGwOppxnRuwp3sMJDpYu', 'Mme', 'ABEL VARELAS', 'LUCIA', 'sablonniere.direction@arpavie.fr', NULL, 1, 4),
+(9, '2025-02-06 10:03:36', '2025-02-06 10:03:36', 'AKADIRI', '$2y$12$SLlK26kOHW9OsQkO8vJF4OrIyN8drE4yz7PiOueMEVy4ikl87.htS', 'Mme', 'AKADIRI', 'ANZAME', 'aakadiri@lavieaugrandair.fr', NULL, 1, 3),
+(10, '2025-02-06 10:03:36', '2025-02-06 10:03:36', 'AMARA', '$2y$12$VUuNon/u4dDvkeZHoWK4c.fKwa3LQNR3at9YnOTAgTjHtiXMrQibW', 'Mme', 'AMARA', 'DJAMILA', 'direction-lessansonnets@mapad.fr', NULL, 1, 4),
+(11, '2025-02-06 10:03:37', '2025-02-06 10:03:37', 'BROSSAIS', '$2y$12$FMNZNL/Lk8xox8kCv4pMk.9CDnhGcTMBrQsRupcw8.vrJ6iVfh3R.', 'Mme', 'BROSSAIS', 'AMANDINE', 'residence.desjardins@orange.fr', NULL, 1, 4),
+(12, '2025-02-06 10:03:37', '2025-02-06 10:03:37', 'ENGELHARD', '$2y$12$croM2TZa3rIXyNytsDUyxOM.rX5JONrJ8Hak.KMHbWiC94IMlp4NW', 'Mme', 'ENGELHARD', 'ANNE-CATHERINE', 'anne-catherine.engelhard@valdoise.fr', NULL, 1, 3),
+(13, '2025-02-06 10:03:37', '2025-02-06 10:03:37', 'ROUBY', '$2y$12$DpkRZpduTevHGS75RRoMcOwPWC9zSLNw7fioUm53pxOyxPsYCG/dW', 'Mme', 'ROUBY', 'ADELINE', 'adeline.rouby@ch-argenteuil.fr', NULL, 1, 4),
+(14, '2025-02-06 10:03:37', '2025-02-06 10:03:37', 'FLORKOWSKI', '$2y$12$ivqlG1ReAv38aoL7rdvUb.liP2clY8/KzQIK5YHhYRYM74yPs7.aO', 'Mme', 'FLORKOWSKI', 'ANNE', 'direction.parmain@orpea.net', NULL, 1, 4),
+(15, '2025-02-06 10:03:38', '2025-02-06 10:03:38', 'GUILON', '$2y$12$cC1Eaci0siglykY9YQmEHu0YnTF2M8Z0mfKYlhtTiYr3cwPqrisXa', 'Mme', 'GUILON', 'AURéLIE', 'petits-balcons.direction@arpavie.fr', NULL, 1, 4),
+(16, '2025-02-06 10:03:38', '2025-02-06 10:03:38', 'KHRIBECH', '$2y$12$qin8cfzjsAZ011yots33Hu1wgZY.mrFQ7ymeyEZQuw4khEkGFjiIC', 'Mme', 'KHRIBECH', 'ADIME', 'direction.lerenan@centfamilles.fr', NULL, 1, 3),
+(17, '2025-02-06 10:03:38', '2025-02-06 10:03:38', 'CESSAC', '$2y$12$zC/2XHYlS4tpyHtMeqe7Y.3PGZqZxHaJROZTpq/0gW3V10PrA8cq6', 'Mme', 'CESSAC', 'ANNE-LISE', 'direction@villajeannedarc.fr', NULL, 1, 4),
+(18, '2025-02-06 10:03:38', '2025-02-06 10:03:38', 'BOUGHABA', '$2y$12$sEGk5mCF6DC.M7r8GwzfTec78kRgjYF9RU.iJ2BCskhmz9XObI2.6', 'M.', 'BOUGHABA', 'ALBERT', 'albert.boughaba@villabeausoleil.com', NULL, 1, 4),
+(19, '2025-02-06 10:03:39', '2025-02-06 10:03:39', 'FREAUD', '$2y$12$KZzjC95dQr66AeCCf2WmgeJr9oeGaIXN4znxN5uAflrbPmtnqrjBi', 'Mme', 'FREAUD', 'ANNE-MARIE', 'direction.lamontagnevivra@orange.fr', NULL, 1, 3),
+(20, '2025-02-06 10:03:39', '2025-02-06 10:03:39', 'UGWE', '$2y$12$/AWlcEBOH552sN9NBmknGey50s3zKOBOmKpXb/sQ9rv.G8govelb.', 'Mme', 'UGWE', 'ANISSA', 'anissa.ugwe@groupe-sos.org', NULL, 1, 3),
+(21, '2025-02-06 10:03:39', '2025-02-06 10:03:39', 'SATHOUD', '$2y$12$HLX4yhiiBwqRWkyGIKxlre664JII6POczgh0ctzoT0DdBBbVM1WYa', 'Mme', 'SATHOUD', 'ANNE-SANDRINE', 'anne-sandrine.sathoud@croix-rouge.fr', NULL, 1, 4),
+(22, '2025-02-06 10:03:39', '2025-02-06 10:03:39', 'MOHAMED', '$2y$12$R1r5nLcnyCXQbBLQY6qoO.3d/nseVYp6knqglaewgshFujIa/VXg.', 'M.', 'MOHAMED', 'ASSAD', 'assad.mohamed@groupe-sos.org', NULL, 1, 3),
+(23, '2025-02-06 10:03:40', '2025-02-06 10:03:40', 'LENAIN', '$2y$12$nNVAnEhMk6lWc7.3Rz70uuvnDZHBlYkglEsqfwYmXffL4ORct6ay2', 'Mme', 'LENAIN', 'AUDREY', 'cedres.direction@arpavie.fr', NULL, 1, 4),
+(24, '2025-02-06 10:03:40', '2025-02-06 10:03:40', 'UDOL', '$2y$12$OOm26EIxuLFdKtEPxUHho./6SZLxVN4xHe3ASIyxQHNoMIgIxILKy', 'Mme', 'UDOL', 'AUDREY', 'audrey.udol@ville-argenteuil.fr', NULL, 1, 4),
+(25, '2025-02-06 10:03:40', '2025-02-06 10:03:40', 'BOUCHENY', '$2y$12$rg0iYxxYtmvDN6WtL8PDhu1NvYeZ3SmRg/5rWjOuAq1HlpnGiumGi', 'M.', 'BOUCHENY', 'BERTRAND', 'direction@residence-lestamaris.fr', NULL, 1, 4),
+(26, '2025-02-06 10:03:40', '2025-02-06 10:03:40', 'LATRACH', '$2y$12$dVHlpcF1MKeYLg9BNn5p/.rDJyelr1cFsrYn36jWYl0cNiVtzBKIu', 'M.', 'LATRACH', 'EL BEKKAY', 'bekkay.latrach@anrs.asso.fr', NULL, 1, 3),
+(27, '2025-02-06 10:03:41', '2025-02-06 10:03:41', 'TROTIN', '$2y$12$i4uBZvy.zZBR2wxRTXFLHuwDB1qvj2hE/VdEIIXSyS76VnTdHZNl6', 'M.', 'TROTIN', 'BRUNO', 'spef.magny@lavieaugrandair.fr', NULL, 1, 3),
+(28, '2025-02-06 10:03:41', '2025-02-06 10:03:41', 'DURANDCHR', '$2y$12$29JJux4pA0BdeIQpABnsU.0UZ7aReIQZGemFxPIh8tNzGzcS1Ke1O', 'M.', 'DURAND', 'CHRISTOPHE', 'c.durand@cat-avenir.com', NULL, 1, 5),
+(29, '2025-02-06 10:03:41', '2025-02-06 10:03:41', 'MATZ', '$2y$12$PnLK9WTWZSBMOWh7NF01beT6Iz2nkQ14S/xMxtK63mzs1EME658.i', 'Mme', 'MATZ', 'CAROLE', 'c.matz@sinoplies.fr', NULL, 1, 4),
+(30, '2025-02-06 10:03:42', '2025-02-06 10:03:42', 'MONTALENT', '$2y$12$VsQOevGm24DWwh49Gb8LPObwc.pMYfCuFIojq/H4mP8JsUrpf/6XC', 'Mme', 'MONTALENT', 'CHRISTELLE', 'c.montalent@agefo.fr', NULL, 1, 4),
+(31, '2025-02-06 10:03:42', '2025-02-06 10:03:42', 'ORSEAU', '$2y$12$6IaI1mnoNg5MsP54LE9kYuaDgPG4pGg50PWd72StFL0uxAr5/kmaK', 'Mme', 'ORSEAU', 'CATHERINE', 'c.orseau@ose-france.org', NULL, 1, 3),
+(32, '2025-02-06 10:03:42', '2025-02-06 10:03:42', 'ANTONIO', '$2y$12$QEbUZi/Tp8i0Uj4TUfO0ZurxYKTenYbGlurfk8x/dedO8Sswpz8cq', 'Mme', 'ANTONIO', 'CéLINE', 'cantonio@sauvegarde95.fr', NULL, 1, 3),
+(33, '2025-02-06 10:03:42', '2025-02-06 10:03:42', 'NGILLA', '$2y$12$Ja3VxGY/mzV0U5SWWpPjRuN8KQUgRQgNURnhgVmLdZPh5PiGYkkNO', 'Mme', 'NGILLA', 'CARINE', 'carine.ngilla@asmeg.org', NULL, 1, 4),
+(34, '2025-02-06 10:03:43', '2025-02-06 10:03:43', 'MAGISTRALI', '$2y$12$lsiqVEdtSnFiLlfR0EKDWOg3lVtNA2y2XAAFO4C8nxrwTHYjjTXRC', 'Mme', 'MAGISTRALI', 'CAROLE', 'carole.magistrali@apf.asso.fr', NULL, 1, 5),
+(35, '2025-02-06 10:03:43', '2025-02-06 10:03:43', 'RYBSTEIN', '$2y$12$5SCWPBkBX8SPJpu/IboKeO1/c6uzv.T0kZZY7lIsilOuxC0D8rZ/y', 'Mme', 'RYBSTEIN', 'CAROLE', 'carole.rybstein@fondation-opej.org', NULL, 1, 3),
+(36, '2025-02-06 10:03:43', '2025-02-06 10:03:43', 'CAMPOSS', '$2y$12$00oFaJzRofA4fncGhdf63OjEBlTrSpe1ekbQssSd001ryBrND.UdK', 'Mme', 'CAMPOS', 'CATHY', 'ccampos@en-droits-denfance.fr', NULL, 1, 3),
+(37, '2025-02-06 10:03:43', '2025-02-06 10:03:43', 'COUSSY', '$2y$12$8mv/d4beUedemLHljFKYO.EsZ5APvwnc5df8xmY65xyR1LdK7Gzx2', 'Mme', 'COUSSY', 'CARINE', 'direction-js@epinomis.fr', NULL, 1, 4),
+(38, '2025-02-06 10:03:44', '2025-02-06 10:03:44', 'GRANIER', '$2y$12$PAU0pJgXJfFfoZmN26Zjc.cgxGj5pDt2u.uBsKgyLfl/ie5hkv.iW', 'Mme', 'GRANIER', 'CéLINE', 'celine.granier@korian.fr', NULL, 1, 4),
+(39, '2025-02-06 10:03:44', '2025-02-06 10:03:44', 'FRILLONNET', '$2y$12$3vO/IzDwWAoAjC9R.8G2xO5ap6i4dXLi52ncu/KllXzZpszKFfj6u', 'Mme', 'FRILLONNET', 'CLARISSE', 'cfrillonnet@magny-en-vexin.fr', NULL, 1, 4),
+(40, '2025-02-06 10:03:44', '2025-02-06 10:03:44', 'ISART', '$2y$12$xvgIp/eio1nn9s0umeLr0.5yQ9eciX868PCYM3vVNyIpa1hXu6PZm', 'M.', 'ISART', 'CHRISTIAN', 'christian.isart@ehpad-pdfc.fr', NULL, 1, 4),
+(41, '2025-02-06 10:03:44', '2025-02-06 10:03:44', 'LEMEAUX', '$2y$12$LS4lq6bSmZKWz1tjrDCefONFyg8CtDb8kQ4qEtyD83T6iwq2K9J9m', 'Mme', 'LE MEAUX', 'CHRISTELLE', 'ehd.saintgratien.direction@arpavie.fr', NULL, 1, 4),
+(42, '2025-02-06 10:03:45', '2025-02-06 10:03:45', 'MARKIEWICZ', '$2y$12$croLirkzHMmFEkVmLUjQIeyzIQ1kGo/DlHMaAsE6CBXjSjjlZsLp6', 'M.', 'MARKIEWICZ', 'CHRISTOPHE', 'direction@chabrand-thibault.com', NULL, 1, 4),
+(43, '2025-02-06 10:03:45', '2025-02-06 10:03:45', 'UMONT', '$2y$12$sRy3vQG9j0PPD.pgTTG3leIwAQkQBQu0xMWsixvUfL3TT..eXxRpW', 'Mme', 'UMONT', 'CORINNE', 'bonne-rencontre.direction@arpavie.fr', NULL, 1, 4),
+(44, '2025-02-06 10:03:45', '2025-02-06 10:03:45', 'ROUDAUT', '$2y$12$KuCnQMZneEz1xJCJ0a7RD.ZKHmcApR0mapn6CLfmpxR5hVfozkW4i', 'Mme', 'ROUDAUT', 'CHARLOTTE', 'croudaut.pmennery@lna-sante.com', NULL, 1, 4),
+(45, '2025-02-06 10:03:45', '2025-02-06 10:03:45', 'VILOCY', '$2y$12$FIYXc4jrGxfMTG8Mitq6QO5qI5vZaVKYruOEKUeu2OmwZMRxMXY9y', 'Mme', 'VILOCY', 'CéLINE', 'dir-eleusis-ezanville@domusvi.com', NULL, 1, 4),
+(46, '2025-02-06 10:03:46', '2025-02-06 10:03:46', 'WEISS', '$2y$12$pPDDn7kAE64H1d2r9MMXsODWUymIqh36aIcAg1XBO3bdZzzqgGC/a', 'Mme', 'WEISS', 'CHRISTINE', 'sau.lamontagne.vivra@wanadoo.fr', NULL, 1, 3),
+(47, '2025-02-06 10:03:46', '2025-02-06 10:03:46', 'BRYCHE', '$2y$12$2b3smkQXo1Jf/VIt2TzdneGzJOUovI2M.l6RJ4957WtHIZ2Fw3C7m', 'M.', 'BRYCHE', 'DIDIER', 'd.bryche@aped-espoir.fr', NULL, 1, 5),
+(48, '2025-02-06 10:03:46', '2025-02-06 10:03:46', 'DEMAZIERE', '$2y$12$f/LlC53BCpytKtddsstoFepsQtcJGwwkynJ0BD8xOYHndDdSN7/eu', 'Mme', 'DEMAZIERE', 'DELPHINE', 'direction@chateaudeneuville.fr', NULL, 1, 4),
+(49, '2025-02-06 10:03:46', '2025-02-06 10:03:46', 'GARRAUD', '$2y$12$OIcZjpyFoUIM5katFwDZLuSDJ6lPs3uqworFQuJdKq/tHRKpL1LWG', 'M.', 'GARRAUD', 'DAVID', 'david.garraud@ville-beauchamp.fr', NULL, 1, 4),
+(50, '2025-02-06 10:03:47', '2025-02-06 10:03:47', 'DJERIOU', '$2y$12$QCQ3Kud1LE/Y8w4QpSigUeeJEKKJJaw.j1UmCGM/sX409wOirpPtS', 'Mme', 'DJERIOU', 'DOUNIA', 'direction-arcenciel@mapad.fr', NULL, 1, 4),
+(51, '2025-02-06 10:03:47', '2025-02-06 10:03:47', 'GUIN', '$2y$12$mM5p6GY4xhSvkvS9Ef6VOeG9virgfyZcC.mDNoLd44TRBQu3qzlbu', 'Mme', 'GUIN', 'DOMINIQUE', 'centremelia@wandoo.fr', NULL, 1, 3),
+(52, '2025-02-06 10:03:47', '2025-02-06 10:03:47', 'BUJIRIRI', '$2y$12$lBMlDMGD4LlIxDW4BpEmVeGbiXdwkA4E4Zpb1VnhjWqOEy77ndomW', 'M.', 'BUJIRIRI', 'EMMANUEL', 'e.bujiriri@asaintvincent.fr', NULL, 1, 3),
+(53, '2025-02-06 10:03:47', '2025-02-06 10:03:47', 'ESCRIVA', '$2y$12$egGXO.QSegtvH0n2WwXXf.tWi3lRLCy1yYOlmfEcl9cpo4oSV0O4y', 'Mme', 'ESCRIVA', 'ELODIE', 'e.escriva@groupecolisee.com', NULL, 1, 4),
+(54, '2025-02-06 10:03:48', '2025-02-06 10:03:48', 'PROTEAU', '$2y$12$w8ivJEWOfgmU7.WNq6zgEe8CPYoCK8uaYB8jg8zyABzWBjE2NTdYq', 'Mme', 'PROTEAU', 'ELSA', 'ehd.taverny.direction@arpavie.fr', NULL, 1, 4),
+(55, '2025-02-06 10:03:48', '2025-02-06 10:03:48', 'JEANRENAUD', '$2y$12$ohJiQihVcBimha3Q3yxbd.GoP2wO6fdyG1HKLqFnx1OHn5IABVqK6', 'M.', 'JEANRENAUD', 'ERIC', 'eric.jeanrenaud@apajh95.fr', NULL, 1, 5),
+(56, '2025-02-06 10:03:48', '2025-02-06 10:03:48', 'ROBIC', '$2y$12$CDwmNHa9Z.O85rSejOJIO.0zkrPE1GICJMlNsWxevzuHYv14WZYMG', 'Mme', 'ROBIC', 'ELSA', 'elsa.robic@coallia.org', NULL, 1, 3),
+(57, '2025-02-06 10:03:49', '2025-02-06 10:03:49', 'PERILLAT', '$2y$12$rM5jAcfeXzJ1kgv45QM8xu0JhKGOmQWQCJ10PFFok2RrxrwEC.Wi2', 'Mme', 'PERILLAT', 'ELISABETH', 'fraternite.st.jean@wanadoo.fr', NULL, 1, 3),
+(58, '2025-02-06 10:03:49', '2025-02-06 10:03:49', 'POUGETOUX', '$2y$12$B19TCMCs9bdYLs1rLIBslO8WEWYQv8KCe9wUrkqnd.wDZWp9Gwp7O', 'M.', 'POUGETOUX', 'EMMANUEL', 'dir-clos-bouchard@ehpad-sedna.fr', NULL, 1, 4),
+(59, '2025-02-06 10:03:49', '2025-02-06 10:03:49', 'CARON', '$2y$12$Zy0zAw3DqFyvVgq4IHRLduEv/fZcOOJkxCU5YNMXTjllElVp9wn82', 'M.', 'CARON', 'STEEVE', 'ermontdirection@arpavie.fr', NULL, 1, 4),
+(60, '2025-02-06 10:03:49', '2025-02-06 10:03:49', 'VANNIER', '$2y$12$QHB6/hZsbNuYf9lGSZIKVOAaAUnyqJqplqSD9yanyOTZyin3nOHeS', 'M.', 'VANNIER', 'EMMANUEL', 'emmanuel.vannier@cite-esperance.org', NULL, 1, 3),
+(61, '2025-02-06 10:03:50', '2025-02-06 10:03:50', 'VASCONI', '$2y$12$t3TFcHuyMLD8GXBLEaMDNurlMLVK3g1POTCY5os8ExhYcG71nERoy', 'Mme', 'VASCONI', 'EMMANUELLE', 'emmanuelle.vasconi@hevea-asso.fr', NULL, 1, 5),
+(62, '2025-02-06 10:03:50', '2025-02-06 10:03:50', 'ALEZY', '$2y$12$KNy8lx8jCgnIE9RIdju3/OWXEeyp1qn0uqGM1pNufjCW3s2x2qx2i', 'Mme', 'ALEZY', 'FLORENCE', 'pivoines.direction@arpavie.fr', NULL, 1, 4),
+(63, '2025-02-06 10:03:50', '2025-02-06 10:03:50', 'DESWARTE', '$2y$12$tyq7E9S4T.ob6fGiqXuyE.27n9jhY01Shcn3IzGnefln1QcG6N2fK', 'Mme', 'DESWARTE', 'FRANçOISE', 'f.deswarte@orpea.net', NULL, 1, 4),
+(64, '2025-02-06 10:03:50', '2025-02-06 10:03:50', 'PARMENTIER', '$2y$12$KaD8inSihdvRnzwZPxR8Ue9BZNspnbGguRAkD5A8l6aoouYZIydPW', 'M.', 'PARMENTIER', 'FRANçOIS', 'francois.parmentier@apf.asso.fr', NULL, 1, 5),
+(65, '2025-02-06 10:03:51', '2025-02-06 10:03:51', 'BEKKOUCH', '$2y$12$vXtCISrrD3x5qXasBXxqdOnNLOAACHnsZJlsXqKFYWvwsheRLuIyW', 'Mme', 'BEKKOUCH', 'FADILA', 'fadila.bekkouch@univi.fr', NULL, 1, 4),
+(66, '2025-02-06 10:03:51', '2025-02-06 10:03:51', 'CHAMMAH', '$2y$12$PlvoVSU8e7O1tIhAaI7w9OneRuE4iEoyHZj3ynix3dF7uOvfh6S1S', 'Mme', 'CHAMMAH', 'FADI', 'fchammah@hgiap.fr', NULL, 1, 4),
+(67, '2025-02-06 10:03:51', '2025-02-06 10:03:51', 'JACQUES', '$2y$12$3oUVp1.GzGtnqMXpcbZ9WOS2u9EN6LGZxHlUgdtt1xk.WTOk5w.NO', 'Mme', 'JACQUES', 'FABIENNE', 'rpautrillo.direction@orange.fr', NULL, 1, 4),
+(68, '2025-02-06 10:03:51', '2025-02-06 10:03:51', 'JANUARIO', '$2y$12$pbbB10arxGsGj3wz1sy0EuWVwZkrKuZa1gX6Bn0ldIbBLobrCjj1q', 'M.', 'JANUARIO', 'FRéDéRIC', 'lespoussinets95@gmail.com', NULL, 1, 3),
+(69, '2025-02-06 10:03:52', '2025-02-06 10:03:52', 'MICHEL', '$2y$12$h9BZxfgsXE4tT/YJxLSKiu0LWn6q.ZWdYRBD9j5a/3/nDNRyqpmvy', 'M.', 'MICHEL', 'FRANCK', 'franck.michel@apajh95.fr', NULL, 1, 5),
+(70, '2025-02-06 10:03:52', '2025-02-06 10:03:52', 'FONTENY', '$2y$12$dFq5gUqd3ahGPaWlPljYcu3ALb3e3BIZwiIzEu6HueS9jBndPcgjO', 'Mme', 'FONTENY', 'GéRALDINE', 'g.fonteny@cheminsdesperance.org', NULL, 1, 4),
+(71, '2025-02-06 10:03:52', '2025-02-06 10:03:52', 'BASSANGUEN', '$2y$12$poyzMTTGVPW6twvVi7SEUOKp0Rs9sNl0f/l88i0swR4qdfuLNLC.i', 'M.', 'BASSANGUEN', 'GUSTAVE', 'gbassanguen@mgen.fr', NULL, 1, 4),
+(72, '2025-02-06 10:03:52', '2025-02-06 10:03:52', 'QUENTIN', '$2y$12$iMucZF/07xNP4vjkZF4ujOarVPyNcgdyXYB7I3aQ37dB8YoJlUe6.', 'M.', 'QUENTIN', 'GUY', 'guy.quentin@residence-le-castel.com', NULL, 1, 4),
+(73, '2025-02-06 10:03:53', '2025-02-06 10:03:53', 'TCHEUFFA', '$2y$12$4q9GqjOo1EgHmrXVvF0FJeZQ4rpTtGOwsMEXVMlEEcGZHHOaD7P5W', 'M.', 'TCHEUFFA', 'GUY', 'guy.tcheuffa@aaas.fr', NULL, 1, 4),
+(74, '2025-02-06 10:03:53', '2025-02-06 10:03:53', 'SINDOUSSOULOU', '$2y$12$PgtaFzfGhj/60iu2.GyN5.0ZhM/McnI5AE3KuQTJ7Qb356HYzUim6', 'Mme', 'SINDOUSSOULOU', 'HéLèNE', 'sindoussoulouh@villedegarges.com', NULL, 1, 4),
+(75, '2025-02-06 10:03:53', '2025-02-06 10:03:53', 'GOB', '$2y$12$HA.vRqHl3P.95juQ0FTDh.ENp0axXim4VZbKih9qi89j2xVPE.IG2', 'M.', 'GOB', 'HUGUES', 'stouen.fhe.direction@fondation-anais.org', NULL, 1, 5),
+(76, '2025-02-06 10:03:54', '2025-02-06 10:03:54', 'PECHEREAU', '$2y$12$sCrks4immLOkolJM8dVA7.FbUU2g28TsT3IMvJM.A/iVlaraobAum', 'Mme', 'PECHEREAU', 'ISABELLE', 'isabelle.pechereau@hevea-asso.fr', NULL, 1, 5),
+(77, '2025-02-06 10:03:54', '2025-02-06 10:03:54', 'COISNE', '$2y$12$c42qybpOqSK7kIVrIc9JJuxevAtaSj0BAS1rG7QnCi/Kf2KW18YhC', 'Mme', 'COISNE', 'ISABELLE', 'icoisne@lavieaugrandair.fr', NULL, 1, 3),
+(78, '2025-02-06 10:03:54', '2025-02-06 10:03:54', 'DELATAILLE', '$2y$12$mR3UD/loHtPwbWbbfnhSCumTX3druoRQoVDxBzLapAp3BxPI2ceBO', 'Mme', 'DE LA TAILLE', 'ISABELLE', 'isabelle.de-la-taille@apprentis-auteuil.org', NULL, 1, 3),
+(79, '2025-02-06 10:03:54', '2025-02-06 10:03:54', 'FERNANDES', '$2y$12$4AToYrCE.9ajYkkbVml.wuaciDAQwv2tEVFGCoPYcKKg2fdzxUumW', 'M.', 'FERNANDES', 'JOSé', 'j.fernandes@apajh.asso.fr', NULL, 1, 5),
+(80, '2025-02-06 10:03:55', '2025-02-06 10:03:55', 'LENCHANTIN', '$2y$12$S3b/KQnm1p1MyVE3TlldAuxC4MAAHOtUSNwdd.uDhbcYK3YoxtWbO', 'Mme', 'LENCHANTIN', 'JAMIE', 'j.lenchantin@orpea.net', NULL, 1, 4),
+(81, '2025-02-06 10:03:55', '2025-02-06 10:03:55', 'PINSON', '$2y$12$270zi6AQeQMaXo3Wx6Y0E.Weq5H8e84WCX2bmD3nOhID/WocPY/qa', 'M.', 'PINSON', 'JEAN', 'jean.pinson@ch-gonesse.fr', NULL, 1, 4),
+(82, '2025-02-06 10:03:55', '2025-02-06 10:03:55', 'FLOURY', '$2y$12$Lfimc7SCSQ.tafc4.HjsI.NXhwc5yR8HQxlrLCRkKHrg2oTQ1D.Ji', 'M.', 'FLOURY', 'JONATHAN', 'direction.bellefontaine@sgmr-ouest.com', NULL, 1, 4),
+(83, '2025-02-06 10:03:55', '2025-02-06 10:03:55', 'HILDERAL', '$2y$12$FXCQTp6b6WKFjM6qSSjl4uyvk0/6/CL8raFH.qsXSkUx0gRAE2EMy', 'Mme', 'HILDERAL', 'JESSIE', 'direction.arnouville@orpea.net', NULL, 1, 4),
+(84, '2025-02-06 10:03:56', '2025-02-06 10:03:56', 'LEVASSEUR', '$2y$12$UMXyrbxkTU4jMxCtp2YiuOPfOJyBBWhftVWYTvp0tWDW3lmP4r70G', 'Mme', 'LEVASSEUR', 'JULIE', 'jlevasseur@eaubonne.fr', NULL, 1, 4),
+(85, '2025-02-06 10:03:56', '2025-02-06 10:03:56', 'SINZELLE', '$2y$12$jmLTE.e50SyMJAbSwff05eRmoQlzLOGo9zeru3NZfSPenWlTewreu', 'M.', 'SINZELLE', 'JULIEN', 'direction.gratien@iroisebellevie.com', NULL, 1, 4),
+(86, '2025-02-06 10:03:56', '2025-02-06 10:03:56', 'LAFOND', '$2y$12$OnCnE63SxEEVeo2T4ZJ5.OYTsZYnuHD/QEASWas3/QWFasGG.xXvm', 'M.', 'LAFOND', 'JULIEN', 'julien.lafond@ch-simoneveil.fr', NULL, 1, 4),
+(87, '2025-02-06 10:03:56', '2025-02-06 10:03:56', 'CAILLAUD', '$2y$12$1Hyl.Xtu/m/WPrYXkeqHk.XVAEL6GpUWAI1zFBvtZ3g.3wV.iV9ca', 'M.', 'CAILLAUD', 'JEAN-YVES', 'jycaillaud@clinique-medicale-du-parc.fr', NULL, 1, 4),
+(88, '2025-02-06 10:03:57', '2025-02-06 10:03:57', 'REULEN', '$2y$12$XHEKapreFqdVVORhBuXo/eMsC9g8cfwm6JP0Kt1G99hX/noExhemm', 'Mme', 'REULEN', 'KARINE', 'k.reulen@herblay.fr', NULL, 1, 4),
+(89, '2025-02-06 10:03:57', '2025-02-06 10:03:57', 'WINGEL', '$2y$12$5ZETt82GhiFRJ562yJKySu8oTTAuXiY1VfOacoO7Sb7DLh.BIgbna', 'Mme', 'WINGEL', 'KARINE', 'dir.fam@haarp.fr', NULL, 1, 5),
+(90, '2025-02-06 10:03:57', '2025-02-06 10:03:57', 'BEUTIN', '$2y$12$fKVqWzoh4k5fAtBp91aK5eHh/GE.k7RmP6YvX8XNHybplJzuNkO06', 'Mme', 'BEUTIN', 'KARINE', 'residence.carnelle@orange.fr', NULL, 1, 4),
+(91, '2025-02-06 10:03:57', '2025-02-06 10:03:57', 'DESCALZI', '$2y$12$mC83MvssxaaBrKvWcF/3f.pucoPA4QJ7epRjYdgFn.N41h4ubqdmC', 'Mme', 'DESCALZI', 'KARINE', 'direction.lacerisaie@teneris.fr', NULL, 1, 4),
+(92, '2025-02-06 10:03:58', '2025-02-06 10:03:58', 'KAMENI', '$2y$12$78ib.mq60V7iHCYaIJ.tLujl5cZ9S5QPNe1eg4NZglHwzzxuJI7j.', 'M.', 'KAMENI', 'DIEUDONNé', 'goussainville.direction@groupe-mieuxvivre.fr', NULL, 1, 4),
+(93, '2025-02-06 10:03:58', '2025-02-06 10:03:58', 'ALA', '$2y$12$U2LMCs6LLpweFZcVK.cLrOkfVqGwF6FSn/lyObenTc91EyW7EOTiO', 'Mme', 'ALA ROMANET', 'LINDA', 'l.ala@orpea.net', NULL, 1, 4),
+(94, '2025-02-06 10:03:58', '2025-02-06 10:03:58', 'COUCHAT', '$2y$12$mCJDcE0IEFMxi0.Vdj6.V.pjmt.Peh/4kVuuHvYX.NYXd6Kl8uDZy', 'Mme', 'COUCHAT', 'LYNDA', 'l.couchat@agefo.fr', NULL, 1, 4),
+(95, '2025-02-06 10:03:58', '2025-02-06 10:03:58', 'DUMESNIL', '$2y$12$zYtVt/9HJZj5YmjaB.V0bePTgaDoU0j9Qrw3E1RIewlm.dGmxyCBC', 'M.', 'DUMESNIL', 'LAURENT', 'laurent.dumesnil-adpj@hevea-asso.fr', NULL, 1, 3),
+(96, '2025-02-06 10:03:59', '2025-02-06 10:03:59', 'TKOBOT', '$2y$12$1/yE67Fk4h6mfes/098ruegVysbdD75/0wB08Hr6Xk72QoIebGVWy', 'Mme', 'TKOBOT', 'LEïLA', 'leila.tkobot@korian.fr', NULL, 1, 4),
+(97, '2025-02-06 10:03:59', '2025-02-06 10:03:59', 'TASSONI', '$2y$12$n32g4BjQJTaAgNejdRDX4eSNJYdlv9VHdF.i9m8nBYztBSH1ygjDi', 'Mme', 'TASSONI', 'XXX', 'levalnotredame@hotmail.fr', NULL, 1, 4),
+(98, '2025-02-06 10:03:59', '2025-02-06 10:03:59', 'HARKATI', '$2y$12$NcIc.CbwoPIVhlPxAl9NFOc1Wunre0Wy7r4y/dcXTWSwCBwYfmu6y', 'Mme', 'HARKATI', 'LAILA', 'lharkati@bellealliance.fr', NULL, 1, 5),
+(99, '2025-02-06 10:04:00', '2025-02-06 10:04:00', 'JEAN', '$2y$12$XqqqwB86aS0TokamS.ah1ubgr5dIKBVyfRQ70HXaI31mQ1QMoktDK', 'Mme', 'JEAN', 'LINDA', 'li.jean@orpea.net', NULL, 1, 4),
+(100, '2025-02-06 10:04:00', '2025-02-06 10:04:00', 'JOUNIAUX', '$2y$12$EHdzxrFTV6VZe.TfCI80J.eBTrq6b5DhVln63pzBSWu4wDCBWvve6', 'Mme', 'JOUNIAUX', 'LAURENCE', 'enghien.direction@arpavie.fr', NULL, 1, 4),
+(101, '2025-02-06 10:04:00', '2025-02-06 10:04:00', 'MARECHAL', '$2y$12$8GvaxDZriE8w4OvvIiWvheRKUB/nshblWqjvHO.c475mopq4k8J.m', 'Mme', 'MARECHAL', 'LAURENCE', 'lmarechal@igesa.fr', NULL, 1, 3),
+(102, '2025-02-06 10:04:00', '2025-02-06 10:04:00', 'NOUVEL', '$2y$12$dV3dp1ll9Vv.6.e.cRnfueZkMocbCNHyEnj26C57qZ6CspjSu/aAG', 'M.', 'NOUVEL', 'LOUIS', 'lnouvel@solemnes.com', NULL, 1, 4),
+(103, '2025-02-06 10:04:01', '2025-02-06 10:04:01', 'COHEN', '$2y$12$3FidzcP9ZtCUpC3QBMKEfuhlmV4GmosQkPLj/aHnH5OyWIgtIvZr2', 'M.', 'COHEN', 'MARC', 'm.cohen@ose-france.org', NULL, 1, 4),
+(104, '2025-02-06 10:04:01', '2025-02-06 10:04:01', 'HENRY', '$2y$12$UP2BEdPoaDtMl1UnL/6B5OeD.E1.z4qWPGINUd2N.L1EYBkomBAZy', 'Mme', 'HENRY', 'MURIELLE', 'm.henry@philanthropique.asso.fr', NULL, 1, 4),
+(105, '2025-02-06 10:04:01', '2025-02-06 10:04:01', 'LANGLOIS', '$2y$12$8cvTIj2j9fkalSWVOUIHiuJfyvXuyowBSvrs8d/E/5j/rUbm4n9.G', 'Mme', 'LANGLOIS', 'MARIE', 'marie.langlois@ville-goussainville.fr', NULL, 1, 4),
+(106, '2025-02-06 10:04:01', '2025-02-06 10:04:01', 'MARQUET', '$2y$12$L0z7bOtDAu0FiMkr9IJfzOuYoeDo5gaEWEOz/3yoJjI2fWIYr210y', 'Mme', 'MARQUET', 'ANNABELLE', 'marquet.anabelle@ladapt.net', NULL, 1, 5),
+(107, '2025-02-06 10:04:02', '2025-02-06 10:04:02', 'CAROLE', '$2y$12$AdvRcPTbR2TLvQNgRwPGweFZRN/i0tceBdEhE.ZT7ZT4nAEQSOSBW', 'M.', 'CAROLE', 'MATHIAS', 'mathias.carole@residence-les-pensees.com', NULL, 1, 4),
+(108, '2025-02-06 10:04:02', '2025-02-06 10:04:02', 'BOUBEKEUR', '$2y$12$gdx7acUidbBSo5sjvykVSeNARv9bZiH4aOTVjGmddJEJRIm55wbvm', 'M.', 'BOUBEKEUR', 'MUSTAPHA', 'boubekeur.mustapha@ladapt.net', NULL, 1, 5),
+(109, '2025-02-06 10:04:02', '2025-02-06 10:04:02', 'DERRIEN', '$2y$12$urq9jV8d/M7rwTi2nujj6.05HYsP9AOHgdhwDGlJVdKs3.31vGI5u', 'Mme', 'DERRIEN', 'MARIE-CHRISTINE', 'mc.derrien@safap95.fr', NULL, 1, 3),
+(110, '2025-02-06 10:04:02', '2025-02-06 10:04:02', 'DABIN', '$2y$12$eHRbeFdqDrM4YxXMQib.Nu9mH9l71OdyxOFmzjLoDiMJaWtshBxZS', 'Mme', 'DABIN', 'MARIE', 'helenemoutetresponsable@arpavie.fr', NULL, 1, 4),
+(111, '2025-02-06 10:04:03', '2025-02-06 10:04:03', 'DELBE', '$2y$12$Tg49tO62q7qDr71Ow7Q4yugNYL/c7LZcKjhhtAOXYrBht2rRNLPye', 'Mme', 'DELBE', 'CONSTANCE', 'mdelbe@ville-taverny.fr', NULL, 1, 4),
+(112, '2025-02-06 10:04:03', '2025-02-06 10:04:03', 'ESCANECRABE', '$2y$12$tE92PMdYbNd9kd5yfCKkdO/vPGSpgM18eSZh1RjJnDOhMuiE3A1ye', 'M.', 'ESCANECRABE', 'MARC', 'mescanecrabe@jean-cotxet.asso.fr', NULL, 1, 3),
+(113, '2025-02-06 10:04:03', '2025-02-06 10:04:03', 'HAMADI', '$2y$12$pkz/cLjyeO7HHszxRW62hO4J1nnwXLbfs0.ksGwwSOusJdjQXeip2', 'Mme', 'HAMADI', 'MARIAMA', 'dir-medicis-argenteuil@domusvi.com', NULL, 1, 4),
+(114, '2025-02-06 10:04:03', '2025-02-06 10:04:03', 'JARRYLACOMBE', '$2y$12$7rpcGlsiytXUa3g3bfkVhOy/lqYl2YAw3zZRZK4orOb577a.LPIKq', 'Mme', 'JARRY-LACOMBE', 'MARIE', 'marie.jarrylacombe@levaldocco.fr', NULL, 1, 3),
+(115, '2025-02-06 10:04:04', '2025-02-06 10:04:04', 'RICHETGAILDRY', '$2y$12$mnnLUDsm3FZibYUedn.t9entH.WZ83wSf49mOVf26jLi3cv36kXgC', 'Mme', 'RICHET-GAILDRY', 'MARIE-LISE', 'sas-ma-vallee@orange.fr', NULL, 1, 4),
+(116, '2025-02-06 10:04:04', '2025-02-06 10:04:04', 'ANIBA', '$2y$12$Sxk2MklvkdZoptTpMHZcuuKP9zsoy7WCghF5EqfdV.sRYtFIB6o5G', 'M.', 'ANIBA', 'MOULOUD', 'mouloud.aniba@apajh95.fr', NULL, 1, 5),
+(117, '2025-02-06 10:04:04', '2025-02-06 10:04:04', 'ROUSSEL', '$2y$12$UvSlaBZLLaDfTzx0T0fMeO3aMYEZXzkqqKCNApAoEvEfv/TYR4MoG', 'Mme', 'ROUSSEL', 'MARTINE', 'mroussel@levertlogis.org', NULL, 1, 3),
+(118, '2025-02-06 10:04:04', '2025-02-06 10:04:04', 'SERAYET', '$2y$12$Ezr7ijQLTmpLqLOq4xEzs.xe0iFFDbAxv7Sj4dWpb8eJMPCJZAuMe', 'M.', 'SERAYET', 'MAXIME', 'mserayet@snc2h.fr', NULL, 1, 4),
+(119, '2025-02-06 10:04:05', '2025-02-06 10:04:05', 'VINCENTDURAND', '$2y$12$l9qNkfIsFjg92fUGZtC6DORn1PoS0r0okbGr.cjXcHKBWvI0tMhJm', 'Mme', 'VINCENT-DURAND', 'MYLèNE', 'marpa.95@orange.fr', NULL, 1, 4),
+(120, '2025-02-06 10:04:05', '2025-02-06 10:04:05', 'LEROUX', '$2y$12$k0QfyiYWfP.nnrU8RGLX2ORGpidmgirnhaZVnGPRylfWyDXpBTvyu', 'Mme', 'LEROUX', 'NATHALIE', 'n.leroux@orpea.net', NULL, 1, 4),
+(121, '2025-02-06 10:04:05', '2025-02-06 10:04:05', 'STACINO', '$2y$12$DC0sxETg4uvY2oTVON3FfeqaADO7ZsIyYcx08AHp2ILNfiNVCJqlK', 'Mme', 'STACINO', 'NATHALIE', 'n.stacino@mairie-bezons.fr', NULL, 1, 4),
+(122, '2025-02-06 10:04:05', '2025-02-06 10:04:05', 'BOULILA', '$2y$12$VwBetCO6gOUZnjx.5JUM0OLow7yd8BV35dFtpb13mMqjKqA.VC1Ty', 'Mme', 'BOULILA', 'NABILA', 'touleuses.direction@arpavie.fr', NULL, 1, 4),
+(123, '2025-02-06 10:04:06', '2025-02-06 10:04:06', 'CICH', '$2y$12$NXrjf7Hjv9TBftW1mqo4ieGjfRjGZMu.jGubxd/JOMpR9p/NAQHxG', 'Mme', 'CICH', 'NADINE', 'ccas-administration@viarmes.fr', NULL, 1, 4),
+(124, '2025-02-06 10:04:06', '2025-02-06 10:04:06', 'GURZYNSKI', '$2y$12$DbIBRcWce5fxJuLW/4rQgOeA6iIiFy7jUgr2o8ceOEitTX..isQt6', 'Mme', 'GURZYNSKI', 'NATHALIE', 'nathalie.gurzynski@ville-argenteuil.fr', NULL, 1, 4),
+(125, '2025-02-06 10:04:06', '2025-02-06 10:04:06', 'LEROUXBADDI', '$2y$12$ptoKGs32zSshw7bP51a/Jugdmu287csnwWrzRUD.07D/89doMrsSK', 'Mme', 'LE ROUX BADDI', 'NATACHA', 'nleroux-baddi@sauvegarde95.fr', NULL, 1, 3),
+(126, '2025-02-06 10:04:07', '2025-02-06 10:04:07', 'ZIAMNI', '$2y$12$ZWQ4RlqmlmoJrLNAtJs6L.CR6L/hpab7S4MEhUJrYeBB6ushvZOMS', 'Mme', 'ZIAMNI', 'NABILA', 'residence.lepatio@groupe-mieuxvivre.fr', NULL, 1, 4),
+(127, '2025-02-06 10:04:07', '2025-02-06 10:04:07', 'BENEZECH', '$2y$12$mKBCJtZyydDrGLnooTXP8.a6TPxfFOznAH6.0VzzXNe/iS4OmSR5C', 'M.', 'BENEZECH', 'OLIVIER', 'o.benezech@capdevant.fr', NULL, 1, 5),
+(128, '2025-02-06 10:04:07', '2025-02-06 10:04:07', 'COLLEONI', '$2y$12$LUVWOlknbsfW9CaaK3eq9.S3oRed0.ngtRU1VaJaUerTA62n1iwAq', 'M.', 'COLLEONI', 'OLIVIER', 'olivier.colleoni@apprentis-auteuil.org', NULL, 1, 3),
+(129, '2025-02-06 10:04:07', '2025-02-06 10:04:07', 'SUFT', '$2y$12$kD/2HpHjRwOxrv9U1qVQqehTejcHMwFIhJ3rCXPoXvhvdtSRrHrSK', 'M.', 'SUFT', 'OLIVIER', 'olivier.suft@johnbost.fr', NULL, 1, 5),
+(130, '2025-02-06 10:04:08', '2025-02-06 10:04:08', 'VINSONNEAU', '$2y$12$ur5yMIy2e2uEqC3uncUf.u3ZQWeLomEQRJk8ofa/bSlwDOKwAzbsK', 'M.', 'VINSONNEAU', 'OLIVIER', 'preslesdirection@arpavie.fr', NULL, 1, 4),
+(131, '2025-02-06 10:04:08', '2025-02-06 10:04:08', 'BOULY', '$2y$12$jdgmYDJkHRZ4A4T4Zz5qJe1TGcHCnD6GefqgK/VR7jfgNo8bFMI2i', 'Mme', 'BOULY', 'PAULINE', 'closeraie.direction@arpavie.fr', NULL, 1, 4),
+(132, '2025-02-06 10:04:08', '2025-02-06 10:04:08', 'SPINASBEYDON', '$2y$12$jSs8LjBsikKxh2wlelZ4EeDkBejdREaE1SKgjcMphRS5CZgxz8Fvu', 'Mme', 'SPINAS BEYDON', 'PAULINE', 'pauline.spinas-beydon@apprentis-auteuil.org', NULL, 1, 3),
+(133, '2025-02-06 10:04:08', '2025-02-06 10:04:08', 'NEVES', '$2y$12$u4qHFG60bchFjEAZ.J.2LeioGFNt38LnvIfBYyW.ELxbzYEZMfGli', 'Mme', 'NEVES', 'PEGGY', 'direction.montigny@orpea.net', NULL, 1, 4),
+(134, '2025-02-06 10:04:09', '2025-02-06 10:04:09', 'CICHY', '$2y$12$gnfMtXixD0btDYopvEXnCeL7x2LhbIa.69bPlsDFage.qOqrZV3Pq', 'M.', 'CICHY', 'RéMY', 'r.cichy@groupecolisee.com', NULL, 1, 4),
+(135, '2025-02-06 10:04:09', '2025-02-06 10:04:09', 'GARABEDIAN', '$2y$12$n7hp8Xr6EM1/wXaSFoWw5OAppXCrclY9jImd0xFFgE4xwFsYlcTPe', 'M.', 'GARABEDIAN', 'RAFFI', 'r.garabedian@aaas.fr', NULL, 1, 4),
+(136, '2025-02-06 10:04:09', '2025-02-06 10:04:09', 'LOPEZMURIEL', '$2y$12$9eWvjePdz05XHwhGi2Vxned/Vza7HcDzj3RW4eXNKM04fEGmDu4GW', 'M.', 'LOPEZ-MURIEL', 'RAPHAëL', 'raphael.lopez-muriel@croix-rouge.fr', NULL, 1, 3),
+(137, '2025-02-06 10:04:09', '2025-02-06 10:04:09', 'BENGONO', '$2y$12$9qsxL486EvizJmesL9hOI./tdv2JcJ8hPg9XYujTtWVe0/RLdbKRS', 'M.', 'BENGONO', 'STéPHANE', 'stephane.bengono@fondation-ove.fr', NULL, 1, 5),
+(138, '2025-02-06 10:04:10', '2025-02-06 10:04:10', 'NIODO', '$2y$12$av/9ZlfvPCQMU3Vyl/trk.jI.vIaBBnlE7UtAcSFfGZrLUM5UeyT6', 'Mme', 'NIODO', 'SYLVIE', 's.niodo@aped-espoir.fr', NULL, 1, 5),
+(139, '2025-02-06 10:04:10', '2025-02-06 10:04:10', 'ROBARDEY', '$2y$12$1dQycY/2FGESNUvgr50nz.nEDudoiUQI2khfk6YLtNcrlLguDk3gG', 'M.', 'ROBARDEY', 'STéPHANE', 's.robardey@apui95.org', NULL, 1, 4),
+(140, '2025-02-06 10:04:10', '2025-02-06 10:04:10', 'TAMINESAMIA', '$2y$12$U4Y6CoLDNRW6jum0g9YmW./VnD86l0QeKSzk9/sWPePpo5T4TTvMm', 'Mme', 'TAMINE', 'SAMIA', 'directrice@ndm-ets.fr', NULL, 1, 3),
+(141, '2025-02-06 10:04:10', '2025-02-06 10:04:10', 'TAMINESAMIR', '$2y$12$nY2/uy.rt5ItZsUcOPKgLOKGEWh2TpLNZlQhm.qGUnDvhLnmwDjZK', 'M.', 'TAMINE', 'SAMIR', 'samir.tamine@garelli95.org', NULL, 1, 3),
+(142, '2025-02-06 10:04:11', '2025-02-06 10:04:11', 'KAC', '$2y$12$1Rk3eiZiTbwD6ugWBxm/0uktfbdn1MJBHXnNWAYGFGDFOBjvUjocm', 'M.', 'KAC', 'SéBASTIEN', 's.kac@ose-france.org', NULL, 1, 3),
+(143, '2025-02-06 10:04:11', '2025-02-06 10:04:11', 'KOUOH', '$2y$12$Kx2YoUj1PkOv80fmdlwyTewxq1GjMEjGjvBV2.LmA6mbWak9qVzpS', 'Mme', 'KOUOH MOUKAKA', 'SOPHIE', 'fontaine.direction@arpavie.fr', NULL, 1, 4),
+(144, '2025-02-06 10:04:11', '2025-02-06 10:04:11', 'LIBERAL', '$2y$12$XlrPYUSR6uFAyCOQ4tQyxOViTqjej66VCNocYYDLeA2Ul1LxxlTXa', 'Mme', 'LIBERAL', 'SéVERINE', 'sliberal@sosve.org', NULL, 1, 3),
+(145, '2025-02-06 10:04:11', '2025-02-06 10:04:11', 'RODRIGUEZ', '$2y$12$OdFv4Zx2iLLwWQGqPcj9mO6H/etGwem03.6GXNW3T56JxmAd5idVa', 'Mme', 'RODRIGUEZ', 'SOFIA', 'sofia.rodriguez@korian.fr', NULL, 1, 4),
+(146, '2025-02-06 10:04:12', '2025-02-06 10:04:12', 'CALADO', '$2y$12$XUHaNgz.jMUH5i6YQk67bOzxosPoDXUcQOHRgKZqC4Td855EM6WK2', 'Mme', 'CALADO CERCAS', 'STéPHANIE', 'stephanie.calado-cercas@korian.fr', NULL, 1, 4),
+(147, '2025-02-06 10:04:12', '2025-02-06 10:04:12', 'YAGOUB', '$2y$12$EQa3kcI4cF0JIb5FPPRZL..gMyFdd/0BUN0T.EDECq1vQEXfEHgSm', 'Mme', 'YAGOUB', 'SARAH', 'ehd.gonesse.direction@arpavie.fr', NULL, 1, 4),
+(148, '2025-02-06 10:04:12', '2025-02-06 10:04:12', 'MHAMDI', '$2y$12$4zniHcgeIadr6sxIXgOr..UXLtfCJUEfkR1PL2oIO2YSfulE00VPO', 'Mme', 'MHAMDI', 'TAKOUA', 't.mhamdi@orpea.net', NULL, 1, 4),
+(149, '2025-02-06 10:04:13', '2025-02-06 10:04:13', 'GERVAIS', '$2y$12$S99fJnE0EdgaCTWw.e3QfOWw50R5iSbYCVr/lXVdP9Tbj7V6JMeCK', 'Mme', 'GERVAIS', 'VALéRIE', 'v.gervais@lerenouveau.fr', NULL, 1, 3),
+(150, '2025-02-06 10:04:13', '2025-02-06 10:04:13', 'SZWARCBART', '$2y$12$.vFoKJjZrlP1iu7APSoKlO6i/X5fA1C/HzX8i8CMqLbUokgSSlkPq', 'Mme', 'SZWARCBART', 'VéRONIQUE', 'opej-maubuisson@wanadoo.fr', NULL, 1, 3),
+(151, '2025-02-06 10:04:13', '2025-02-06 10:04:13', 'PERRET', '$2y$12$aQ90dD7NFrNF8EFWKPCbMu2tzhvw2A1bk4qihvlOpggkKW/wrRzgm', 'Mme', 'PERRET', 'VéRONIQUE', 'veronique.perret@ght-novo.fr', NULL, 1, 4),
+(152, '2025-02-06 10:04:13', '2025-02-06 10:04:13', 'BOKOBZA', '$2y$12$qWV885tWgXwPvuAepqL0su/b7GKAyFDK8rr3grA/pmqwOIPXznova', 'Mme', 'BOKOBZA', 'VIRGINIE', 'virginie.bokobza@fondation-opej.org', NULL, 1, 3),
+(153, '2025-02-06 10:04:13', '2025-02-06 10:04:13', 'DAVID', '$2y$12$UbulcIhQfeOBhidzBYNYLu/sljPFD3BPAxsQa2d7rYNCneUK.X1Hu', 'Mme', 'DAVID', 'VIRGINIE', 'virginie.david@ght-novo.fr', NULL, 1, 4),
+(154, '2025-02-06 10:04:14', '2025-02-06 10:04:14', 'MENEUX', '$2y$12$tnIq./BvsyBGmehhTysfRO/4bwg9Ji8xqxc/dcax1xo2ghephw6K.', 'Mme', 'MENEUX', 'VIRGINIE', 'virginie.meneux@hevea-asso.fr', NULL, 1, 3),
+(155, '2025-02-06 10:04:14', '2025-02-06 10:04:14', 'LORQUIN', '$2y$12$drbBFf1yP61ashLbTFdq6eagiIxylG87vrsVXf.sIoD58uQLOCFAO', 'Mme', 'LORQUIN', 'VéRONIQUE', 'rpa@ville-montmorency.fr', NULL, 1, 4),
+(156, '2025-02-06 10:04:14', '2025-02-06 10:04:14', 'JUILLE', '$2y$12$gsZXmxttXdOTynmUt31n/eSkTzSk9IXIrauj4HpMzX19yfrjCHDwm', 'M.', 'JUILLE', 'YANN', 'y.juille@sinoplies.fr', NULL, 1, 4),
+(157, '2025-02-06 10:04:15', '2025-02-06 10:04:15', 'ZAOUI', '$2y$12$kw4mV1/KcCir0iq..SHAaeqjeBPmy5FoaSTq2e.lRhqb5DMgmE98.', 'M.', 'ZAOUI', 'FRéDéRIC', 'zaoui.frederic@ladapt.net', NULL, 1, 5),
+(158, '2025-02-06 10:04:15', '2025-02-06 10:04:15', 'ELBTIOUI', '$2y$12$ptgoxAzhUvOKP6g/3f5vV.JcD9xGf98U/PRk6O1m2JE1qfZFUTGr2', 'M.', 'ELBTIOUI', 'ZINEB', 'zineb.elbtioui@maisonsdefamille.com', NULL, 1, 4),
+(159, '2025-02-06 10:04:15', '2025-02-06 10:04:15', 'HAMDAN', '$2y$12$cz21qUzcvO0HwJOPHCoRgODTAcuW2/O8tS8FDhnEWTDTmRiede7q2', 'M.', 'HAMDAN', 'ZOUKAIR', 'zouhair.hamdan@korian.fr', NULL, 1, 4),
+(160, '2025-02-06 10:04:15', '2025-02-06 10:04:15', 'VASSEUR', '$2y$12$.qwFLpM2IZ8miHZp7BEAYODnCmOYjd3RzR91SMQFmAs7jl9EsgR1C', 'Mme', 'VASSEUR', 'MONIQUE', 'monique.vasseur@valdoise.fr', NULL, 1, NULL),
+(161, '2025-02-06 10:04:16', '2025-02-06 10:04:16', 'DURANDROC', '$2y$12$c1YT5DK2/28G7v0pU6lEvus6XfUdQ6Bif121YOgQ4sVkc6sUWjMvm', 'Mme', 'DURAND', 'ROCIO', 'rocio.durand@valdoise.fr', NULL, 1, NULL),
+(162, '2025-02-06 10:04:16', '2025-02-06 10:04:16', 'HONORE', '$2y$12$iHD1yn5zWoLWEIr4lidSy.Hi2mtd/td8eDkwIzZfnCCQ3bpJrEMs2', 'Mme', 'HONORE ROUGE', 'VALéRIE', 'valerie.honore-rouge@valdoise.fr', NULL, 1, NULL),
+(163, '2025-02-06 10:04:16', '2025-02-06 10:04:16', 'DECOCK', '$2y$12$y7XZi21wY.3Ts.x0E/rQxO9Ljip0UgBfxSV/Qu7u1/DMnWB9dpadG', 'Mme', 'DECOCK', 'NATHALIE', 'nathalie.decock@valdoise.fr', NULL, 1, NULL),
+(165, '2025-02-06 11:34:17', '2025-02-06 11:34:17', 'MAMERI', '$2y$12$qpWYtRnVRVTQDZajcuJrrOD6kJI1I4WA5k.XSd/Nttw0o/5pGb7HG', 'M.', 'MAMERI', 'HEDDY', 'heddy.mameri@valdoise.fr', NULL, 1, 3);
+COMMIT;
+
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
