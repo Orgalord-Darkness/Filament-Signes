@@ -25,6 +25,7 @@ use App\Models\Section ;
 use Filament\Forms\Components\Grid ; 
 use App\Models\Commune ; 
 use App\Models\Etablissement ; 
+use App\Models\Rubrique ; 
 
 
 class SignalementResource extends Resource
@@ -97,7 +98,10 @@ class SignalementResource extends Resource
                                     $set('competence',$competence); 
 
                                     $territoire = Etablissement::find($etablissementId)->territoire;
-                                    $set('territoire',$territoire);  
+                                    $set('territoire',$territoire);
+                                    
+                                    $statut = Etablissement::find($etablissementId)->statut;
+                                    $set('statut',$statut);
                                 }
                             })
                         ]),
@@ -167,29 +171,32 @@ class SignalementResource extends Resource
                     ->label('Préfet'), 
 
                     Forms\Components\Select::make('commune_id')
-                    ->relationship('commune','nom')
-                    ->options(function (callable $get) {
-                        $etablissementId = $get('diplome_id');
-                        if ($etablissementId) {
-                            return Commune::where('etablissement_id', $etablissementId)->pluck('libelle', 'id');
-                        }
-                        return Commune::all()->pluck('libelle', 'id');
-                    })
-                    ->hidden()
-                    ->reactive(),
+                    ->relationship('commune','libelle'),
+                    // ->options(function (callable $get) {
+                    //     $etablissementId = $get('diplome_id');
+                    //     if ($etablissementId) {
+                    //         return Commune::where('etablissement_id', $etablissementId)->pluck('libelle', 'id');
+                    //     }
+                    //     return Commune::all()->pluck('libelle', 'id');
+                    // })
+                    // ->hidden()
+                    // ->reactive(),
 
                     Forms\Components\TextInput::make('type'),
                     Forms\Components\TextInput::make('competence'),
                     Forms\Components\TextInput::make('territoire'),
+                    Forms\Components\TextInput::make('statut'),
                     Forms\Components\Select::make('categorie_id')
                     ->relationship('categorie','libelle'),
+                    Forms\Components\Checkbox::make('complet')
+                    ->default(true)
 
                 ]),
             Tab::make('Faits-Victime')
                 ->schema([
-                    Forms\Components\Select::make('nature1_id')
+                    Forms\Components\Select::make('rub_nature1_id')
                     ->label('Catégorie Nature des Faits principale')
-                    ->relationship('nature1','libelle', function ($query) { 
+                    ->relationship('rub_nature1', 'libelle',function ($query) { 
                         $id = 1 ; 
                         $sections = Section::all(); 
                         foreach($sections as $ligne){
@@ -198,14 +205,24 @@ class SignalementResource extends Resource
                                 break ; 
                             }
                         }
-                        $query->where('section_id',$id); 
+                        $query->where('section_id',$id);
+                        $query->orderBy('ordre','asc'); 
                     })
+                    ->afterStateUpdated(function (callable $set, callable $get) 
+                        {
+                            $rubriqueId = $get('rubrique_id');
+                            if ($rubriqueId) {
+                                $sectionId = Rubrique::find($rubriqueId)->section_id;
+                                $set('nature1_id', $sectionId);
+                            }
+                        })
+                    ->reactive()
                     ->required(),
 
-                    Forms\Components\Select::make('rub_nature1_id')
+                    Forms\Components\Select::make('nature1_id')
                     ->label('Nature des Faits principale')
                     ->required()
-                    ->relationship('rub_nature1','libelle', function ($query) { 
+                    ->relationship('nature1','libelle', function ($query) { 
                         $id = 1 ; 
                         $sections = Section::all(); 
                         foreach($sections as $ligne){
@@ -219,9 +236,10 @@ class SignalementResource extends Resource
 
                     Forms\Components\TextArea::make('nature1_autre'),
 
-                    Forms\Components\Select::make('nature2_id')//ne passe pas 
+                    Forms\Components\Select::make('rub_nature2_id')//ne passe pas 
                     ->default(1)
-                    ->relationship('nature2','libelle', function ($query) { 
+                    ->reactive()
+                    ->relationship('rub_nature2', 'libelle',function ($query) { 
                         $id = 1 ; 
                         $sections = Section::all(); 
                         foreach($sections as $ligne){
@@ -230,11 +248,12 @@ class SignalementResource extends Resource
                                 break ; 
                             }
                         }
-                        $query->where('section_id',$id); 
+                        $query->where('section_id',$id);
+                        $query->orderBy('ordre','asc'); 
                     }),
-                    Forms\Components\Select::make('rub_nature2_id')//ne passe pas 
+                    Forms\Components\Select::make('nature2_id')//ne passe pas 
                     ->default(1)
-                    ->relationship('rub_nature2','libelle'), 
+                    ->relationship('nature2','libelle'), 
                     Forms\Components\TextArea::make('nature2_autre'),
 
                     Forms\Components\TextArea::make('description'),
@@ -738,12 +757,9 @@ class SignalementResource extends Resource
 
                 Forms\Components\TextArea::make('commentaire'),
                 //Champs automatiques
-                Forms\Components\Checkbox::make('complet')
-                ->default(true)
-                ->hidden(),
             ]),
         ])
-        ]);
+    ]);
     }
 
     public static function table(Table $table): Table
@@ -777,9 +793,8 @@ class SignalementResource extends Resource
                 ->wrap(),
 
                 Tables\Columns\TextColumn::make('complet')
-                ->formatStateUsing(function ($record) {
-                   return 'Oui' ; 
-
+                ->formatStateUsing(function ($state) {
+                    return $state ? 'Oui' : 'Non';
                 })
                 ->searchable()
                 ->sortable()
