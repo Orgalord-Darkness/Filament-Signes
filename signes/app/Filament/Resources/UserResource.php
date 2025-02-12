@@ -20,6 +20,8 @@ use Filament\Forms\Components\CheckBoxList;
 use Filament\Forms\Components\Password;
 use Illuminate\Support\Facades\Hash;
 use AlperenErsoy\FilamentExport\Actions\FilamentExportBulkAction; 
+use Filament\Tables\Enums\FiltersLayout;
+use App\Filament\Resources\UserResource\Pages\FiltersUser; 
 
 
 class UserResource extends Resource
@@ -88,9 +90,7 @@ class UserResource extends Resource
                 Tables\Columns\TextColumn::make('secteur.libelle'),
 
             ])
-            ->filters([
-                //
-            ])
+            ->filters( FiltersUser::getFilters(), layout: FiltersLayout::AboveContent)
             ->actions([
                 Tables\Actions\EditAction::make(),
             ])
@@ -121,5 +121,10 @@ class UserResource extends Resource
             'create' => Pages\CreateUser::route('/create'),
             'edit' => Pages\EditUser::route('/{record}/edit'),
         ];
+    }
+
+    public static function getNavigationBadge(): ?string
+    {
+        return static::getModel()::count(); 
     }
 }

@@ -110,4 +110,9 @@ class SecteurResource extends Resource
             'edit' => Pages\EditSecteur::route('/{record}/edit'),
         ];
     }
+
+    public static function getNavigationBadge(): ?string
+    {
+        return static::getModel()::count(); 
+    }
 }

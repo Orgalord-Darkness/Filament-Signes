@@ -95,4 +95,9 @@ class FaqResource extends Resource
             'edit' => Pages\EditFaq::route('/{record}/edit'),
         ];
     }
+
+    public static function getNavigationBadge(): ?string
+    {
+        return static::getModel()::count(); 
+    }
 }

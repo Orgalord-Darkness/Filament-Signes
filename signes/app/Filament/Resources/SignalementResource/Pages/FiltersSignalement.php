@@ -47,24 +47,24 @@ class FiltersSignalement
 
         SelectFilter::make('Etablissement')
             ->options( function () {
-                $rubriques = Etablissement::all() ; //Récupérer toutes les valeurs de la table via all pour faire le tableu options
+                $etablissements = Etablissement::all() ; //Récupérer toutes les valeurs de la table via all pour faire le tableu options
                 $options = [] ; 
-                foreach($rubriques as $row){
-                    if($row->libelle != null){
-                        $options[$row->id] = $row->libelle ; 
+                foreach($etablissements as $row){
+                    if($row->nom != null){
+                        $options[$row->id] = $row->nom ; 
                     } 
                 }
                 return $options ; 
             })
         ->attribute('etablissement_id'),
 
-        Filter::make('statut')
+        Filter::make('etat')
             ->form([
-                TextInput::make('e')->label('statut : '),
+                TextInput::make('etat')->label('etat : '),
             ])
             ->query(function (Builder $query, array $data): Builder {
                 return $query
-                ->when($data['statut'], fn (Builder $query, $statut): Builder => $query->where('statut',$statut)); 
+                ->when($data['etat'], fn (Builder $query, $statut): Builder => $query->where('etat',$statut)); 
             }),
 
             Filter::make('complet')
@@ -75,6 +75,7 @@ class FiltersSignalement
                 return $query
                 ->when($data['complet'], fn (Builder $query, $complet): Builder => $query->where('complet',$complet)); 
             })
+            
         ];
  
     }

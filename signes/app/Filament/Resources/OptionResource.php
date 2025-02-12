@@ -119,4 +119,9 @@ class OptionResource extends Resource
             'edit' => Pages\EditOption::route('/{record}/edit'),
         ];
     }
+
+    public static function getNavigationBadge(): ?string
+    {
+        return static::getModel()::count(); 
+    }
 }

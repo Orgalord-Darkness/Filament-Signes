@@ -758,7 +758,7 @@ class SignalementResource extends Resource
                 Forms\Components\TextArea::make('commentaire'),
                 //Champs automatiques
             ]),
-        ])->extraAttributes(['style' => 'width: 1200px; margin: 0 auto;'])
+        ])->extraAttributes(['style' => 'width: 100%; max-width: 1200px; margin: 0 auto; min-width: 1000px;'])
     ]);
     }
 
@@ -806,6 +806,7 @@ class SignalementResource extends Resource
                 Tables\Actions\EditAction::make()->label('Modifier'),
                 Tables\Actions\DeleteAction::make()->label('Supprimer'),
             ])
+            ->filters(FiltersSignalement::getFilters(), layout: FiltersLayout::AboveContent)
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
@@ -833,5 +834,10 @@ class SignalementResource extends Resource
             'create' => Pages\CreateSignalement::route('/create'),
             'edit' => Pages\EditSignalement::route('/{record}/edit'),
         ];
+    }
+
+    public static function getNavigationBadge(): ?string
+    {
+        return static::getModel()::count(); 
     }
 }

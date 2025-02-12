@@ -121,4 +121,9 @@ class CategorieResource extends Resource
             'edit' => Pages\EditCategorie::route('/{record}/edit'),
         ];
     }
+
+    public static function getNavigationBadge(): ?string
+    {
+        return static::getModel()::count(); 
+    }
 }
