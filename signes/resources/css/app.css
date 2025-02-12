@@ -1,3 +1,12 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+form {
+    width: 1200px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+form input, form select, form textarea {
+    width: auto;
+}

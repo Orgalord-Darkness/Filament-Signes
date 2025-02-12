@@ -758,7 +758,7 @@ class SignalementResource extends Resource
                 Forms\Components\TextArea::make('commentaire'),
                 //Champs automatiques
             ]),
-        ])
+        ])->extraAttributes(['style' => 'width: 1200px; margin: 0 auto;'])
     ]);
     }
 
