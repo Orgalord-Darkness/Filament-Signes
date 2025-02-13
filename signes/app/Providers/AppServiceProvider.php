@@ -4,6 +4,8 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Schema;
+use App\Models\Signalement ; 
+use App\Observers\SignalementObserver ; 
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -20,7 +22,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        //Ajout de l'observateru de signalement
+        Signalement::observe(SignalementObserver::class); 
         Schema::defaultStringLength(191);
-    }
+    }   
 }
