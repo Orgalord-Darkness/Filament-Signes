@@ -37,12 +37,12 @@ class SignalementFields
                 ->schema([
                     Forms\Components\Grid::make(2)
                     ->schema([
-                        Forms\Components\DatePicker::make('date_evenement')
+                        Forms\Components\DateTimePicker::make('date')
                         ->label('Date et heure du signalement')
                         ->default(Carbon::now()->toDateTimeString())
                         ->required(),
 
-                        Forms\Components\DatePicker::make('date')
+                        Forms\Components\DateTimePicker::make('date_evenement')
                         ->label('Date et heure de l\'évenement')
                         ->default(Carbon::now()->toDateTimeString())
                         ->required(),
