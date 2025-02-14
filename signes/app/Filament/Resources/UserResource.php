@@ -21,7 +21,8 @@ use Filament\Forms\Components\Password;
 use Illuminate\Support\Facades\Hash;
 use AlperenErsoy\FilamentExport\Actions\FilamentExportBulkAction; 
 use Filament\Tables\Enums\FiltersLayout;
-use App\Filament\Resources\UserResource\Pages\FiltersUser; 
+use App\Filament\Resources\UserResource\Pages\FiltersUser;
+use App\Filament\Resources\UserResource\Pages\UserFields ;  
 
 
 class UserResource extends Resource
@@ -39,43 +40,9 @@ class UserResource extends Resource
                                                 
     public static function form(Form $form): Form
     {
-        return $form
-            ->schema([
-                Radio::make('Civilité')
-                    ->options([
-                        'M.' => 'M.',
-                        'Mme' => 'Mme',
-                    ])
-                    ->inline() // Pour afficher les options en ligne
-                    ->required(),
-                Forms\Components\TextInput::make('prenom')->required(), 
-                Forms\Components\TextInput::make('nom')->required(),
-                Forms\Components\TextInput::make('email')->label('Courriel')->email()->required(),
-                Forms\Components\TextInput::make('name')->label('Identifiant')->required(),
-                Forms\Components\TextInput::make('password')
-                ->label('Mot de passe')
-                ->password()
-                ->dehydrateStateUsing(fn($state) => Hash::make($state))
-                ->required(),
-                Forms\Components\TextInput::make('password_confirmation')
-                    ->password()
-                    ->required()
-                    ->maxLength(255)
-                    ->same('password')
-                    ->dehydrateStateUsing(fn($state) => Hash::make($state))
-                    ->label('Conformation du mot de passe'),
-                CheckBoxList::make('roles')
-                   ->relationship('roles','name'),
-                Select::make('secteur')
-                ->relationship('secteur', 'libelle')
-                ->required(),  
-                Select::make('etablissements')
-                ->relationship('etablissements', 'nom')
-                ->required(),
-                CheckBox::make('actif')
-                        ->label('Actif')
-                        ->required(), 
-            ]);
+        return $form->schema([
+            UserFields::getFields()->columns(1), 
+        ]); 
     }
 
     public static function table(Table $table): Table

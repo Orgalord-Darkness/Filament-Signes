@@ -16,6 +16,7 @@ use Filament\Forms\Components\Select ;
 use App\Filament\Resources\OptionResource\Pages\FiltersOption; 
 use Filament\Tables\Enums\FiltersLayout;
 use AlperenErsoy\FilamentExport\Actions\FilamentExportBulkAction; 
+use App\Filament\Resources\OptionResource\Pages\OptionFields ; 
 
 class OptionResource extends Resource
 {
@@ -32,26 +33,7 @@ class OptionResource extends Resource
     {
         return $form
             ->schema([
-                //
-                Forms\Components\TextInput::make('libelle')
-                ->required(),
-
-                Select::make('section_id')
-                ->relationship('section', 'libelle')
-                ->required(), 
-
-                Select::make('rubrique_id')
-                ->relationship('rubrique', 'libelle')
-                ->required(), 
-
-                Forms\Components\TextInput::make('ordre')
-                ->numeric()
-                ->integer()
-                ->required(), 
-
-                Forms\Components\CheckBox::make('actif')
-                    ->label('Actif')
-                    ->required(), 
+                OptionFields::getFields()
             ]);
     }
 

@@ -21,6 +21,8 @@ use Filament\Tables\Actions\EditAction ;
 use Filament\Tables\Actions\DeleteAction ; 
 use Filament\Tables\Actions\RestoreAction;
 use Filament\Forms\Components\Grid ; 
+use App\Filament\Resources\CategorieResource\Pages\CategorieFields;
+use App\Filament\Resources\SignalementResource\Pages\SignalementFields ; 
 
 class CategorieResource extends Resource
 {
@@ -36,6 +38,21 @@ class CategorieResource extends Resource
 
     protected static ?string $navigationGroup = 'Administration';
     // protected static ?int $navigationSort = 2 ;
+
+    public static function form(Form $form): Form
+    {
+        return $form->schema([
+            // Grid::make()
+            // ->schema([
+            // Forms\Components\TextInput::make('code')->required(),
+            // Forms\Components\TextInput::make('libelle')->required(),
+            // CheckBox::make('actif')
+            //     ->label('Actif')
+            //     ->required(), 
+            // ])
+            CategorieFields::getFields()->columns(1), 
+        ]);
+    }
 
     public static function table(Table $table): Table
     {
@@ -88,22 +105,6 @@ class CategorieResource extends Resource
             ])->paginated([10,25,50,100,200,300])
             ->defaultSort('id','desc');
             
-    }
-
-    
-    public static function form(Form $form): Form
-    {
-        return $form
-            ->schema([
-                Grid::make()
-                ->schema([
-                Forms\Components\TextInput::make('code')->required(),
-                Forms\Components\TextInput::make('libelle')->required(),
-                CheckBox::make('actif')
-                        ->label('Actif')
-                        ->required(), 
-                ])
-            ]);
     }
 
     public static function getRelations(): array

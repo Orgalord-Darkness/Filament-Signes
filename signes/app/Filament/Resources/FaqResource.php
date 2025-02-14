@@ -18,6 +18,7 @@ use Filament\Forms\Components\CheckBox;
 use App\Filament\Resources\FaqResource\Pages\FiltersFaq; 
 use Filament\Tables\Enums\FiltersLayout;
 use AlperenErsoy\FilamentExport\Actions\FilamentExportBulkAction; 
+use App\Filament\Resources\FaqResource\Pages\FaqFields ; 
 
 
 class FaqResource extends Resource
@@ -36,15 +37,7 @@ class FaqResource extends Resource
         return $form
             ->schema([
                 //
-                Select::make('catfaq_id')
-                ->relationship('catfaq', 'libelle')
-                ->required(),  //c'est le classe du model pas le nom de la table
-                Forms\Components\TextInput::make('question')->required(), 
-                Forms\Components\TextArea::make('reponse'),
-                CheckBox::make('actif')
-                        ->label('Actif')
-                        ->required(),
-
+                FaqFields::getFields()->columns(1), 
             ]);
     }
 

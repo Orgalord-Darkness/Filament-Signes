@@ -17,6 +17,7 @@ use App\Filament\Resources\CatFaqResource\Pages\FiltersCatFaq;
 use Filament\Tables\Enums\FiltersLayout;
 use AlperenErsoy\FilamentExport\Actions\FilamentExportBulkAction; 
 use Illuminate\Support\Facades\DB;
+use App\Filament\Resources\CatFaqResource\Pages\CatFaqFields ; 
 
 class CatFaqResource extends Resource
 {
@@ -34,10 +35,7 @@ class CatFaqResource extends Resource
         return $form
             ->schema([
                 //
-                Forms\Components\TextInput::make('libelle')->required(),
-                CheckBox::make('actif')
-                        ->label('Actif')
-                        ->required(), 
+               CatFaqFields::getFields()->columns(1), 
             ]);
     }
 
