@@ -27,6 +27,7 @@ use App\Models\Commune ;
 use App\Models\Etablissement ; 
 use App\Models\Rubrique ; 
 use App\Filament\Resources\SignalementResource\Pages\SignalementFields ; 
+use App\Enums\SignalementEtatEnum ; 
 
 
 class SignalementResource extends Resource
@@ -772,6 +773,7 @@ class SignalementResource extends Resource
             ->columns([
                 //
                 Tables\Columns\TextColumn::make('id')
+                ->label('N°')
                 ->searchable()
                 ->sortable()
                 ->wrap(),
@@ -794,12 +796,59 @@ class SignalementResource extends Resource
                 Tables\Columns\TextColumn::make('etat')
                 ->searchable()
                 ->sortable()
+                ->toggleable()
+                ->color(static function($state): string { 
+                    if($state === SignalementEtatEnum::OUVERT->getLabel()){
+                        return 'danger' ; 
+                    }
+                    if($state === SignalementEtatEnum::FERME->getLabel()){
+                        return 'dark' ; 
+                    }
+                    if($state === SignalementEtatEnum::RECEPTIONNE->getLabel()){
+                        return 'info' ; 
+                    }
+                    if($state === SignalementEtatEnum::RELANCE->getLabel()){
+                        return 'warning' ; 
+                    }
+                    if($state === SignalementEtatEnum::ENCOURS->getLabel()){
+                        return 'success' ; 
+                    }
+                    return 'dark' ; 
+                })
+                ->icon(static function($state): string {
+                    if($state === SignalementEtatEnum::OUVERT->getLabel())
+                    {
+                        return SignalementEtatEnum::OUVERT->getIcon() ; 
+                    }
+                    if($state === SignalementEtatEnum::FERME->getLabel())
+                    {
+                        return SignalementEtatEnum::FERME->getIcon() ; 
+                    }
+                    if($state === SignalementEtatEnum::RELANCE->getLabel())
+                    {
+                        return SignalementEtatEnum::RELANCE->getIcon() ; 
+                    }
+                    if($state === SignalementEtatEnum::RECEPTIONNE->getLabel())
+                    {
+                        return SignalementEtatEnum::RECEPTIONNE->getIcon() ; 
+                    }
+                    if($state === SignalementEtatEnum::ENCOURS->getLabel())
+                    {
+                        return SignalementEtatEnum::ENCOURS->getIcon() ; 
+                    }
+                    return ''; 
+                })
                 ->wrap(),
 
                 Tables\Columns\TextColumn::make('complet')
                 ->formatStateUsing(function ($state) {
                     return $state ? 'Oui' : 'Non';
                 })
+                ->searchable()
+                ->sortable()
+                ->wrap(),
+
+                Tables\Columns\TextColumn::make('public')
                 ->searchable()
                 ->sortable()
                 ->wrap(),
