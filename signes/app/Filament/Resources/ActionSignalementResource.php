@@ -12,6 +12,8 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use App\Filament\Resources\ActionSignalementResource\Pages\ActionSignalementColumns; 
+use App\Filament\Resources\ActionSignalementResource\Pages\ActionSignalementFields; 
 
 class ActionSignalementResource extends Resource
 {
@@ -24,15 +26,17 @@ class ActionSignalementResource extends Resource
         return $form
             ->schema([
                 //
+                ActionSignalementFields::getFields(), 
             ]);
     }
 
     public static function table(Table $table): Table
     {
         return $table
-            ->columns([
+            ->columns(
                 //
-            ])
+            ActionSignalementColumns::getColumns(), 
+            )
             ->filters([
                 //
             ])

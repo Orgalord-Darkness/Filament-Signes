@@ -28,6 +28,7 @@ use App\Models\Etablissement ;
 use App\Models\Rubrique ; 
 use App\Filament\Resources\SignalementResource\Pages\SignalementFields ; 
 use App\Enums\SignalementEtatEnum ; 
+use App\Enums\SignalementCompletEnum ; 
 
 
 class SignalementResource extends Resource
@@ -797,6 +798,7 @@ class SignalementResource extends Resource
                 ->searchable()
                 ->sortable()
                 ->toggleable()
+                ->badge()
                 ->color(static function($state): string { 
                     if($state === SignalementEtatEnum::OUVERT->getLabel()){
                         return 'danger' ; 
@@ -846,6 +848,17 @@ class SignalementResource extends Resource
                 })
                 ->searchable()
                 ->sortable()
+                ->toggleable()
+                ->badge()
+                ->color(static function($state): string { 
+                    if($state === true){
+                        return 'success' ;
+                    }
+                    if($state === false){
+                        return 'danger' ; 
+                    }
+                    return 'dark' ; 
+                })
                 ->wrap(),
 
                 Tables\Columns\TextColumn::make('public')
