@@ -42,14 +42,6 @@ class CategorieResource extends Resource
     public static function form(Form $form): Form
     {
         return $form->schema([
-            // Grid::make()
-            // ->schema([
-            // Forms\Components\TextInput::make('code')->required(),
-            // Forms\Components\TextInput::make('libelle')->required(),
-            // CheckBox::make('actif')
-            //     ->label('Actif')
-            //     ->required(), 
-            // ])
             CategorieFields::getFields()->columns(1), 
         ]);
     }
@@ -62,12 +54,20 @@ class CategorieResource extends Resource
                     ->wrap()
                     ->searchable()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('actif')
+                Tables\Columns\ToggleColumn::make('actif')
+                    ->onColor('success')
+                    ->offColor('danger')
+                    //->onIcon('heroicon-s-check')
+                    //->offIcon('heroicon-s-x')
+                    ->toggleable()
                     ->searchable()
                     ->sortable()
-                    ->formatStateUsing(function ($state) {
-                        return $state ? 'Oui' : 'Non';
+                    ->afterStateUpdated(function ($record, $state) {
+                        $record->update(['is_active' => $state]);
                     }),
+                    // ->formatStateUsing(function ($state) {
+                    //     return $state ? 'Oui' : 'Non';
+                    // }),
             ])
             ->filters(
                 //
