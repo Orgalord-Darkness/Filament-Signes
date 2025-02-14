@@ -168,6 +168,8 @@ class SignalementFields
                     Hidden::make('territoire'),
                     Hidden::make('statut'),
                     Hidden::make('categorie_id'),
+                    Hidden::make('complet')->default(true), 
+
                 ]),
             Tab::make('Faits-Victime')
                 ->schema([
@@ -761,11 +763,6 @@ class SignalementFields
 
                 Forms\Components\TextArea::make('commentaire'),
                 //Champs automatiques
-                Hidden::make('complet')->default(
-                    function (callable $get){
-                        return $get('description'); 
-                    }
-                ), 
             ]),
         ])
         ]) ;
