@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\SignalementResource\Pages;
 use App\Filament\Resources\SignalementResource\RelationManagers;
 use App\Models\Signalement;
+use App\Models\ActionSignalement ; 
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -29,7 +30,8 @@ use App\Models\Rubrique ;
 use App\Filament\Resources\SignalementResource\Pages\SignalementFields ; 
 use App\Enums\SignalementEtatEnum ; 
 use App\Enums\SignalementCompletEnum ; 
-
+use Filament\Tables\Columns\LinkColumn ;
+use Symfony\Component\Console\Logger\ConsoleLogger;
 
 class SignalementResource extends Resource
 {
@@ -149,6 +151,40 @@ class SignalementResource extends Resource
                 ->sortable()
                 ->wrap(),
 
+                Tables\Columns\TextColumn::make('actions_count')
+                ->label('Nb Actions')
+                ->counts('actions')
+                ->sortable()
+                ->searchable()
+                ->wrap()
+
+                // Tables\Columns\TextColumn::make('actions')
+                //->label('Voir Actions')
+                ->formatStateUsing(function ($record){
+                    $list = [] ; 
+                    $actions_signalements = ActionSignalement::all() ; 
+                    foreach($actions_signalements as $ligne)
+                    {
+                        if($ligne['signalement_id'] == $record->id)
+                        {
+                            $action_id = $ligne['id'] ; 
+                            $list[] = $action_id ;
+                            
+                        }
+                    }
+                    if(!empty($list) == true){
+                        for($ind=0 ; $ind < count($list) ; $ind++){
+                            $url = '/admin/action-signalements?tableFilters[id][id]='.$action_id  ;
+                            $n = $ind+1 ; 
+                            //return "Nb:".count($list)."<a style='font-size:14px;' class='warning'href='$url'>Action N°".$n."</a>" ; Version avec nombre total d'actions 
+                            return "<a style='font-size:14px;' class='text-center warning'href='$url'>Action N°".$n."</a>" ; 
+                        }
+                    }else{
+                        return "<p style='font-size:14px;'>Aucune action</p>" ; 
+                    }
+                })
+                ->wrap()
+                ->html(), 
             ])
             //->filters(FiltersSignalement::getFilters(), layout: FiltersLayout::AboveContent)
             ->actions([

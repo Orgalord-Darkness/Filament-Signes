@@ -14,12 +14,16 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\ActionSignalementResource\Pages\ActionSignalementColumns; 
 use App\Filament\Resources\ActionSignalementResource\Pages\ActionSignalementFields; 
+use App\Filament\Resources\ActionSignalementResource\Pages\FiltersActionSignalement ; 
+use Filament\Tables\Enums\FiltersLayout;
 
 class ActionSignalementResource extends Resource
 {
     protected static ?string $model = ActionSignalement::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+
+    protected static ?string $navigationGroup = 'Administration';
 
     public static function form(Form $form): Form
     {
@@ -37,9 +41,10 @@ class ActionSignalementResource extends Resource
                 //
             ActionSignalementColumns::getColumns(), 
             )
-            ->filters([
+            ->filters(
                 //
-            ])
+                FiltersActionSignalement::getFilters(), layout: FiltersLayout::AboveContent
+            )
             ->actions([
                 Tables\Actions\EditAction::make(),
             ])
@@ -64,5 +69,10 @@ class ActionSignalementResource extends Resource
             'create' => Pages\CreateActionSignalement::route('/create'),
             'edit' => Pages\EditActionSignalement::route('/{record}/edit'),
         ];
+    }
+
+    public static function getNavigationBadge(): ?string
+    {
+        return static::getModel()::count(); 
     }
 }

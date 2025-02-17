@@ -9,14 +9,24 @@ class ActionSignalementColumns
 {
     public static function getColumns(): array {
         return [
-            TextColumn::make('motif')
+            TextColumn::make('motif.libelle')
+            ->searchable()
+            ->sortable()
             ->wrap(), 
-            TextColumn::make('question')
+            TextColumn::make('question.libelle')
             ->label('question libre')
             ->searchable()
-            ->wrap(), 
+            ->sortable()
+            ->wrap(),
+            TextColumn::make('user.nom')
+            ->label('Créé par')
+            ->searchable()
+            ->sortable()
+            ->wrap(),  
             TextColumn::make('created_at')
             ->label('Créé le')
+            ->searchable()
+            ->sortable()
             ->wrap(), 
         ] ; 
     }

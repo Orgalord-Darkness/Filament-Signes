@@ -10,4 +10,5 @@ class FilamentLogManager extends \FilipFonal\FilamentLogManager\FilamentLogManag
     {
         $panel->pages([Logs::class]);
     }
+    
 }
