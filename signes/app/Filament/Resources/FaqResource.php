@@ -19,6 +19,7 @@ use App\Filament\Resources\FaqResource\Pages\FiltersFaq;
 use Filament\Tables\Enums\FiltersLayout;
 use AlperenErsoy\FilamentExport\Actions\FilamentExportBulkAction; 
 use App\Filament\Resources\FaqResource\Pages\FaqFields ; 
+use App\Filament\Resources\FaqResource\Pages\FaqColumns ; 
 
 
 class FaqResource extends Resource
@@ -44,18 +45,7 @@ class FaqResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
-            ->columns([
-                //
-                Tables\Columns\TextColumn::make('catfaq.libelle')
-                    ->wrap()
-                    ->searchable()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('question')
-                    ->wrap()
-                    ->searchable()
-                    ->sortable(),
-
-            ])
+            ->columns(FaqColumns::getColumns())
             ->filters(  FiltersFaq::getFilters(), layout: FiltersLayout::AboveContent)
             ->actions([
                 Tables\Actions\EditAction::make(),

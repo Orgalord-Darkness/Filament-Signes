@@ -22,7 +22,8 @@ use Illuminate\Support\Facades\Hash;
 use AlperenErsoy\FilamentExport\Actions\FilamentExportBulkAction; 
 use Filament\Tables\Enums\FiltersLayout;
 use App\Filament\Resources\UserResource\Pages\FiltersUser;
-use App\Filament\Resources\UserResource\Pages\UserFields ;  
+use App\Filament\Resources\UserResource\Pages\UserFields ;
+use App\Filament\Resources\UserResource\Pages\UserColumns ;  
 
 
 class UserResource extends Resource
@@ -48,15 +49,7 @@ class UserResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
-            ->columns([
-                Tables\Columns\TextColumn::make('civilite'),
-                Tables\Columns\TextColumn::make('prenom')
-                ->searchable(),
-                Tables\Columns\TextColumn::make('nom'),
-                Tables\Columns\TextColumn::make('roles.name'),
-                Tables\Columns\TextColumn::make('secteur.libelle'),
-
-            ])
+            ->columns(UserColumns::getColumns())
             ->filters( FiltersUser::getFilters(), layout: FiltersLayout::AboveContent)
             ->actions([
                 Tables\Actions\EditAction::make(),

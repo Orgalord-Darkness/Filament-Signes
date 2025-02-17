@@ -18,6 +18,7 @@ use Filament\Tables\Enums\FiltersLayout;
 use AlperenErsoy\FilamentExport\Actions\FilamentExportBulkAction; 
 use Illuminate\Support\Facades\DB;
 use App\Filament\Resources\CatFaqResource\Pages\CatFaqFields ; 
+use App\Filament\Resources\CatFaqResource\Pages\CatFaqColumns ; 
 
 class CatFaqResource extends Resource
 {
@@ -42,20 +43,7 @@ class CatFaqResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
-            ->columns([
-                Tables\Columns\TextColumn::make('libelle')
-                ->wrap()
-                ->searchable()
-                ->sortable(),
-                
-                Tables\Columns\TextColumn::make('actif')
-                ->formatStateUsing(function ($state) {
-                    return $state ? 'Oui' : 'Non';
-                })
-                ->wrap()
-                ->searchable()
-                ->sortable(),
-            ])
+            ->columns(CatFaqColumns::getColumns())
             ->filters(
                 //
                 FiltersCatFaq::getFilters(), layout: FiltersLayout::AboveContent

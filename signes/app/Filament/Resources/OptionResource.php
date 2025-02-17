@@ -17,6 +17,7 @@ use App\Filament\Resources\OptionResource\Pages\FiltersOption;
 use Filament\Tables\Enums\FiltersLayout;
 use AlperenErsoy\FilamentExport\Actions\FilamentExportBulkAction; 
 use App\Filament\Resources\OptionResource\Pages\OptionFields ; 
+use App\Filament\Resources\OptionResource\Pages\OptionColumns ; 
 
 class OptionResource extends Resource
 {
@@ -40,32 +41,7 @@ class OptionResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
-            ->columns([
-                Tables\Columns\TextColumn::make('section.libelle')
-                ->wrap()
-                ->sortable()
-                ->searchable(),
-                Tables\Columns\TextColumn::make('rubrique.libelle')
-                ->wrap()
-                ->sortable()
-                ->searchable(),
-                Tables\Columns\TextColumn::make('libelle')
-                ->wrap()
-                ->sortable()
-                ->searchable(),
-                Tables\Columns\TextColumn::make('ordre')
-                ->wrap()
-                ->sortable()
-                ->searchable(),
-                Tables\Columns\TextColumn::make('actif')
-                ->formatStateUsing(function ($state) {
-                    return $state ? 'Oui' : 'Non';
-                })
-                ->wrap()
-                ->searchable()
-                ->sortable(),
-
-            ])
+            ->columns(OptionColumns::getColumns())
             // ->filters(
             //     //
             //     FiltersOption::getFilters(), layout: FiltersLayout::AboveContent

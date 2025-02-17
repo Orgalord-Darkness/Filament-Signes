@@ -4,6 +4,7 @@ namespace App\Filament\Resources\ActionSignalementResource\Pages ;
 
 use App\Enums\SignalementEtatEnum ; 
 use Filament\Tables\Columns\TextColumn ; 
+use Filament\Tables ; 
 
 class ActionSignalementColumns 
 {

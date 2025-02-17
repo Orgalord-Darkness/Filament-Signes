@@ -15,7 +15,8 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\SecteurResource\Pages\FiltersSecteur; 
 use Filament\Tables\Enums\FiltersLayout;
 use AlperenErsoy\FilamentExport\Actions\FilamentExportBulkAction;
-use App\Filament\Resources\SecteurResource\Pages\SecteurFields ;  
+use App\Filament\Resources\SecteurResource\Pages\SecteurFields ;
+use App\Filament\Resources\SecteurResource\Pages\SecteurColumns ;  
 
 class SecteurResource extends Resource
 {
@@ -53,33 +54,7 @@ class SecteurResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
-        ->columns([
-            //
-            Tables\Columns\TextColumn::make('libelle')
-            ->searchable()
-            ->wrap()
-            ->sortable(),
-
-            Tables\Columns\TextColumn::make('email')
-            ->searchable()
-            ->wrap()
-            ->sortable(),
-            
-            Tables\Columns\TextColumn::make('email2')
-            ->searchable()
-            ->wrap()
-            ->sortable(),
-
-            Tables\Columns\TextColumn::make('delai_relance')
-            ->searchable()
-            ->wrap()
-            ->sortable(),
-
-            Tables\Columns\TextColumn::make('responsable.nom')
-            ->searchable()
-            ->wrap()
-            ->sortable(),
-        ])
+        ->columns(SecteurColumns::getColumns())
             ->filters( FiltersSecteur::getFilters(), layout: FiltersLayout::AboveContent)
             ->actions([
                 Tables\Actions\EditAction::make(),

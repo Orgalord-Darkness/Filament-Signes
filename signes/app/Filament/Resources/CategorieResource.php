@@ -22,7 +22,7 @@ use Filament\Tables\Actions\DeleteAction ;
 use Filament\Tables\Actions\RestoreAction;
 use Filament\Forms\Components\Grid ; 
 use App\Filament\Resources\CategorieResource\Pages\CategorieFields;
-use App\Filament\Resources\SignalementResource\Pages\SignalementFields ; 
+use App\Filament\Resources\CategorieResource\Pages\CategorieColumns; 
 
 class CategorieResource extends Resource
 {
@@ -49,26 +49,7 @@ class CategorieResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
-            ->columns([
-                Tables\Columns\TextColumn::make('libelle')
-                    ->wrap()
-                    ->searchable()
-                    ->sortable(),
-                Tables\Columns\ToggleColumn::make('actif')
-                    ->onColor('success')
-                    ->offColor('danger')
-                    //->onIcon('heroicon-s-check')
-                    //->offIcon('heroicon-s-x')
-                    ->toggleable()
-                    ->searchable()
-                    ->sortable()
-                    ->afterStateUpdated(function ($record, $state) {
-                        $record->update(['is_active' => $state]);
-                    }),
-                    // ->formatStateUsing(function ($state) {
-                    //     return $state ? 'Oui' : 'Non';
-                    // }),
-            ])
+            ->columns(CategorieColumns::getColumns())
             ->filters(
                 //
                 FiltersCategorie::getFilters(), layout: FiltersLayout::AboveContent

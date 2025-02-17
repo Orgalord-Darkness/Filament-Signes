@@ -16,7 +16,9 @@ use Filament\Forms\Components\Select ;
 use Filament\Forms\Components\CheckBox;
 use App\Repositories\CommuneRepository; 
 use AlperenErsoy\FilamentExport\Actions\FilamentExportBulkAction; 
-use App\Filament\Resources\EtablissementResource\Pages\EtablissementFields ; 
+use App\Filament\Resources\EtablissementResource\Pages\EtablissementFields ;
+use App\Filament\Resources\EtablissementResource\Pages\EtablissementColumns ; 
+use App\Filament\Resources\EtablissementResource\Pages\EtablissementFilters ; 
 
 class EtablissementResource extends Resource
 {
@@ -38,18 +40,8 @@ class EtablissementResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
-            ->columns([
-                Tables\Columns\TextColumn::make('nom'),
-                Tables\Columns\TextColumn::make('secteur.libelle'),
-                Tables\Columns\TextColumn::make('categorie.code'),
-                Tables\Columns\TextColumn::make('statut'),
-                Tables\Columns\TextColumn::make('type'),
-                Tables\Columns\TextColumn::make('competence'),
-                Tables\Columns\TextColumn::make('commune_id'),
-            ])
-            ->filters([
-                //
-            ])
+            ->columns(EtablissementColumns::getColumns())
+            ->filters(EtablissementFilters::getFilters())
             ->actions([
                 Tables\Actions\EditAction::make(),
             ])
