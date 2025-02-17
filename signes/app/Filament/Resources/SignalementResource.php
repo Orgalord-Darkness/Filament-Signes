@@ -167,14 +167,14 @@ class SignalementResource extends Resource
                     {
                         if($ligne['signalement_id'] == $record->id)
                         {
-                            $action_id = $ligne['id'] ; 
+                            $action_id = $ligne['signalement_id'] ; 
                             $list[] = $action_id ;
                             
                         }
                     }
                     if(!empty($list) == true){
                         for($ind=0 ; $ind < count($list) ; $ind++){
-                            $url = '/admin/action-signalements?tableFilters[id][id]='.$action_id  ;
+                            $url = '/admin/action-signalements?tableFilters[Signalement][value]='.$action_id  ;
                             $n = $ind+1 ; 
                             //return "Nb:".count($list)."<a style='font-size:14px;' class='warning'href='$url'>Action N°".$n."</a>" ; Version avec nombre total d'actions 
                             return "<a style='font-size:14px;' class='text-center warning'href='$url'>Action N°".$n."</a>" ; 
