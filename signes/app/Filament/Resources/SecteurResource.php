@@ -57,7 +57,10 @@ class SecteurResource extends Resource
         ->columns(SecteurColumns::getColumns())
             ->filters( FiltersSecteur::getFilters(), layout: FiltersLayout::AboveContent)
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\EditAction::make()
+                ->label('modifier'),
+                Tables\Actions\DeleteAction::make()
+                ->label('supprimer'),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

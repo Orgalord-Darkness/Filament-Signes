@@ -22,14 +22,29 @@ class FiltersCategorie
                 return $query
                 ->when($data['libelle'], fn (Builder $query, $libelle): Builder => $query->where('libelle',$libelle)); 
             }), 
-            Filter::make('actif')
+            // Filter::make('actif')
+            // ->form([
+            //     CheckBox::make('actif')->label('Actif : ')
+            // ])
+            // ->query(function (Builder $query, array $data): Builder {
+            //     return $query
+            //     ->when($data['actif'], fn (Builder $query, $actif): Builder => $query->where('actif',$actif)); 
+            // }), 
+            Filter::make('code')
             ->form([
-                CheckBox::make('actif')->label('Actif : ')
+                TextInput::make('code')->label('Code : ')
             ])
             ->query(function (Builder $query, array $data): Builder {
                 return $query
-                ->when($data['actif'], fn (Builder $query, $actif): Builder => $query->where('actif',$actif)); 
+                ->when($data['code'], fn (Builder $query, $code): Builder => $query->where('code',$code)); 
             }), 
+
+            SelectFilter::make('actif')
+                ->options([
+                    '1' => 'Actif',
+                    '0' => 'Inactif',
+                ])
+                ->default(null), // Afficher tous les employés par défaut
         ];
     }
 }

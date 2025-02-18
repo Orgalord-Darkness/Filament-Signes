@@ -50,7 +50,12 @@ class CatFaqResource extends Resource
             )
             ->actions([
                 Tables\Actions\EditAction::make()
-                ->visible(fn (CatFaq $record): bool => !$record->actif),
+                ->label('modifier')
+                //->visible(fn (CatFaq $record): bool => !$record->actif)
+                ,
+
+                Tables\Actions\DeleteAction::make()
+                ->label('supprimer'),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

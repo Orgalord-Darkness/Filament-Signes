@@ -48,7 +48,10 @@ class FaqResource extends Resource
             ->columns(FaqColumns::getColumns())
             ->filters(  FiltersFaq::getFilters(), layout: FiltersLayout::AboveContent)
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\EditAction::make()
+                ->label('modifier'),
+                Tables\Actions\DeleteAction::make()
+                ->label('supprimer'),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

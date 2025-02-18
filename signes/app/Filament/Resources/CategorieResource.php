@@ -43,6 +43,7 @@ class CategorieResource extends Resource
     {
         return $form->schema([
             CategorieFields::getFields()->columns(1), 
+
         ]);
     }
 
@@ -56,17 +57,17 @@ class CategorieResource extends Resource
             )
             ->actions([
                 EditAction::make()
-                    ->visible(fn (Categorie $record): bool => !$record->deleted_at),
-
-                Tables\Actions\Action::make('actif')->label('Désactivé')
-                ->icon('heroicon-o-archive-box-x-mark')
-                ->modalHeading('Désactivé'.' une Catégorie')
-                ->successNotificationTitle('Catégorie '.'Désactivé')
-                ->action(function($record) {
-                    $record->update([
-                        'confirme' => 0, 
-                    ]);
-                }),
+                    ->visible(fn (Categorie $record): bool => !$record->deleted_at)
+                    ->label('modifier'), 
+                // Tables\Actions\Action::make('actif')->label('Désactivé')
+                // ->icon('heroicon-o-archive-box-x-mark')
+                // ->modalHeading('Désactivé'.' une Catégorie')
+                // ->successNotificationTitle('Catégorie '.'Désactivé')
+                // ->action(function($record) {
+                //     $record->update([
+                //         'confirme' => 0, 
+                //     ]);
+                // }),
                 DeleteAction::make()->label('SUPPRIMER')
                     ->icon('heroicon-o-archive-box-x-mark')
                     ->modalHeading('SUPPRIMER'.' une Catégorie')
@@ -108,4 +109,13 @@ class CategorieResource extends Resource
     {
         return static::getModel()::count(); 
     }
+
+    public static function query(): Builder
+    {
+        $query = parent::query()->where('actif', 1)->orWhere('actif', 0);
+        dd($query->get()); // Affiche les résultats de la requête pour débogage
+        return $query;
+    }
+
+    
 }

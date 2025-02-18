@@ -97,4 +97,9 @@ class SignalementResource extends Resource
     {
         return static::getModel()::count(); 
     }
+
+    public static function getModel(): string
+    {
+        return Signalement::class;
+    }
 }

@@ -22,6 +22,7 @@ class CategorieFields
                 Forms\Components\TextInput::make('libelle')->required(),
                 CheckBox::make('actif')
                     ->label('Actif')
+                    ->default(0)
                     ->required(), 
                 ])
             ]);

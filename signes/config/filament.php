@@ -87,11 +87,6 @@ return [
     'livewire_loading_delay' => 'default',
 
     'locales' => [
-        'en' => [
-            'name' => 'English',
-            'native' => 'English',
-            'flag_code' => 'us',
-        ],
         'fr' => [
             'name' => 'French',
             'native' => 'français',
@@ -100,7 +95,7 @@ return [
         // Ajoutez d'autres langues ici
     ],
 
-    'default_locale' => 'en', // Langue par défaut
+    'default_locale' => 'fr', // Langue par défaut
     'switcher_position' => 'topbar', // Position du sélecteur de langue
 
 ];
