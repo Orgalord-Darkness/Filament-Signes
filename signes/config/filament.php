@@ -31,6 +31,7 @@ return [
 
     ],
 
+    'brand' => 'Signes', 
     /*
     |--------------------------------------------------------------------------
     | Default Filesystem Disk
@@ -95,10 +96,9 @@ return [
             'native' => 'français',
             'flag_code' => 'fr',
         ],
-        'en' => ['name' => 'English', 'native' => 'English'],
-        // Ajoutez d'autres langues ici
     ],
 
+    'locale' => 'fr', 
     'default_locale' => 'fr', // Langue par défaut
     //'switcher_position' => 'topbar', // Position du sélecteur de langue
 

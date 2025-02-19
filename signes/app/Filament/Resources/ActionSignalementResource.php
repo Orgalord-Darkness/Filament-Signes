@@ -14,7 +14,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\ActionSignalementResource\Pages\ActionSignalementColumns; 
 use App\Filament\Resources\ActionSignalementResource\Pages\ActionSignalementFields; 
-use App\Filament\Resources\ActionSignalementResource\Pages\FiltersActionSignalement ; 
+//use App\Filament\Resources\ActionSignalementResource\Pages\FiltersActionSignalement ; 
 use Filament\Tables\Enums\FiltersLayout;
 
 class ActionSignalementResource extends Resource
@@ -41,10 +41,8 @@ class ActionSignalementResource extends Resource
                 //
             ActionSignalementColumns::getColumns(), 
             )
-            ->filters(
-                //
-                FiltersActionSignalement::getFilters(), layout: FiltersLayout::AboveContent
-            )
+            ->filters([//FiltersActionSignalement::getFilters(), layout: FiltersLayout::AboveContent
+            ])
             ->actions([
                 Tables\Actions\EditAction::make()
                 ->label('modifier'),
