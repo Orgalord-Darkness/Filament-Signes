@@ -71,6 +71,12 @@
             "dont-discover": []
         }
     },
+    "repositories": [
+        {
+            "type": "path",
+            "url": "filament-language-switch"
+        }
+    ],
     "config": {
         "optimize-autoloader": true,
         "preferred-install": "dist",

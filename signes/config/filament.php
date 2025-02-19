@@ -83,6 +83,9 @@ return [
     | Livewire's standard 200ms delay.
     |
     */
+    'carbon' => true, 
+
+    'native' => true, 
 
     'livewire_loading_delay' => 'default',
 
@@ -92,10 +95,11 @@ return [
             'native' => 'français',
             'flag_code' => 'fr',
         ],
+        'en' => ['name' => 'English', 'native' => 'English'],
         // Ajoutez d'autres langues ici
     ],
 
     'default_locale' => 'fr', // Langue par défaut
-    'switcher_position' => 'topbar', // Position du sélecteur de langue
+    //'switcher_position' => 'topbar', // Position du sélecteur de langue
 
 ];
