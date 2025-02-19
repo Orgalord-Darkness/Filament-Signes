@@ -17,16 +17,19 @@ class SecteurColumns
             ->sortable(),
 
             Tables\Columns\TextColumn::make('email')
+            ->label('1er Courriel')
             ->searchable()
             ->wrap()
             ->sortable(),
             
             Tables\Columns\TextColumn::make('email2')
+            ->label('2eme Courriel')
             ->searchable()
             ->wrap()
             ->sortable(),
 
             Tables\Columns\TextColumn::make('delai_relance')
+            ->label('Délai de Relance')
             ->searchable()
             ->wrap()
             ->sortable(),

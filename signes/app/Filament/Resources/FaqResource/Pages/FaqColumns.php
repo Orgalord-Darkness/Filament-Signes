@@ -12,6 +12,7 @@ class FaqColumns
         return [
             //
             Tables\Columns\TextColumn::make('catfaq.libelle')
+                ->label('Catégorie')
                 ->wrap()
                 ->searchable()
                 ->sortable(),
