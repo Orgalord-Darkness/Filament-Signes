@@ -48,9 +48,10 @@ class CategorieResource extends Resource
     }
 
     public static function table(Table $table): Table
-    {
+    { 
         return $table
-            ->columns(CategorieColumns::getColumns())
+            ->columns(
+                CategorieColumns::getColumns())
             ->filters(
                 //
                 FiltersCategorie::getFilters(), layout: FiltersLayout::AboveContent
