@@ -32,6 +32,9 @@ return [
     ],
 
     'brand' => 'Signes', 
+
+    'name' => env('APP_NAME', 'Signes'),
+
     /*
     |--------------------------------------------------------------------------
     | Default Filesystem Disk
