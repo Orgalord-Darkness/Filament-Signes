@@ -22,4 +22,18 @@ class Section extends Model
         parent::boot();
         static::addGlobalScope(new OrderScope(['libelle']));
     }
+
+    public static function getAutre()
+    {
+        $id = null ; 
+        $sections = Section::all() ; 
+        foreach($sections as $ligne)
+        {
+            if($ligne['libelle'] === 'Autre')
+            {
+                $id = $ligne['id'] ; 
+            }
+        }
+        return $id ; 
+    }
 }

@@ -28,6 +28,10 @@ use App\Models\Option ;
 
 class SignalementFields
 {
+    protected function getAutre($champ, $get): bool 
+    {
+        return in_array('Autre', $get($champ, [])) ; 
+    }
     public static function getFields()
     {
         return Fieldset::make('SIGNALEMENT')->schema([
@@ -45,6 +49,7 @@ class SignalementFields
                         Forms\Components\DateTimePicker::make('date_evenement')
                         ->label('Date et heure de l\'évenement')
                         ->default(Carbon::now()->toDateTimeString())
+                        ->helperText('Si cette date n\'est pas connue, merci de saisir la date et heure du signalement')
                         ->required(),
                     ]),
 
@@ -114,16 +119,6 @@ class SignalementFields
                     ]),
                     Forms\Components\Grid::make(3)
                     ->schema([
-                        Forms\Components\TextInput::make('email')
-                        ->label('Courriel')
-                        ->email()
-                        ->default(Auth::user()->email)
-                        ->required(),
-
-                        Forms\Components\TextInput::make('tel')
-                        ->numeric()
-                        ->required(),
-
                         Forms\Components\Select::make('fonction_id')
                         ->label('Fonction')
                         ->relationship('fonction','libelle', function ($query) { 
@@ -138,12 +133,20 @@ class SignalementFields
                             $query->where('section_id',$id); 
                         })  
                         ->required(),
+
+                        Forms\Components\TextInput::make('email')
+                        ->label('Courriel')
+                        ->email()
+                        ->default(Auth::user()->email)
+                        ->required(),
+
+                        Forms\Components\TextInput::make('tel')
+                        ->label('Téléphone')
+                        ->numeric()
+                        ->required(),
                     ]),
                                     
-                    Forms\Components\Select::make('user_id')
-                    ->relationship('user','nom')
-                    ->default(Auth::user()->id)
-                    ->required(),
+                    
                     Forms\Components\Toggle::make('ars_info')
                     ->label('Agence Régionale de Santé')
                     ->default(false),
@@ -187,22 +190,34 @@ class SignalementFields
                         $query->where('section_id',$id);
                         $query->orderBy('ordre','asc'); 
                     })
-                    ->afterStateUpdated(function (callable $set, callable $get) 
-                        {
-                            $rubriqueId = $get('rubrique_id');
-                            if ($rubriqueId) {
-                                $sectionId = Rubrique::find($rubriqueId)->section_id;
-                                $set('nature1_id', $sectionId);
+                    ->afterStateUpdated(function ($state, callable $set, callable $get) 
+                    {
+                         $rubriqueId = $get('rubrique_id');
+                        if ($rubriqueId) {
+                            $sectionId = Rubrique::find($rubriqueId)->section_id;
+                            $set('nature1_id', $sectionId);
+                        }
+
+                        $rubriques = Rubrique::all();
+                        $id_autre = null ; 
+                        foreach($rubriques as $ligne){
+                            if($ligne['libelle'] == '13-Autre'){
+                                $id_autre = $ligne['id'] ; 
                             }
-                        })
+                        }
+                        if ($state == $id_autre) {
+                            $set('nature1_inter', 'Autre'); 
+                        }
+                    })
                     ->reactive()
                     ->required(),
 
                     Forms\Components\Select::make('nature1_id')
                     ->label('Nature des Faits principale')
                     ->required()
-                    ->relationship('nature1','libelle', function ($query) { 
+                    ->relationship('nature1','libelle', function ($query, callable $get) { 
                         $id = 1 ; 
+                        $rub = $get('rub_nature1_id') ; 
                         $sections = Section::all(); 
                         foreach($sections as $ligne){
                             if($ligne['libelle'] == 'Nature des Faits'){
@@ -210,13 +225,17 @@ class SignalementFields
                                 break ; 
                             }
                         }
-                        $query->where('section_id',$id); 
+                        $query->where('section_id',$id)
+                        ->where('rubrique_id',$rub); 
                     }),
 
-                    Forms\Components\TextArea::make('nature1_autre'),
+                    Hidden::make('nature1_inter'), 
+                    Forms\Components\TextArea::make('nature1_autre')
+                    ->label('Si Autre, précisez')
+                    ->visible(fn ($get) => $get('nature1_inter') === 'Autre' ),  
 
-                    Forms\Components\Select::make('rub_nature2_id')//ne passe pas 
-                    ->default(1)
+                    Forms\Components\Select::make('rub_nature2_id')
+                    ->label('Catégorie Natire des Faits secondaire')
                     ->reactive()
                     ->relationship('rub_nature2', 'libelle',function ($query) { 
                         $id = 1 ; 
@@ -229,13 +248,53 @@ class SignalementFields
                         }
                         $query->where('section_id',$id);
                         $query->orderBy('ordre','asc'); 
-                    }),
-                    Forms\Components\Select::make('nature2_id')//ne passe pas 
-                    ->default(1)
-                    ->relationship('nature2','libelle'), 
-                    Forms\Components\TextArea::make('nature2_autre'),
+                    })
+                    ->afterStateUpdated(function ($state, callable $set, callable $get) 
+                    {
+                         $rubriqueId = $get('rubrique_id');
+                        if ($rubriqueId) {
+                            $sectionId = Rubrique::find($rubriqueId)->section_id;
+                            $set('nature1_id', $sectionId);
+                        }
 
-                    Forms\Components\TextArea::make('description'),
+                        $rubriques = Rubrique::all();
+                        $id_autre = null ; 
+                        foreach($rubriques as $ligne){
+                            if($ligne['libelle'] == '13-Autre'){
+                                $id_autre = $ligne['id'] ; 
+                            }
+                        }
+                        if ($state == $id_autre) {
+                            $set('nature2_inter', 'Autre'); 
+                        }
+                    }),
+
+                    Hidden::make('nature2_inter'), 
+
+                    Forms\Components\Select::make('nature2_id')
+                    ->label('Nature des Faits secondaire')
+                    ->relationship('nature2','libelle', function ($query, callable $get) { 
+                        $id = 1 ; 
+                        $rub = $get('rub_nature2_id') ; 
+                        $sections = Section::all(); 
+                        foreach($sections as $ligne){
+                            if($ligne['libelle'] == 'Nature des Faits'){
+                                $id = $ligne['id'];
+                                break ; 
+                            }
+                        }
+                        $query->where('section_id',$id)
+                        ->where('rubrique_id',$rub); 
+                    }), 
+
+                    Forms\Components\TextArea::make('nature2_autre')
+                    ->label('Si Autre, précisez')
+                    ->visible(fn ($get) => $get('nature2_inter') === 'Autre'),
+
+                    Forms\Components\TextArea::make('description')
+                    ->label('Description des circonstances et déroulement des faits')
+                    ->helperText('Les informations saisies dans ce champ sont confidentielles')
+                    ->required(), 
 
                     Forms\Components\Grid::make(3)
                     ->schema([
@@ -264,7 +323,7 @@ class SignalementFields
 
                     Forms\Components\Grid::make(2)
                     ->schema([
-                        Forms\Components\Radio::make('victimes_pec')
+                        Forms\Components\Select::make('victimes_pec')
                         ->label('Nombre de victimes prises en charge')
                         ->options([
                             'Aucune' => 'Aucune',
@@ -277,8 +336,8 @@ class SignalementFields
                         ])
                         ->required(),
 
-                        Forms\Components\Radio::make('perex_pec')
-                        ->label('Nombre de personnes prises en charge exposées')//marche pas 
+                        Forms\Components\Select::make('perex_pec')
+                        ->label('Nombre de personnes prises en charge exposées')
                         ->options([
                             'Aucune' => 'Aucune',
                             'Une' => 'Une',
@@ -290,7 +349,7 @@ class SignalementFields
                         ]),
                     ]),
 
-                    Forms\Components\Grid::make(2)
+                    Forms\Components\Select::make(2)
                     ->schema([
                         Forms\Components\Radio::make('victimes_pro')
                         ->label('Nombre de victimes professionnels')
@@ -305,8 +364,8 @@ class SignalementFields
                         ])
                         ->required(),
 
-                        Forms\Components\Radio::make('perex_pro')
-                        ->label('Nombre de professionnels exposées')// marche pas
+                        Forms\Components\Select::make('perex_pro')
+                        ->label('Nombre de professionnels exposées')
                         ->options([
                             'Aucune' => 'Aucune',
                             'Une' => 'Une',
@@ -320,7 +379,7 @@ class SignalementFields
                     
                     Forms\Components\Grid::make(2)
                     ->schema([
-                        Forms\Components\Radio::make('victimes_autre')
+                        Forms\Components\Select::make('victimes_autre')
                         ->label('Nombre de victimes autre')
                         ->options([
                             'Aucune' => 'Aucune',
@@ -333,7 +392,7 @@ class SignalementFields
                         ])
                         ->required(),
 
-                        Forms\Components\Radio::make('perex_autre')
+                        Forms\Components\Select::make('perex_autre')
                         ->label('Nombre de professionnels exposées autre') //marche pas 
                         ->options([
                             'Aucune' => 'Aucune',
@@ -407,9 +466,10 @@ class SignalementFields
                         ->visible(fn ($get) => $get('consequence3') === 'Autre'),
                     ]),
                     
-                    Forms\Components\Grid::make()
+                    Forms\Components\Grid::make('Demande d\'intervention des secours')
                     ->schema([
                         Forms\Components\Select::make('secours_id')
+                        ->label('Demande d\'intervention des secours' )
                         ->relationship('secours','libelle', function ($query) { 
                             $id = 1 ; 
                             $sections = Section::all(); 
@@ -435,7 +495,7 @@ class SignalementFields
                             }
                             if ($state == $id_autre) {
                                 $set('inter_secours_autre', 'Autre');
-                                logger()->info('Test'); 
+                                // logger()->info('Test'); 
                             }
                             if ($state == $id_non) {
                                 $set('inter_secours_non', 'Non');
@@ -443,11 +503,13 @@ class SignalementFields
                         })
                         ->reactive()
                         ->required(),
+
                         Hidden::make('inter_secours_non')->reactive(), 
                         Hidden::make('inter_secours_autre')->reactive()
-                        ->afterStateUpdated(function ($state, callable $set, callable $get) {
-                            logger()->info('inter_secours_autre : '.$state) ; 
-                        }),
+                        // ->afterStateUpdated(function ($state, callable $set, callable $get) {
+                        //     logger()->info('inter_secours_autre : '.$state) ; 
+                        // })
+                        ,
                         Forms\Components\TextInput::make('secours_non')
                         ->label('Si Non, précisez')
                         ->visible(fn ($get) => $get('inter_secours_non') === 'Non'),
@@ -456,38 +518,44 @@ class SignalementFields
                         ->label('Si Autre, précisez')
                         ->visible(fn ($get) => $get('inter_secours_autre') === 'Autre'),
 
-                    ]),
-                    Forms\Components\CheckBox::make('secours_ide')
-                    ->label('IDE (Infirmière Diplômée d\'Etat')
-                    ->default(false)
-                    ->required(),
+                    ])->columns(2),
 
-                    Forms\Components\CheckBox::make('secours_medecin')
-                    ->label('Médecin')
-                    ->default(false)
-                    ->required(),
+                    Grid::make('Liste des secours')
+                    ->schema([
+                        Forms\Components\CheckBox::make('secours_ide')
+                        ->label('IDE (Infirmière Diplômée d\'Etat')
+                        ->default(false)
+                        ->required(),
 
-                    Forms\Components\CheckBox::make('secours_medecin2')
-                    ->label('Médecin traitant')
-                    ->default(false)
-                    ->required(),
+                        Forms\Components\CheckBox::make('secours_medecin')
+                        ->label('Médecin')
+                        ->default(false)
+                        ->required(),
 
-                    Forms\Components\CheckBox::make('secours_police')
-                    ->label('Police')
-                    ->default(false)
-                    ->required(),
+                        Forms\Components\CheckBox::make('secours_medecin2')
+                        ->label('Médecin traitant')
+                        ->default(false)
+                        ->required(),
 
-                    Forms\Components\CheckBox::make('secours_samu')
-                    ->label('SAMU')
-                    ->default(false)
-                    ->required(),
+                        Forms\Components\CheckBox::make('secours_police')
+                        ->label('Police')
+                        ->default(false)
+                        ->required(),
 
-                    Forms\Components\CheckBox
-                    ::make('secours_pompiers')
-                    ->label('Pompiers')
-                    ->default(false)
-                    ->required(),
+                        Forms\Components\CheckBox::make('secours_samu')
+                        ->label('SAMU')
+                        ->default(false)
+                        ->required(),
 
+                        Forms\Components\CheckBox
+                        ::make('secours_pompiers')
+                        ->label('Pompiers')
+                        ->default(false)
+                        ->required(),
+                    ])->columns(5),
+
+                    Grid::make('Mesures immédiates prises par l\'établissement')
+                    ->schema([
                     Forms\Components\TextArea::make('mesure1')
                     ->label('Pour protéger, accompagner ou soutenir les victimes ou personnes exposées - Les informations saisies dans ce champ sont confidentielles'),
 
@@ -496,7 +564,7 @@ class SignalementFields
                     
                     Forms\Components\TextArea::make('mesure3')
                     ->label('A l\'égard des autres personnes prises en carge ou du personnel, le cas échéant - Les informations saisies dans ce champ sont confidentielles'),
-                    
+                    ])->columns(2), 
                     Forms\Components\CheckBox::make('mesure3_info')
                     ->label(
                         'Information à l\'ensemble du personnel' 
@@ -511,7 +579,7 @@ class SignalementFields
                     ->label(
                         'Réunion entre la direction et l\'équipe concernée' 
                     ),
-                ]),
+                ])->columns(5),
         Tab::make('Information-Dispositions')
             ->schema([
                 Grid::make()
@@ -526,8 +594,14 @@ class SignalementFields
                     ])
                     ->reactive()
                     ->required(),
-                    
-                    Forms\Components\TextInput::make('plus_information'),
+
+                    Forms\Components\TextInput::make('information_autre')
+                    ->label('Si Autre, précisez')
+                    ->visible(fn ($get)=>$get('information') === 'Autre' ),
+
+                    Forms\Components\TextInput::make('information_plus')
+                    ->label('Si Oui, précisez')
+                    ->visible(fn ($get)=>$get('information') === 'Oui' ),
 
                     Forms\Components\TextInput::make('information_non')
                     ->label('Si Non, précisez')
@@ -536,8 +610,29 @@ class SignalementFields
                     Forms\Components\TextInput::make('information_autre')
                     ->label('Si Autre, précisez')
                     ->visible(fn ($get)=>$get('information') === 'Autre' ),
+                    ]), 
+                    Grid::make('Destinataire')
+                    ->schema([
+                    Forms\Components\Select::make('destinataire_signalement')
+                    ->options([
+                        'CVS' => 'CVS ou groupe d\'expression', 
+                        'DAC' => 'DAC (Dispositif d\'Appui à la Coordination', 
+                        'Famille et proches' => 'Famille et proches', 
+                        'Les Points Conseils' => 'Les Points Conseils (du Département)', 
+                        'Personnes concernées' => 'Personnes concernées', 
+                        'Professionnels' => 'Professionnels', 
+                        'Responsable légal' => 'Responsable légal', 
+                        'Autre' => 'Autre', 
+                    ])
+                    ->reactive()
+                    ->multiple()
+                    ->label('Destinataire'),
+
+                    Forms\Components\TextInput::make('destinataire_autre')
+                    ->label('Si Autre destinataire, précisez')
+                    ->visible(fn ($get) => in_array('Autre', $get('destinataire_signalement') ?? [])),
                 
-                ]),
+                ])->columns(2),
                 
                 Grid::make()
                 ->schema([
