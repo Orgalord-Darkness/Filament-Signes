@@ -43,6 +43,11 @@ class Etablissement extends ActiveBaseModel
         return $this->belongsTo(User::class);
     }
 
+    public function signalements()
+     {
+        return $this->toMany(Signalement::class) ; 
+     }
+
     /*
     |--------------------------------------------------------------------------
     | SETTERS
