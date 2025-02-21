@@ -25,7 +25,7 @@ class RoleResource extends Resource
 
     protected static ?string $pluralLabel = 'Rôles';
 
-    protected static ?string $label = 'Un rôle';
+    protected static ?string $label = 'un rôle';
 
     protected static ?int $navigationSort = 1 ;
 

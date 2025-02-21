@@ -25,6 +25,10 @@ class ActionSignalementResource extends Resource
 
     protected static ?string $navigationGroup = 'Gestion';
 
+    protected static ?string $pluralLabel = 'Actions Signalement';
+
+    protected static ?string $label = 'une action de signalement' ; 
+
     protected static ?int $navigationSort = 2 ;
 
     public static function form(Form $form): Form

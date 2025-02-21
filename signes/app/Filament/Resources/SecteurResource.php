@@ -26,6 +26,10 @@ class SecteurResource extends Resource
 
     protected static ?string $navigationGroup = 'Administration';
 
+    protected static ?string $pluralLabel = 'Secteurs';
+
+    protected static ?string $label = 'un secteur' ; 
+
     protected static ?int $navigationSort = 4 ;
 
     public static function form(Form $form): Form

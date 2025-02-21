@@ -42,7 +42,11 @@ class SignalementResource extends Resource
 
     protected static ?string $navigationGroup = 'Gestion';
 
-     protected static ?int $navigationSort = 1 ;
+    protected static ?string $pluralLabel = 'Signalements';
+
+    protected static ?string $label = 'un signalement' ; 
+
+    protected static ?int $navigationSort = 1 ;
 
     public static function form(Form $form): Form
     {

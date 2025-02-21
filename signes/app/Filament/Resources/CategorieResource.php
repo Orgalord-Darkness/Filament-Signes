@@ -34,7 +34,7 @@ class CategorieResource extends Resource
     protected static ?string $navigationLabel = 'Catégories Etablissements';
 
     protected static ?string $pluralLabel = 'Categories';
-    protected static ?string $label = 'Une Catégorie';
+    protected static ?string $label = 'une catégorie';
 
     protected static ?string $navigationGroup = 'Administration';
     

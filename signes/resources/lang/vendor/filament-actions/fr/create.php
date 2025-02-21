@@ -4,16 +4,16 @@ return [
 
     'single' => [
 
-        'label' => 'Créer',
+        'label' => 'Ajouter :label',
 
         'modal' => [
 
-            'heading' => 'Créer :label',
+            'heading' => 'Ajouter :label',
 
             'actions' => [
 
                 'create' => [
-                    'label' => 'Créer',
+                    'label' => 'Ajouter',
                 ],
 
                 'create_another' => [
@@ -27,7 +27,7 @@ return [
         'notifications' => [
 
             'created' => [
-                'title' => 'Créé(e)',
+                'title' => 'Ajouté(e)',
             ],
 
         ],

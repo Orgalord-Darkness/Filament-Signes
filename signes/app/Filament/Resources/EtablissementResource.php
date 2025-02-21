@@ -28,6 +28,10 @@ class EtablissementResource extends Resource
 
     protected static ?string $navigationGroup = 'Administration';
 
+    protected static ?string $pluralLabel = 'Etablissements';
+
+    protected static ?string $label = 'un établissement' ; 
+
     protected static ?int $navigationSort = 1 ;
 
     public static function form(Form $form): Form

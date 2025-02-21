@@ -27,6 +27,10 @@ class OptionResource extends Resource
 
     protected static ?string $navigationGroup = 'Administration';
 
+    protected static ?string $pluralLabel = 'Paramètres';
+
+    protected static ?string $label = 'un paramètre' ; 
+
     protected static ?int $navigationSort = 5 ;
 
     // Définir le label de navigation

@@ -33,6 +33,10 @@ class FaqResource extends Resource
 
     protected static ?string $navigationGroup = 'Gestion';
 
+    protected static ?string $pluralLabel = 'Aides en ligne';
+
+    protected static ?string $label = 'une aide en ligne' ; 
+
     protected static ?int $navigationSort = 3 ;
 
     public static function form(Form $form): Form
