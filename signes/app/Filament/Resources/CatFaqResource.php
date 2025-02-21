@@ -29,6 +29,10 @@ class CatFaqResource extends Resource
     // Définir le label de navigation
     protected static ?string $navigationLabel = 'Catégories Aide en ligne';
 
+    protected static ?string $pluralLabel = 'Catégories aide en ligne';
+
+    protected static ?string $label = 'une catégorie d\'aide en ligne';
+
     protected static ?string $navigationGroup = 'Administration';
 
     protected static ?int $navigationSort = 6 ;

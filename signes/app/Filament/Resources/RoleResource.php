@@ -67,4 +67,10 @@ class RoleResource extends Resource
             'edit' => Pages\EditRole::route('/{record}/edit'),
         ];
     }
+
+    public static function getNavigationBadge(): ?string
+    {
+        return static::getModel()::count(); 
+    }
+
 }
