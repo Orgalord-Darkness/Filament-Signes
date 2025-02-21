@@ -22,9 +22,6 @@ class FaqFields
             ->required(),  //c'est le classe du model pas le nom de la table
             Forms\Components\TextInput::make('question')->required(), 
             Forms\Components\TextArea::make('reponse'),
-            CheckBox::make('actif')
-                    ->label('Actif')
-                    ->required(),
 
         ]);
     }

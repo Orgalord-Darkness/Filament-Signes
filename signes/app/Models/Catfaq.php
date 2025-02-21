@@ -5,10 +5,12 @@ namespace App\Models;
 use App\Scopes\OrderScope;
 use Spatie\Permission\Traits\HasRoles;
 use App\Scopes\IncludeAllScope;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Catfaq extends ActiveBaseModel
 {
-    use HasRoles;
+    use HasRoles; 
+    use SoftDeletes ; 
 
     /*
     |--------------------------------------------------------------------------

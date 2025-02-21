@@ -14,14 +14,6 @@ class CatFaqColumns
             ->wrap()
             ->searchable()
             ->sortable(),
-            
-            Tables\Columns\TextColumn::make('actif')
-            ->formatStateUsing(function ($state) {
-                return $state ? 'Oui' : 'Non';
-            })
-            ->wrap()
-            ->searchable()
-            ->sortable(),
         ] ; 
     }
 }

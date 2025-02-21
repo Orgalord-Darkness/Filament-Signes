@@ -49,9 +49,16 @@ class FaqResource extends Resource
             ->filters(  FiltersFaq::getFilters(), layout: FiltersLayout::AboveContent)
             ->actions([
                 Tables\Actions\EditAction::make()
+                ->visible(fn (Faq $record): bool => !$record->deleted_at) 
                 ->label('modifier'),
+
                 Tables\Actions\DeleteAction::make()
-                ->label('supprimer'),
+                ->label('désactiver')
+                ->icon('heroicon-o-archive-box-x-mark')
+                ->modalHeading('désactiver un utilisateur' )
+                ->successNotificationTitle('Catégorie '."DESACTIVE"),
+
+                Tables\Actions\RestoreAction::make()
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -85,5 +92,10 @@ class FaqResource extends Resource
     public static function getNavigationBadge(): ?string
     {
         return static::getModel()::count(); 
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()->withoutGlobalScopes([SoftDeletingScope::class]) ; 
     }
 }

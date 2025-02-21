@@ -58,9 +58,6 @@ class UserFields
             Select::make('etablissements')
             ->relationship('etablissements', 'nom')
             ->required(),
-            CheckBox::make('actif')
-                    ->label('Actif')
-                    ->required(), 
         ]);
     }
 }

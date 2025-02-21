@@ -4,14 +4,23 @@ namespace App\Models;
 
 use App\Scopes\OrderScope;
 use Spatie\Permission\Traits\HasRoles;
+use Filament\Models\Contracts\HasName;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use App\Notifications\TranslatableResetPasswordNotification;
+use Filament\Models\Contracts\HasAvatar;
+use Filament\Panel ; 
+use Laravel\Sanctum\HasApiTokens;
+use Filament\Models\Contracts\FilamentUser;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Storage;
 
-class User extends Authenticatable
+class User extends Authenticatable implements FilamentUser, HasName, HasAvatar 
 {
     use HasRoles;
     use Notifiable;
+    use HasApiTokens; 
+    use SoftDeletes ; 
 
     /*
     |--------------------------------------------------------------------------
@@ -38,10 +47,6 @@ class User extends Authenticatable
     |--------------------------------------------------------------------------
     */
 
-    public function getFullnameAttribute()
-    {
-        return $this->prenom." ".$this->nom;
-    }
 
     public function getUsernameRoleAttribute()
     {
@@ -51,8 +56,28 @@ class User extends Authenticatable
         return $this->username;
     }
 
+    public function getFullnameAttribute() : string
+    {
+        return $this->nom. " " .$this->prenom;
+    }
+
+    public function getFilamentName() : string
+    {
+        return $this->prenom. " " .$this->nom;
+    }
+
+    public function getFilamentId(): string
+    {
+        return $this->id;
+    }
+
     public function getCurrentRoleAttribute() {
         return optional($this->roles->first())->name;
+    }
+
+    public function getFilamentAvatarUrl(): ?string
+    {
+        return $this->avatar_url ? Storage::url($this->avatar_url) : null ;
     }
 
     /*
@@ -129,5 +154,15 @@ class User extends Authenticatable
     {
         parent::boot();
         static::addGlobalScope(new OrderScope(['nom']));
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | METHODES
+    |--------------------------------------------------------------------------
+    */
+    public function canAccessPanel(Panel $panel): bool 
+    {
+        return $this->delete_at == null ? true : false ; 
     }
 }

@@ -69,7 +69,7 @@ class CategorieResource extends Resource
                 //         'confirme' => 0, 
                 //     ]);
                 // }),
-                DeleteAction::make()->label('SUPPRIMER')
+                DeleteAction::make()->label('Désactiver')
                     ->icon('heroicon-o-archive-box-x-mark')
                     ->modalHeading('SUPPRIMER'.' une Catégorie')
                     ->successNotificationTitle('Catégorie '."DESACTIVE"),
@@ -116,6 +116,11 @@ class CategorieResource extends Resource
         $query = parent::query()->where('actif', 1)->orWhere('actif', 0);
         dd($query->get()); // Affiche les résultats de la requête pour débogage
         return $query;
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()->withoutGlobalScopes([SoftDeletingScope::class]) ; 
     }
 
     

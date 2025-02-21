@@ -17,9 +17,6 @@ class CatFaqFields
         ->schema([
             //
             Forms\Components\TextInput::make('libelle')->required(),
-            CheckBox::make('actif')
-                ->label('Actif')
-                ->required(), 
         ]);
     }
 }

@@ -53,9 +53,16 @@ class UserResource extends Resource
             ->filters( FiltersUser::getFilters(), layout: FiltersLayout::AboveContent)
             ->actions([
                 Tables\Actions\EditAction::make()
-                ->label('modifier'),
+                ->label('modifier')
+                ->visible(fn (User $record): bool => !$record->deleted_at),
+                
                 Tables\Actions\DeleteAction::make()
-                ->label('supprimer'),
+                ->label('désactiver')
+                ->icon('heroicon-o-archive-box-x-mark')
+                ->modalHeading('désactiver un utilisateur' )
+                ->successNotificationTitle('Catégorie '."DESACTIVE"),
+
+                Tables\Actions\RestoreAction::make()
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -89,5 +96,10 @@ class UserResource extends Resource
     public static function getNavigationBadge(): ?string
     {
         return static::getModel()::count(); 
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()->withoutGlobalScopes([SoftDeletingScope::class]) ; 
     }
 }
