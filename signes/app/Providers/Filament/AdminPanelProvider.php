@@ -56,6 +56,12 @@ class AdminPanelProvider extends PanelProvider
                 Authenticate::class,
             ])
             ->brandName('Signes')
-            ->brandLogo(asset('img/logo/Logo_Val_Oise.svg.png'));
+            ->brandLogo(asset('img/logo/Logo_Val_Oise.svg.png'))
+            ->navigationGroups([
+                'Gestion', 
+                'Administration', 
+                'Super Administration', 
+                'Système',
+            ]);
   }
 }

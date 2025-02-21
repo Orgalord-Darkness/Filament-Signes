@@ -31,7 +31,9 @@ class FaqResource extends Resource
     // Définir le label de navigation
     protected static ?string $navigationLabel = 'Aide en ligne';
 
-    protected static ?string $navigationGroup = 'Administration';
+    protected static ?string $navigationGroup = 'Gestion';
+
+    protected static ?int $navigationSort = 3 ;
 
     public static function form(Form $form): Form
     {

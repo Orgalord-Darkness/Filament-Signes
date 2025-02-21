@@ -30,6 +30,8 @@ class CatFaqResource extends Resource
     protected static ?string $navigationLabel = 'Catégories Aide en ligne';
 
     protected static ?string $navigationGroup = 'Administration';
+
+    protected static ?int $navigationSort = 6 ;
     
     public static function form(Form $form): Form
     {
