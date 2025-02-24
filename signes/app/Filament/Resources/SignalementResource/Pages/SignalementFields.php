@@ -62,9 +62,7 @@ class SignalementFields
                     ->inline() // Pour afficher les options en ligne
                     ->required(), 
                     
-                    // Forms\Components\TextInput::make('etat')
-                    // ->default('Ouvert')
-                    // ->required(),
+                    
                     Hidden::make('etat')->default('Ouvert'), 
 
                     Forms\Components\Grid::make(2)
@@ -100,6 +98,17 @@ class SignalementFields
                                 }
                             })
                         ]),
+
+                        Forms\Components\Select::make('commune_id')
+                        ->relationship('commune','libelle'),
+
+                        Hidden::make('type'), 
+                        Hidden::make('competence'),
+                        Hidden::make('territoire'),
+                        Hidden::make('statut'),
+                        Hidden::make('categorie_id'),
+                        Hidden::make('complet')->default(true),
+                        
                     Forms\Components\Grid::make(3)
                     ->schema([
                         Forms\Components\Radio::make('civilite')
@@ -146,7 +155,11 @@ class SignalementFields
                         ->required(),
                     ]),
                                     
-                    
+                    Hidden::make('user_id')
+                    // ->relationship('user','nom')
+                    ->default(Auth::user()->id)
+                    ->required(),
+
                     Forms\Components\Toggle::make('ars_info')
                     ->label('Agence Régionale de Santé')
                     ->default(false),
@@ -162,16 +175,6 @@ class SignalementFields
                     Forms\Components\Toggle::make('prefet_info')
                     ->default(false)
                     ->label('Préfet'), 
-
-                    Forms\Components\Select::make('commune_id')
-                    ->relationship('commune','libelle'),
-
-                    Hidden::make('type'), 
-                    Hidden::make('competence'),
-                    Hidden::make('territoire'),
-                    Hidden::make('statut'),
-                    Hidden::make('categorie_id'),
-                    Hidden::make('complet')->default(true), 
 
                 ]),
             Tab::make('Faits-Victime')
@@ -349,9 +352,9 @@ class SignalementFields
                         ]),
                     ]),
 
-                    Forms\Components\Select::make(2)
+                    Forms\Components\Grid::make(2)
                     ->schema([
-                        Forms\Components\Radio::make('victimes_pro')
+                        Forms\Components\Select::make('victimes_pro')
                         ->label('Nombre de victimes professionnels')
                         ->options([
                             'Aucune' => 'Aucune',
@@ -813,8 +816,8 @@ class SignalementFields
                 Forms\Components\Radio::make('analyse') //marche pas 
                 ->label('L\'évènement va t-il être analysé ?')
                 ->options([
-                    'O' => 'O',
-                    'N'=>'N',
+                    'Oui' => 'Oui',
+                    'Non'=>'Non',
                 ]),
 
                 Forms\Components\Radio::make('analyse_car_event') //marche pas

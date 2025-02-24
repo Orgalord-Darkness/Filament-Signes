@@ -3,7 +3,8 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\SignalementResource\Pages;
-use App\Filament\Resources\SignalementResource\RelationManagers;
+use App\Filament\Resources\SignalementResource\RelationManagers ; 
+use App\Filament\Resources\SignalementResource\RelationManagers\SignalementRelationManager ; 
 use App\Models\Signalement;
 use App\Models\ActionSignalement ; 
 use Filament\Forms;
@@ -85,6 +86,7 @@ class SignalementResource extends Resource
     {
         return [
             //
+            SignalementRelationManager::class, 
         ];
     }
 
