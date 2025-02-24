@@ -19,7 +19,8 @@ use App\Filament\Resources\FaqResource\Pages\FiltersFaq;
 use Filament\Tables\Enums\FiltersLayout;
 use AlperenErsoy\FilamentExport\Actions\FilamentExportBulkAction; 
 use App\Filament\Resources\FaqResource\Pages\FaqFields ; 
-use App\Filament\Resources\FaqResource\Pages\FaqColumns ; 
+use App\Filament\Resources\FaqResource\Pages\FaqColumns ;
+use App\Filament\Resources\FaqResource\RelationManagers\FaqRelationManager ;  
 
 
 class FaqResource extends Resource
@@ -83,6 +84,7 @@ class FaqResource extends Resource
     {
         return [
             //
+            FaqRelationManager::class, 
         ];
     }
 

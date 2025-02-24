@@ -17,7 +17,8 @@ use App\Filament\Resources\OptionResource\Pages\FiltersOption;
 use Filament\Tables\Enums\FiltersLayout;
 use AlperenErsoy\FilamentExport\Actions\FilamentExportBulkAction; 
 use App\Filament\Resources\OptionResource\Pages\OptionFields ; 
-use App\Filament\Resources\OptionResource\Pages\OptionColumns ; 
+use App\Filament\Resources\OptionResource\Pages\OptionColumns ;
+use App\Filament\Resources\OptionResource\RelationManagers\OptionRelationManager ;  
 
 class OptionResource extends Resource
 {
@@ -75,6 +76,7 @@ class OptionResource extends Resource
     {
         return [
             //
+            OptionRelationManager::class, 
         ];
     }
 
