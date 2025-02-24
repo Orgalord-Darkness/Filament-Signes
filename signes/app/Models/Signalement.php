@@ -7,6 +7,8 @@ use App\Traits\Encryptable;
 use App\Models\Etablissement;
 use Spatie\Permission\Traits\HasRoles;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\SignalementOuvert;
 
 class Signalement extends Model
 {
@@ -240,5 +242,17 @@ class Signalement extends Model
     {
         parent::boot();
         static::addGlobalScope(new OrderScope(['etat']));
+    }
+
+    /*
+    |------------------------------------------------------------------------
+    | BOOTED
+    |------------------------------------------------------------------------
+    */
+    protected static function booted()
+    {
+        static::created(function () {
+            Mail::to('heddy.mameri@valdoise.fr')->send(new SignalementOuvert());
+        });
     }
 }
