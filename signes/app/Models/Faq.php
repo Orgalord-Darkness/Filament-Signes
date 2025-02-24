@@ -4,9 +4,10 @@ namespace App\Models;
 
 use App\Scopes\OrderScope;
 use Spatie\Permission\Traits\HasRoles;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Faq extends ActiveBaseModel
+class Faq extends Model
 {
     use HasRoles;
     use SoftDeletes ; 
