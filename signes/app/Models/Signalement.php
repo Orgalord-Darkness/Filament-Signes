@@ -10,6 +10,7 @@ use Spatie\Permission\Traits\HasRoles;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\SignalementOuvert;
+use Illuminate\Support\Facades\Crypt;
 
 class Signalement extends Model
 {
@@ -169,7 +170,7 @@ class Signalement extends Model
     |--------------------------------------------------------------------------
     */
 
-    public function actions()
+    public function action()
     {
         return $this->hasMany(ActionSignalement::class);
     }
@@ -199,6 +200,22 @@ class Signalement extends Model
     public function getDeclarantAttribute()
     {
         return $this->attributes['civilite']." ".$this->attributes['prenom']." ".$this->attributes['nom'];
+    }
+
+    public function getAttribute($key)
+    {
+        $value = parent::getAttribute($key) ;
+
+        if(in_array($key, $this->encryptable))
+        {
+            try {
+                return Crypt::decrypt($value) ; 
+            }catch(\Illuminate\Contracts\Encryption\DecryptException $e){
+                return $value." ".$e->getMessage() ; 
+            }
+        }
+        
+        return $value ; 
     }
 
     /*

@@ -43,12 +43,12 @@ class SignalementFields
                     ->schema([
                         Forms\Components\DateTimePicker::make('date')
                         ->label('Date et heure du signalement')
-                        ->default(Carbon::now()->toDateTimeString())
+                        ->default((new \DateTime())->format('Y-m-d H:i:s'))
                         ->required(),
 
                         Forms\Components\DateTimePicker::make('date_evenement')
                         ->label('Date et heure de l\'évenement')
-                        ->default(Carbon::now()->toDateTimeString())
+                        ->default((new \DateTime())->format('Y-m-d H:i:s'))
                         ->helperText('Si cette date n\'est pas connue, merci de saisir la date et heure du signalement')
                         ->required(),
                     ]),
