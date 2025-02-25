@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon ; 
 use App\Scopes\OrderScope;
 use App\Traits\Encryptable;
 use App\Models\Etablissement;
@@ -219,13 +220,13 @@ class Signalement extends Model
         return $this;
     }
 
-    public function setDateAttribute($value) {
-        $this->attributes['date'] = \Carbon\Carbon::parse($value);
-    }
+    // public function setDateAttribute($value) {
+    //     $this->attributes['date'] = Carbon::parse($value);
+    // }
 
-    public function setDateEvenementAttribute($value) {
-        $this->attributes['date_evenement'] = \Carbon\Carbon::parse($value);
-    }
+    // public function setDateEvenementAttribute($value) {
+    //     $this->attributes['date_evenement'] = Carbon::parse($value);
+    // }
 
     /*
     |--------------------------------------------------------------------------

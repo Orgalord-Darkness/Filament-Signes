@@ -20,6 +20,7 @@
         "laravel/sanctum": "^4.0",
         "laravel/tinker": "^2.9",
         "mpdf/mpdf": "^8.2",
+        "nesbot/carbon": "^3.8",
         "pxlrbt/filament-activity-log": "^1.1"
     },
     "require-dev": {

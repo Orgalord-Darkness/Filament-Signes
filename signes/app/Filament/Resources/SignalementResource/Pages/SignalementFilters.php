@@ -11,7 +11,7 @@ use Filament\Forms\Components\CheckBox;
 use App\Models\Secteur;
 use App\Models\Etablissement; 
 
-class FiltersSignalement
+class SignalementFilters
 {
     public static function getFilters(): array 
     {

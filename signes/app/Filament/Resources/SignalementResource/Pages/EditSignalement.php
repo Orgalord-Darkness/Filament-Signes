@@ -6,7 +6,8 @@ use App\Filament\Resources\SignalementResource;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Support\Facades\Crypt ;
-use App\Traits\EncryptionFilesSignalement ; 
+use App\Traits\EncryptionFilesSignalement ;
+use Hamcrest\Core\HasToString;
 
 class EditSignalement extends EditRecord
 {
@@ -20,10 +21,16 @@ class EditSignalement extends EditRecord
         ];
     }
 
-    protected function mutateFormDataBeforeFill(array $data): array 
+    protected function mutateFormDataBeforeFill(array $data): array   
     {
-        //$data = self::decryptFiles(data: $data); 
-
+        //test 
+        $encryptedValue = Crypt::encrypt('test');
+        try {
+            $decrypted = Crypt::decrypt($encryptedValue);
+            echo "Valeur déchiffrée : " . $decrypted;
+        } catch (\Illuminate\Contracts\Encryption\DecryptException $e) {
+            echo "Erreur de déchiffrement : " . $e->getMessage();
+        }
         //Décryptage des champs
         $data['nature1_autre'] = Crypt::decrypt($data['nature1_autre']) ;
         $data['nature2_autre'] = Crypt::decrypt($data['nature2_autre']) ;
@@ -51,5 +58,10 @@ class EditSignalement extends EditRecord
 
         return $data ; 
 
+    }
+
+    public function getTitle(): string 
+    {
+        return 'Modifier le Signalement N°'.$this->record->id ; 
     }
 }
