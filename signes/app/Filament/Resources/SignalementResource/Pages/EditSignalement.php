@@ -11,7 +11,6 @@ use Hamcrest\Core\HasToString;
 
 class EditSignalement extends EditRecord
 {
-    use EncryptionFilesSignalement ; 
     protected static string $resource = SignalementResource::class;
 
     protected function getHeaderActions(): array
@@ -21,21 +20,21 @@ class EditSignalement extends EditRecord
         ];
     }
     
-    // protected function mutateFormDataBeforeFill(array $data): array   
-    // {
-    //     //dd($data) ; 
-    //     //test 
-    //     $encryptedValue = Crypt::encrypt('test');
-    //     try {
-    //         $decrypted = Crypt::decrypt('eyJpdiI6IlVIejFvVndwRzNONlZGSFZNNDRhbWc9PSIsInZhbHVlIjoiTTZ5OHlidkY0QzJhbFY5d1FpUFFUemgxckVGYmMxdHZMV2Z6K1UyaWt0MTF3QnZGQTZETlZub3BGSkxmYkpYcGlJRkFST0JGNThYanlBbTJnU2NqRFE9PSIsIm1hYyI6IjE2Mjg2YjBiNTZkOGZlNjgwMzEwODA2MGMxMmRkMzQzN2Y5NWIxZjAyNWVjMDJmY2Q1MTQ1YmJjMjNiOWJhOWQiLCJ0YWciOiIifQ==');
-    //         echo $encryptedValue." Valeur déchiffrée : " . $decrypted;
-    //     } catch (\Illuminate\Contracts\Encryption\DecryptException $e) {
-    //         echo "Erreur de déchiffrement : " . $e->getMessage();
-    //     }
-    //     //Décryptage des champs
+    protected function mutateFormDataBeforeFill(array $data): array   
+    {
+        //dd($data) ; 
+        //test 
+        // $encryptedValue = Crypt::encrypt('test');
+        // try {
+        //     $decrypted = Crypt::decrypt('eyJpdiI6IlhaVFVDak5oWjRUS3RyK1FpR20wSGc9PSIsInZhbHVlIjoiRlV3cUVlL0dVUVZ1K2Eyakw1ajd4VHRIZWo1K3kxNzQvTlJSVUFPRWRMcmdnYWlOKzBhR1dYaDBlWll2MlhGNHMvMER1UU1MckxEMS9kSXVQZ0kxYzk4ZmNZRkx3cDRoUk1QeGk5VnZhdmc9IiwibWFjIjoiMTM4ZmMzZmJjMTQyNjg4ODQ5MTNlMGRlOTBjYTQ4ZmE2YjdkNTVmMzVhZGQzM2NlMmY2NzlhYTQ2ZDEzNzg1NCIsInRhZyI6IiJ9');
+        //     echo $encryptedValue." Valeur déchiffrée : " . $decrypted;
+        // } catch (\Illuminate\Contracts\Encryption\DecryptException $e) {
+        //     echo "Erreur de déchiffrement : " . $e->getMessage();
+        // }
+        //Décryptage des champs
         // $data['nature1_autre'] = Crypt::decrypt($data['nature1_autre']) ;
         // $data['nature2_autre'] = Crypt::decrypt($data['nature2_autre']) ;
-        // $data['description'] = Crypt::decrypt($data['description']) ;
+        $data['description'] = Crypt::decrypt($data['description']) ;
         // $data['periode_eig_autre'] = Crypt::decrypt($data['periode_eig_autre']) ; 
         // $data['consequence1_autre'] = Crypt::decrypt($data['consequence1_autre']) ;
         // $data['consequence2_autre'] = Crypt::decrypt($data['consequence2_autre']) ;
@@ -57,9 +56,9 @@ class EditSignalement extends EditRecord
         // $data['analyse_groupe_autre'] = Crypt::decrypt($data['analyse_groupe_autre']) ;
         // $data['commentaire'] = Crypt::decrypt($data['commentaire']) ;
 
-    //     return $data ; 
+        return $data ; 
 
-    // }
+    }
 
     public function getTitle(): string 
     {

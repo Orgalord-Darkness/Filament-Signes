@@ -170,6 +170,11 @@ class Signalement extends Model
     |--------------------------------------------------------------------------
     */
 
+    public function actions()
+    {
+        return $this->hasMany(ActionSignalement::class);
+    }
+
     public function action()
     {
         return $this->hasMany(ActionSignalement::class);
