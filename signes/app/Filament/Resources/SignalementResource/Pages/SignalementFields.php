@@ -24,7 +24,8 @@ use App\Models\Section ;
 use Filament\Forms\Components\Grid ; 
 use App\Models\Etablissement ; 
 use App\Models\Rubrique ; 
-use App\Models\Option ; 
+use App\Models\Option ;
+use Symfony\Component\Console\Logger\ConsoleLogger;
 
 class SignalementFields
 {
@@ -64,6 +65,7 @@ class SignalementFields
                     
                     
                     Hidden::make('etat')->default('Ouvert'), 
+                    Hidden::make('complet')->default(true), 
 
                     Forms\Components\Grid::make(2)
                         ->schema([
@@ -166,7 +168,7 @@ class SignalementFields
 
                     Forms\Components\Toggle::make('ddpp_info')
                     ->default(false)
-                    ->label('Direction Départementale de la Portection des Populations'),
+                    ->label('Direction Départementale de la Protection des Populations'),
 
                     Forms\Components\Toggle::make('dtpjj_info')
                     ->default(false)
@@ -210,6 +212,8 @@ class SignalementFields
                         }
                         if ($state == $id_autre) {
                             $set('nature1_inter', 'Autre'); 
+                        }else{
+                            $set('nature1_inter','') ; 
                         }
                     })
                     ->reactive()
@@ -269,6 +273,8 @@ class SignalementFields
                         }
                         if ($state == $id_autre) {
                             $set('nature2_inter', 'Autre'); 
+                        }else{
+                            $set('nature2_inter','') ; 
                         }
                     }),
 
@@ -486,22 +492,32 @@ class SignalementFields
                         })
                         ->afterStateUpdated(function ($state, callable $set, callable $get) {
                             $sections = Option::all(); 
+                            $rubriques = Rubrique::all() ; 
                             $id_non = null ;
                             $id_autre = null ; 
+                            foreach($rubriques as $ligne){
+                                if($ligne['libelle'] == 'Demande d\'intervention des secours'){
+                                    $rubrique_id = $ligne['id'] ;
+                                }
+                            }
                             foreach($sections as $ligne){
                                 if($ligne['libelle'] == 'Non'){
                                     $id_non = $ligne['id'] ; 
                                 }
-                                if($ligne['libelle'] == 'Autre'){
+                                if($ligne['libelle'] == 'Autre' && $ligne['rubrique_id'] === $rubrique_id){
                                     $id_autre = $ligne['id'] ; 
                                 }
                             }
                             if ($state == $id_autre) {
                                 $set('inter_secours_autre', 'Autre');
                                 // logger()->info('Test'); 
+                            }else{
+                                $set('inter_secours_autre','');
                             }
                             if ($state == $id_non) {
                                 $set('inter_secours_non', 'Non');
+                            }else{
+                                $set('inter_secours_non','');
                             }
                         })
                         ->reactive()
@@ -616,7 +632,7 @@ class SignalementFields
                     ]), 
                     Grid::make('Destinataire')
                     ->schema([
-                    Forms\Components\Select::make('destinataire_signalement')
+                    Forms\Components\Select::make('destinataires')
                     ->options([
                         'CVS' => 'CVS ou groupe d\'expression', 
                         'DAC' => 'DAC (Dispositif d\'Appui à la Coordination', 
@@ -627,6 +643,7 @@ class SignalementFields
                         'Responsable légal' => 'Responsable légal', 
                         'Autre' => 'Autre', 
                     ])
+                    //->relationship('destinataires','libelle')
                     ->reactive()
                     ->multiple()
                     ->label('Destinataire'),
@@ -852,15 +869,49 @@ class SignalementFields
                         }
                         $query->where('section_id',$id); 
                     })
+                    ->afterStateUpdated(function ($state, callable $set, callable $get) 
+                    {
+                        $options = Option::all() ; 
+                        $rubriques = Rubrique::all() ; 
+                        $sections = Section::all() ; 
+
+                        foreach($rubriques as $ligne){
+                            if($ligne['libelle'] === 'Groupe d\'analyse' ){
+                                $rubrique_id = $ligne['id'] ; 
+                            }
+                        }
+
+                        foreach($sections as $ligne){
+                            if($ligne['libelle'] === 'Analyse' ){
+                                $section_id = $ligne['id'] ; 
+                                print_r('section id' , $section_id) ; 
+                            }
+                        }
+            
+                        foreach($options as $ligne){
+                            if($ligne['libelle'] === 'Autre' && $ligne['section_id'] === $section_id && $ligne['rubrique_id'] === $rubrique_id){
+                                $option_id = $ligne['id'] ; 
+                            }
+                        }
+
+                        if($state == $option_id){
+                            $set('groupe_inter','Autre') ;
+                        }else{
+                            $set('groupe_inter','') ; 
+                        }
+
+                    })
                     ->reactive(),
+
+                    Hidden::make('groupe_inter')
+                    ->reactive(), 
 
                     Forms\Components\TextInput::make('analyse_group_autre')
                     ->label('Si Autre, précisez')
-                    ->visible(fn ($get)=>$get('analyse_group_id') === 'Autre'),
+                    ->visible(fn ($get)=>$get('groupe_inter') === 'Autre'),
                 ]),
 
                 Forms\Components\TextArea::make('commentaire'),
-                //Champs automatiques
             ]),
         ])
         ]) ;

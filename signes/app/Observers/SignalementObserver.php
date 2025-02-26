@@ -19,6 +19,10 @@ class SignalementObserver
         if(is_null($signalement->complet)){
             $signalement->complet = true ; 
         }
+
+        if (request()->has('destinataires')) {
+            $signalement->destinataires()->sync(request()->input('destinataires'));
+        }
     }
 
     /**
