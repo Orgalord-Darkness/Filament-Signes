@@ -30,6 +30,13 @@ class Secteur extends Model
 		return $this->belongsTo(User::class);
     }
 
+    public function signalements()
+    {
+        return $this->hasMany(Signalement::class);
+    }
+
+
+
     /*
     |--------------------------------------------------------------------------
     | SCOPES

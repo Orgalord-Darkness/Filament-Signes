@@ -4,8 +4,9 @@ namespace App\Models;
 
 use App\Scopes\OrderScope;
 use Spatie\Permission\Traits\HasRoles;
+use Illuminate\Database\Eloquent\Model;
 
-class Etablissement extends ActiveBaseModel
+class Etablissement extends Model
 {
     use HasRoles;
 
@@ -42,6 +43,11 @@ class Etablissement extends ActiveBaseModel
     {
         return $this->belongsTo(User::class);
     }
+
+    public function signalements()
+     {
+        return $this->toMany(Signalement::class) ; 
+     }
 
     /*
     |--------------------------------------------------------------------------

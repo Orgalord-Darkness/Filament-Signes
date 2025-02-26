@@ -24,7 +24,8 @@ use App\Models\Section ;
 use Filament\Forms\Components\Grid ; 
 use App\Models\Etablissement ; 
 use App\Models\Rubrique ; 
-use App\Models\Option ; 
+use App\Models\Option ;
+use Symfony\Component\Console\Logger\ConsoleLogger;
 
 class SignalementFields
 {
@@ -43,12 +44,12 @@ class SignalementFields
                     ->schema([
                         Forms\Components\DateTimePicker::make('date')
                         ->label('Date et heure du signalement')
-                        ->default(Carbon::now()->toDateTimeString())
+                        ->default((new \DateTime())->format('Y-m-d H:i:s'))
                         ->required(),
 
                         Forms\Components\DateTimePicker::make('date_evenement')
                         ->label('Date et heure de l\'évenement')
-                        ->default(Carbon::now()->toDateTimeString())
+                        ->default((new \DateTime())->format('Y-m-d H:i:s'))
                         ->helperText('Si cette date n\'est pas connue, merci de saisir la date et heure du signalement')
                         ->required(),
                     ]),
@@ -62,10 +63,9 @@ class SignalementFields
                     ->inline() // Pour afficher les options en ligne
                     ->required(), 
                     
-                    // Forms\Components\TextInput::make('etat')
-                    // ->default('Ouvert')
-                    // ->required(),
+                    
                     Hidden::make('etat')->default('Ouvert'), 
+                    Hidden::make('complet')->default(true), 
 
                     Forms\Components\Grid::make(2)
                         ->schema([
@@ -100,6 +100,17 @@ class SignalementFields
                                 }
                             })
                         ]),
+
+                        Forms\Components\Select::make('commune_id')
+                        ->relationship('commune','libelle'),
+
+                        Hidden::make('type'), 
+                        Hidden::make('competence'),
+                        Hidden::make('territoire'),
+                        Hidden::make('statut'),
+                        Hidden::make('categorie_id'),
+                        Hidden::make('complet')->default(true),
+                        
                     Forms\Components\Grid::make(3)
                     ->schema([
                         Forms\Components\Radio::make('civilite')
@@ -146,14 +157,18 @@ class SignalementFields
                         ->required(),
                     ]),
                                     
-                    
+                    Hidden::make('user_id')
+                    // ->relationship('user','nom')
+                    ->default(Auth::user()->id)
+                    ->required(),
+
                     Forms\Components\Toggle::make('ars_info')
                     ->label('Agence Régionale de Santé')
                     ->default(false),
 
                     Forms\Components\Toggle::make('ddpp_info')
                     ->default(false)
-                    ->label('Direction Départementale de la Portection des Populations'),
+                    ->label('Direction Départementale de la Protection des Populations'),
 
                     Forms\Components\Toggle::make('dtpjj_info')
                     ->default(false)
@@ -162,16 +177,6 @@ class SignalementFields
                     Forms\Components\Toggle::make('prefet_info')
                     ->default(false)
                     ->label('Préfet'), 
-
-                    Forms\Components\Select::make('commune_id')
-                    ->relationship('commune','libelle'),
-
-                    Hidden::make('type'), 
-                    Hidden::make('competence'),
-                    Hidden::make('territoire'),
-                    Hidden::make('statut'),
-                    Hidden::make('categorie_id'),
-                    Hidden::make('complet')->default(true), 
 
                 ]),
             Tab::make('Faits-Victime')
@@ -207,6 +212,8 @@ class SignalementFields
                         }
                         if ($state == $id_autre) {
                             $set('nature1_inter', 'Autre'); 
+                        }else{
+                            $set('nature1_inter','') ; 
                         }
                     })
                     ->reactive()
@@ -266,6 +273,8 @@ class SignalementFields
                         }
                         if ($state == $id_autre) {
                             $set('nature2_inter', 'Autre'); 
+                        }else{
+                            $set('nature2_inter','') ; 
                         }
                     }),
 
@@ -349,9 +358,9 @@ class SignalementFields
                         ]),
                     ]),
 
-                    Forms\Components\Select::make(2)
+                    Forms\Components\Grid::make(2)
                     ->schema([
-                        Forms\Components\Radio::make('victimes_pro')
+                        Forms\Components\Select::make('victimes_pro')
                         ->label('Nombre de victimes professionnels')
                         ->options([
                             'Aucune' => 'Aucune',
@@ -483,22 +492,32 @@ class SignalementFields
                         })
                         ->afterStateUpdated(function ($state, callable $set, callable $get) {
                             $sections = Option::all(); 
+                            $rubriques = Rubrique::all() ; 
                             $id_non = null ;
                             $id_autre = null ; 
+                            foreach($rubriques as $ligne){
+                                if($ligne['libelle'] == 'Demande d\'intervention des secours'){
+                                    $rubrique_id = $ligne['id'] ;
+                                }
+                            }
                             foreach($sections as $ligne){
                                 if($ligne['libelle'] == 'Non'){
                                     $id_non = $ligne['id'] ; 
                                 }
-                                if($ligne['libelle'] == 'Autre'){
+                                if($ligne['libelle'] == 'Autre' && $ligne['rubrique_id'] === $rubrique_id){
                                     $id_autre = $ligne['id'] ; 
                                 }
                             }
                             if ($state == $id_autre) {
                                 $set('inter_secours_autre', 'Autre');
                                 // logger()->info('Test'); 
+                            }else{
+                                $set('inter_secours_autre','');
                             }
                             if ($state == $id_non) {
                                 $set('inter_secours_non', 'Non');
+                            }else{
+                                $set('inter_secours_non','');
                             }
                         })
                         ->reactive()
@@ -613,7 +632,7 @@ class SignalementFields
                     ]), 
                     Grid::make('Destinataire')
                     ->schema([
-                    Forms\Components\Select::make('destinataire_signalement')
+                    Forms\Components\Select::make('destinataires')
                     ->options([
                         'CVS' => 'CVS ou groupe d\'expression', 
                         'DAC' => 'DAC (Dispositif d\'Appui à la Coordination', 
@@ -624,6 +643,7 @@ class SignalementFields
                         'Responsable légal' => 'Responsable légal', 
                         'Autre' => 'Autre', 
                     ])
+                    //->relationship('destinataires','libelle')
                     ->reactive()
                     ->multiple()
                     ->label('Destinataire'),
@@ -813,8 +833,8 @@ class SignalementFields
                 Forms\Components\Radio::make('analyse') //marche pas 
                 ->label('L\'évènement va t-il être analysé ?')
                 ->options([
-                    'O' => 'O',
-                    'N'=>'N',
+                    'Oui' => 'Oui',
+                    'Non'=>'Non',
                 ]),
 
                 Forms\Components\Radio::make('analyse_car_event') //marche pas
@@ -849,15 +869,49 @@ class SignalementFields
                         }
                         $query->where('section_id',$id); 
                     })
+                    ->afterStateUpdated(function ($state, callable $set, callable $get) 
+                    {
+                        $options = Option::all() ; 
+                        $rubriques = Rubrique::all() ; 
+                        $sections = Section::all() ; 
+
+                        foreach($rubriques as $ligne){
+                            if($ligne['libelle'] === 'Groupe d\'analyse' ){
+                                $rubrique_id = $ligne['id'] ; 
+                            }
+                        }
+
+                        foreach($sections as $ligne){
+                            if($ligne['libelle'] === 'Analyse' ){
+                                $section_id = $ligne['id'] ; 
+                                print_r('section id' , $section_id) ; 
+                            }
+                        }
+            
+                        foreach($options as $ligne){
+                            if($ligne['libelle'] === 'Autre' && $ligne['section_id'] === $section_id && $ligne['rubrique_id'] === $rubrique_id){
+                                $option_id = $ligne['id'] ; 
+                            }
+                        }
+
+                        if($state == $option_id){
+                            $set('groupe_inter','Autre') ;
+                        }else{
+                            $set('groupe_inter','') ; 
+                        }
+
+                    })
                     ->reactive(),
+
+                    Hidden::make('groupe_inter')
+                    ->reactive(), 
 
                     Forms\Components\TextInput::make('analyse_group_autre')
                     ->label('Si Autre, précisez')
-                    ->visible(fn ($get)=>$get('analyse_group_id') === 'Autre'),
+                    ->visible(fn ($get)=>$get('groupe_inter') === 'Autre'),
                 ]),
 
                 Forms\Components\TextArea::make('commentaire'),
-                //Champs automatiques
             ]),
         ])
         ]) ;
