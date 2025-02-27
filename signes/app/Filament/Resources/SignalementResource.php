@@ -106,4 +106,15 @@ class SignalementResource extends Resource
     {
         return Signalement::class;
     }
+
+    protected function handleRecordCreation(array $data) 
+    {   
+        if($data['complet'] === false){
+            return static::getModel()::create([
+                'complet' => $data['complet'], 
+            ]) ; 
+        }else{
+            return static::getModel()::create($data) ; 
+        }
+    }
 }

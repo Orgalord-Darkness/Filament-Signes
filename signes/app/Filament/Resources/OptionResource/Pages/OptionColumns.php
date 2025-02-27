@@ -10,6 +10,7 @@ class OptionColumns
 {
     public static function getColumns(): array {
         return [
+            TextColumn::make('id')->label('Id')->searchable()->sortable()->wrap()->toggleable(isToggledHiddenByDefault: true),
             Tables\Columns\TextColumn::make('section.libelle')
             ->wrap()
             ->sortable()

@@ -15,7 +15,7 @@ class CreateSignalement extends CreateRecord
     {
         return [
             Actions\Action::make('saveDraft')
-                ->label('Sauvegarder en brouillon')
+                ->label('Enregistrer la saisie')
                 ->action(function (){
                     $data = $this->form->getState();
                     $data['complet'] = false ; 
