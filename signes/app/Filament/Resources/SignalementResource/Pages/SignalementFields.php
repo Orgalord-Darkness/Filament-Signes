@@ -44,13 +44,13 @@ class SignalementFields
                         Forms\Components\DateTimePicker::make('date')
                         ->label('Date et heure du signalement')
                         ->default(Carbon::now()->toDateTimeString())
-                        ->required(),
+                        ->required(fn ($get) => !$get('complet')),
 
                         Forms\Components\DateTimePicker::make('date_evenement')
                         ->label('Date et heure de l\'évenement')
                         ->default(Carbon::now()->toDateTimeString())
                         ->helperText('Si cette date n\'est pas connue, merci de saisir la date et heure du signalement')
-                        ->required(),
+                        ->required(fn ($get) => !$get('complet')),
                     ]),
 
                     Forms\Components\Radio::make('public')
@@ -60,7 +60,7 @@ class SignalementFields
                         'PH'=> 'PH',
                     ])
                     ->inline() // Pour afficher les options en ligne
-                    ->required(), 
+                    ->required(fn ($get) => !$get('complet')),
                     
                     // Forms\Components\TextInput::make('etat')
                     // ->default('Ouvert')
@@ -71,11 +71,11 @@ class SignalementFields
                         ->schema([
                             Forms\Components\Select::make('secteur_id')
                             ->relationship('secteur', 'libelle')
-                            ->required(),
+                            ->required(fn ($get) => !$get('complet')),
 
                             Forms\Components\Select::make('etablissement_id')
                             ->relationship('etablissement', 'nom')
-                            ->required()
+                            ->required(fn ($get) => !$get('complet'))
                             ->reactive() 
                             ->afterStateUpdated(function (callable $set, callable $get) {
                                 $etablissementId = $get('etablissement_id');
@@ -109,13 +109,13 @@ class SignalementFields
                         ])
                         ->inline() // Pour afficher les options en ligne
                         ->default(Auth::user()->civilite)
-                        ->required(),
+                        ->required(fn ($get) => !$get('complet')),
                         Forms\Components\TextInput::make('prenom')
                         ->default(Auth::user()->prenom)
-                        ->required(), 
+                        ->required(fn ($get) => !$get('complet')),
                         Forms\Components\TextInput::make('nom')
                         ->default(Auth::user()->nom)
-                        ->required(),
+                        ->required(fn ($get) => !$get('complet')),
                     ]),
                     Forms\Components\Grid::make(3)
                     ->schema([
@@ -132,18 +132,18 @@ class SignalementFields
                             }
                             $query->where('section_id',$id); 
                         })  
-                        ->required(),
+                        ->required(fn ($get) => !$get('complet')),
 
                         Forms\Components\TextInput::make('email')
                         ->label('Courriel')
                         ->email()
                         ->default(Auth::user()->email)
-                        ->required(),
+                        ->required(fn ($get) => !$get('complet')),
 
                         Forms\Components\TextInput::make('tel')
                         ->label('Téléphone')
                         ->numeric()
-                        ->required(),
+                        ->required(fn ($get) => !$get('complet')),
                     ]),
                                     
                     
@@ -210,11 +210,11 @@ class SignalementFields
                         }
                     })
                     ->reactive()
-                    ->required(),
+                    ->required(fn ($get) => !$get('complet')),
 
                     Forms\Components\Select::make('nature1_id')
                     ->label('Nature des Faits principale')
-                    ->required()
+                    ->required(fn ($get) => !$get('complet'))
                     ->relationship('nature1','libelle', function ($query, callable $get) { 
                         $id = 1 ; 
                         $rub = $get('rub_nature1_id') ; 
@@ -294,7 +294,7 @@ class SignalementFields
                     Forms\Components\TextArea::make('description')
                     ->label('Description des circonstances et déroulement des faits')
                     ->helperText('Les informations saisies dans ce champ sont confidentielles')
-                    ->required(), 
+                    ->required(fn ($get) => !$get('complet')),
 
                     Forms\Components\Grid::make(3)
                     ->schema([
@@ -304,7 +304,7 @@ class SignalementFields
                             'Oui'=>'Oui',
                             'Non'=>'Non',
                         ])
-                        ->required(),
+                        ->required(fn ($get) => !$get('complet')),
                         Forms\Components\Select::make('periode_eig')
                         ->label('Période EIG')
                         ->options([
@@ -314,7 +314,7 @@ class SignalementFields
                             'Heure de changement d\'équipe'=>'Heure de changement d\'équipe',
                             'Autre'=>'Autre',
                         ])
-                        ->required()
+                        ->required(fn ($get) => !$get('complet'))
                         ->reactive(),
                         Forms\Components\TextInput::make('periode_eig_autre')
                         ->label('Si Autre, précisez')
@@ -334,7 +334,7 @@ class SignalementFields
                             'Cinq et plus'=> 'Cinq et plus',
                             'Tous'=>'Tous',
                         ])
-                        ->required(),
+                        ->required(fn ($get) => !$get('complet')),
 
                         Forms\Components\Select::make('perex_pec')
                         ->label('Nombre de personnes prises en charge exposées')
@@ -362,7 +362,7 @@ class SignalementFields
                             'Cinq et plus'=> 'Cinq et plus',
                             'Tous'=>'Tous',
                         ])
-                        ->required(),
+                        ->required(fn ($get) => !$get('complet')),
 
                         Forms\Components\Select::make('perex_pro')
                         ->label('Nombre de professionnels exposées')
@@ -390,7 +390,7 @@ class SignalementFields
                             'Cinq et plus'=> 'Cinq et plus',
                             'Tous'=>'Tous',
                         ])
-                        ->required(),
+                        ->required(fn ($get) => !$get('complet')),
 
                         Forms\Components\Select::make('perex_autre')
                         ->label('Nombre de professionnels exposées autre') //marche pas 
@@ -422,7 +422,7 @@ class SignalementFields
                             'Autre'=>'Autre',                       
                         ])
                         ->reactive()
-                        ->required(),
+                        ->required(fn ($get) => !$get('complet')),
                         Forms\Components\TextInput::make('consequence1_autre')
                         ->label('Si autre précisez')
                         ->visible(fn ($get) => $get('consequence1') === 'Autre'),
@@ -441,7 +441,7 @@ class SignalementFields
                             'Autre'=>'Autre',                       
                         ])
                         ->reactive()
-                        ->required(),
+                        ->required(fn ($get) => !$get('complet')),
                         Forms\Components\TextInput::make('consequence2_autre')
                         ->label('Si autre précisez')
                         ->visible(fn ($get) => $get('consequence2') === 'Autre'),
@@ -460,7 +460,7 @@ class SignalementFields
                             'Autre'=>'Autre',                       
                         ])
                         ->reactive()
-                        ->required(),
+                        ->required(fn ($get) => !$get('complet')),
                         Forms\Components\TextInput::make('consequence3_autre')
                         ->label('Si autre précisez')
                         ->visible(fn ($get) => $get('consequence3') === 'Autre'),
@@ -502,7 +502,7 @@ class SignalementFields
                             }
                         })
                         ->reactive()
-                        ->required(),
+                        ->required(fn ($get) => !$get('complet')),
 
                         Hidden::make('inter_secours_non')->reactive(), 
                         Hidden::make('inter_secours_autre')->reactive()
@@ -525,33 +525,33 @@ class SignalementFields
                         Forms\Components\CheckBox::make('secours_ide')
                         ->label('IDE (Infirmière Diplômée d\'Etat')
                         ->default(false)
-                        ->required(),
+                        ->required(fn ($get) => !$get('complet')),
 
                         Forms\Components\CheckBox::make('secours_medecin')
                         ->label('Médecin')
                         ->default(false)
-                        ->required(),
+                        ->required(fn ($get) => !$get('complet')),
 
                         Forms\Components\CheckBox::make('secours_medecin2')
                         ->label('Médecin traitant')
                         ->default(false)
-                        ->required(),
+                        ->required(fn ($get) => !$get('complet')),
 
                         Forms\Components\CheckBox::make('secours_police')
                         ->label('Police')
                         ->default(false)
-                        ->required(),
+                        ->required(fn ($get) => !$get('complet')),
 
                         Forms\Components\CheckBox::make('secours_samu')
                         ->label('SAMU')
                         ->default(false)
-                        ->required(),
+                        ->required(fn ($get) => !$get('complet')),
 
                         Forms\Components\CheckBox
                         ::make('secours_pompiers')
                         ->label('Pompiers')
                         ->default(false)
-                        ->required(),
+                        ->required(fn ($get) => !$get('complet')),
                     ])->columns(5),
 
                     Grid::make('Mesures immédiates prises par l\'établissement')
@@ -593,7 +593,7 @@ class SignalementFields
                         'Sans objet'=>'Sans objet',
                     ])
                     ->reactive()
-                    ->required(),
+                    ->required(fn ($get) => !$get('complet')),
 
                     Forms\Components\TextInput::make('information_autre')
                     ->label('Si Autre, précisez')
@@ -651,7 +651,7 @@ class SignalementFields
                     ->reactive()
                     ->multiple()
                     ->label('Concernant les usagers')
-                    ->required(),
+                    ->required(fn ($get) => !$get('complet')),
                     
                     Forms\Components\TextInput::make('disposition1_autre')
                     ->label('Si Autre, précisez')
@@ -674,7 +674,7 @@ class SignalementFields
                     ->reactive()
                     ->multiple()
                     ->label('Concernant les professionnels')
-                    ->required(),
+                    ->required(fn ($get) => !$get('complet')),
                     
                     Forms\Components\TextInput::make('disposition2_autre')
                     ->label('Si Autre, précisez')
@@ -695,7 +695,7 @@ class SignalementFields
                     ->reactive()
                     ->multiple()
                     ->label('Concernant l\'organisation du travail')
-                    ->required(),
+                    ->required(fn ($get) => !$get('complet')),
                     
                     Forms\Components\TextInput::make('disposition3_autre')
                     ->label('Si Autre, précisez')
@@ -716,7 +716,7 @@ class SignalementFields
                     ->reactive()
                     ->label('Concernant l\'établissement')
                     ->multiple()
-                    ->required(), 
+                    ->required(fn ($get) => !$get('complet')), 
                   
                     Forms\Components\TextInput::make('disposition4_autre')
                     ->label('Si Autre, précisez')
@@ -733,7 +733,7 @@ class SignalementFields
                         'Oui'=>'Oui',
                         'Non'=>'Non',
                     ])
-                    ->required(),
+                    ->required(fn ($get) => !$get('complet')),
                     
                     Forms\Components\Radio::make('suite2')
                     ->label('Dépôt de plainte')
@@ -741,7 +741,7 @@ class SignalementFields
                         'Oui'=>'Oui',
                         'Non'=>'Non',
                     ])
-                    ->required(),
+                    ->required(fn ($get) => !$get('complet')),
 
                     Forms\Components\Radio::make('suite3')
                     ->label('Signalement au Procureur de la République')
@@ -749,7 +749,7 @@ class SignalementFields
                         'Oui'=>'Oui',
                         'Non'=>'Non',
                     ])
-                    ->required(),
+                    ->required(fn ($get) => !$get('complet')),
                 ]),
 
                 Forms\Components\TextArea::make('evolution')
@@ -764,7 +764,7 @@ class SignalementFields
                         'Non'=>'Non',
                     ])
                     ->reactive()
-                    ->required(),
+                    ->required(fn ($get) => !$get('complet')),
                     Forms\Components\TextInput::make('media1_oui')
                     ->label('Si oui, dans quelle mesure ?')
                     ->visible(fn ($get) => $get('media1') === 'Oui'),
@@ -779,7 +779,7 @@ class SignalementFields
                         'Non'=>'Non',
                     ])
                     ->reactive()
-                    ->required(),
+                    ->required(fn ($get) => !$get('complet')),
                     Forms\Components\TextInput::make('media2_oui')
                     ->label('Si oui, par quel moyen ?')
                     ->visible(fn ($get) => $get('media2') === 'Oui'),
@@ -794,7 +794,7 @@ class SignalementFields
                         'Non'=>'Non',
                     ])
                     ->reactive()
-                    ->required(),
+                    ->required(fn ($get) => !$get('complet')),
                     Forms\Components\TextInput::make('media3_oui')
                     ->label('Si oui, précisez par qui ? quand ? comment ?')
                     ->visible(fn ($get) => $get('media3') === 'Oui'),
