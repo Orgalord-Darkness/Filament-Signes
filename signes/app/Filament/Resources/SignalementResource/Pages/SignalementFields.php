@@ -34,6 +34,25 @@ class SignalementFields
     }
     public static function getFields()
     {
+        $required = [
+            'secteur_id', 
+            'etablissement_id',
+            'public' => 'saisir public',
+            'etat' => 'Non complet',
+            'fonction_id',
+            'rub_nature1_id', 
+            'nature1_id', 
+            'description', 
+            'eig',
+            'periode_eig', 
+            'victimes_pec', 
+            'victimes_pro',
+            'victimes_autre', 
+            'perex_pec',
+            'perex_pro',
+            'perex_autre', 
+        ] ; 
+        
         return Fieldset::make('SIGNALEMENT')->schema([
             Tabs::make('Signalement')
                 ->tabs([
@@ -44,13 +63,13 @@ class SignalementFields
                         Forms\Components\DateTimePicker::make('date')
                         ->label('Date et heure du signalement')
                         ->default(Carbon::now()->toDateTimeString())
-                        ->required(fn ($get) => !$get('complet')),
+                        ->required(),
 
                         Forms\Components\DateTimePicker::make('date_evenement')
                         ->label('Date et heure de l\'évenement')
                         ->default(Carbon::now()->toDateTimeString())
                         ->helperText('Si cette date n\'est pas connue, merci de saisir la date et heure du signalement')
-                        ->required(fn ($get) => !$get('complet')),
+                        ->required(),
                     ]),
 
                     Forms\Components\Radio::make('public')
@@ -60,7 +79,7 @@ class SignalementFields
                         'PH'=> 'PH',
                     ])
                     ->inline() // Pour afficher les options en ligne
-                    ->required(fn ($get) => !$get('complet')),
+                    ->required(),
                     
                     // Forms\Components\TextInput::make('etat')
                     // ->default('Ouvert')
@@ -71,11 +90,11 @@ class SignalementFields
                         ->schema([
                             Forms\Components\Select::make('secteur_id')
                             ->relationship('secteur', 'libelle')
-                            ->required(fn ($get) => !$get('complet')),
+                            ->required(),
 
                             Forms\Components\Select::make('etablissement_id')
                             ->relationship('etablissement', 'nom')
-                            ->required(fn ($get) => !$get('complet'))
+                            ->required()
                             ->reactive() 
                             ->afterStateUpdated(function (callable $set, callable $get) {
                                 $etablissementId = $get('etablissement_id');
@@ -109,13 +128,13 @@ class SignalementFields
                         ])
                         ->inline() // Pour afficher les options en ligne
                         ->default(Auth::user()->civilite)
-                        ->required(fn ($get) => !$get('complet')),
+                        ->required(),
                         Forms\Components\TextInput::make('prenom')
                         ->default(Auth::user()->prenom)
-                        ->required(fn ($get) => !$get('complet')),
+                        ->required(),
                         Forms\Components\TextInput::make('nom')
                         ->default(Auth::user()->nom)
-                        ->required(fn ($get) => !$get('complet')),
+                        ->required(),
                     ]),
                     Forms\Components\Grid::make(3)
                     ->schema([
@@ -132,18 +151,47 @@ class SignalementFields
                             }
                             $query->where('section_id',$id); 
                         })  
-                        ->required(fn ($get) => !$get('complet')),
+                        ->required(),
 
                         Forms\Components\TextInput::make('email')
                         ->label('Courriel')
                         ->email()
                         ->default(Auth::user()->email)
-                        ->required(fn ($get) => !$get('complet')),
+                        ->required(),
 
                         Forms\Components\TextInput::make('tel')
                         ->label('Téléphone')
                         ->numeric()
-                        ->required(fn ($get) => !$get('complet')),
+                        ->afterStateUpdated(function (callable $set, callable $get) {
+                            // Vérifier les valeurs des autres champs et définir la valeur du champ caché
+                            $required = [
+                                'rub_nature1_id', 
+                                'nature1_id', 
+                                'description', 
+                                'eig',
+                                'periode_eig', 
+                                'victimes_pec', 
+                                'victimes_pro',
+                                'victimes_autre', 
+                                'perex_pec',
+                                'perex_pro',
+                                'perex_autre', 
+                            ] ;
+                            $verif = false ; 
+                            for($ind = 0 ; $ind < count($required) ; $ind++){
+                                if ($get($required[$ind]) === null || $get($required[$ind]) === '') {
+                                    $verif = true ; 
+                                }
+                            }
+                            if($verif === true){
+                                $set('etat', 'Incomplet' ) ; 
+                                $set('complet', false) ; 
+                            }else{
+                                $set('etat', 'Incomplet');
+                                $set('complet',true) ; 
+                            }
+                        })
+                        ->required(),
 
                         Hidden::make('user_id')
                         ->default(Auth::user()->id)
