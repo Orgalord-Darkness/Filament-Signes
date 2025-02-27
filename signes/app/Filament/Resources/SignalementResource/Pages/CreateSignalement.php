@@ -20,6 +20,7 @@ class CreateSignalement extends CreateRecord
                     $data = $this->form->getState();
                     $data['complet'] = false ; 
                     $this->record = $this->handleRecordCreation($data) ; 
+                    dd($data) ; 
                 }),
         ];
     }

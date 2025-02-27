@@ -241,4 +241,42 @@ class Signalement extends Model
         parent::boot();
         static::addGlobalScope(new OrderScope(['etat']));
     }
+
+    /*
+    |------------------------------------------------------------------------
+    |METHODES 
+    |------------------------------------------------------------------------
+    */
+    protected function handleRecordCreation(array $data) 
+    {   
+        $required = [
+            'secteur_id' => 1, 
+            'etablissement_id' => 1,
+            'public' => 'saisir public',
+            'etat' => 'Non complet',
+            'fonction_id' => 1,
+            'rub_nature1_id', 
+            'nature1_id', 
+            'description', 
+            'eig',
+            'periode_eig', 
+            'victimes_pec', 
+            'victimes_pro',
+            'victimes_autre', 
+            'perex_pec',
+            'perex_pro',
+            'perex_autre', 
+        ] ; 
+        if($data['complet'] === false){
+            return static::getModel()::create([
+                $data['secteur_id'] => 1, 
+                $data['etablissement_id'] => 1,
+                $data['public'] => 'saisir public',
+                $data['etat'] => 'Non complet',
+                $data['fonction_id'] => 1,
+            ]) ; 
+        }else{
+            return static::getModel()::create($data) ; 
+        }
+    }
 }

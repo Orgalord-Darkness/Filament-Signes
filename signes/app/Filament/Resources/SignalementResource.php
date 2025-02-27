@@ -109,12 +109,23 @@ class SignalementResource extends Resource
 
     protected function handleRecordCreation(array $data) 
     {   
+        $required = [
+            'secteur_id' => 1, 
+            'etablissement_id' => 1,
+            'public' => 'saisir public',
+            'etat' => 'Non complet',
+            'fonction_id' => 1,
+        ] ; 
         if($data['complet'] === false){
             return static::getModel()::create([
-                'complet' => $data['complet'], 
+                $data['secteur_id'] => 1, 
+                $data['etablissement_id'] => 1,
+                $data['public'] => 'saisir public',
+                $data['etat'] => 'Non complet',
+                $data['fonction_id'] => 1,
             ]) ; 
         }else{
             return static::getModel()::create($data) ; 
         }
     }
-}
+} 
