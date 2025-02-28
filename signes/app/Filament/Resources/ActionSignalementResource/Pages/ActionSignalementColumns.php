@@ -10,6 +10,9 @@ class ActionSignalementColumns
 {
     public static function getColumns(): array {
         return [
+            TextColumn::make('id')->label('Id')->searchable()->sortable()->wrap()->toggleable(isToggledHiddenByDefault: true), 
+            TextColumn::make('question2')->label('Détails')->searchable()->sortable()->wrap()->toggleable(isToggledHiddenByDefault: true),
+            TextColumn::make('reponse')->label('Réponse')->searchable()->sortable()->wrap()->toggleable(isToggledHiddenByDefault: true),
             TextColumn::make('motif.libelle')
             ->searchable()
             ->sortable()
@@ -29,6 +32,8 @@ class ActionSignalementColumns
             ->searchable()
             ->sortable()
             ->wrap(), 
+            TextColumn::make('updated_at')->label('Modifier le')->searchable()->sortable()->wrap()->toggleable(isToggledHiddenByDefault: true),
+            TextColumn::make('signalement.id')->label('N° Signalement')->searchable()->sortable()->wrap()->toggleable(isToggledHiddenByDefault: true),
         ] ; 
     }
 }

@@ -11,6 +11,8 @@ class SecteurColumns
     public static function getColumns(): array {
         return [
             //
+            TextColumn::make('id')->label('Id')->searchable()->sortable()->wrap()->toggleable(isToggledHiddenByDefault: true),
+            TextColumn::make('code')->label('Code')->searchable()->sortable()->wrap()->toggleable(isToggledHiddenByDefault: true),
             Tables\Columns\TextColumn::make('libelle')
             ->searchable()
             ->wrap()
