@@ -90,10 +90,29 @@ class SignalementFields
                         ->schema([
                             Forms\Components\Select::make('secteur_id')
                             ->relationship('secteur', 'libelle')
+                            ->afterStateUpdated(function ($state, callable $set, callable $get){
+                                $secteur_id = $get('secteur_id');
+                                if($secteur_id){
+                                    $etablissement_id = Etablissement::find($secteur_id)->$secteur_id ; 
+                                    $set('etablissement_id', $etablissement_id) ; 
+                                }
+                            })
+                            ->reactive()
                             ->required(),
 
                             Forms\Components\Select::make('etablissement_id')
-                            ->relationship('etablissement', 'nom')
+                            ->relationship('etablissement','nom', function ($query, callable $get) { 
+                                $id = null ; 
+                                $secteur = $get('secteur_id') ;  
+                                $etablissements = Etablissement::all(); 
+                                foreach($etablissements as $ligne){
+                                    if($ligne['secteur_id'] == $secteur){
+                                        $id = $ligne['id'];
+                                        break ; 
+                                    }
+                                }
+                                $query->where('secteur_id', $secteur) ; 
+                            })
                             ->required()
                             ->reactive() 
                             ->afterStateUpdated(function (callable $set, callable $get) {

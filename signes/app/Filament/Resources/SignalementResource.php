@@ -34,6 +34,9 @@ use App\Enums\SignalementEtatEnum ;
 use App\Enums\SignalementCompletEnum ; 
 use Filament\Tables\Columns\LinkColumn ;
 use Symfony\Component\Console\Logger\ConsoleLogger;
+use App\Mail\Test; 
+use Illuminate\Support\Facades\Mail;
+use Filament\Notifications\Notification;
 
 class SignalementResource extends Resource
 {
@@ -63,10 +66,32 @@ class SignalementResource extends Resource
     {
         return $table
             ->columns(SignalementColumns::getColumns())
+            ->headerActions([
+                Tables\Actions\Action::make('envoyerMail')
+                    ->label('Envoyer un mail')
+                    ->action(function () {
+                        try {
+                            $data = [
+                                'title' => 'Titre du Mail de Test',
+                                'message' => 'Ceci est un message de test.'
+                            ];
+                            Mail::to('heddy.mameri@gmail.com')->send(new Test($data));
+                            Notification::make()
+                                ->title('Mail envoyé avec succès !')
+                                ->success()
+                                ->send();
+                        } catch (\Exception $e) {
+                            Notification::make()
+                                ->title('Échec de l\'envoi du mail.')
+                                ->danger()
+                                ->send();
+                        }
+                    }),
+            ])
             //->filters(FiltersSignalement::getFilters(), layout: FiltersLayout::AboveContent)
             ->actions([
                 Tables\Actions\EditAction::make()->label('Modifier'),
-                Tables\Actions\DeleteAction::make()->label('Supprimer'),
+                Tables\Actions\DeleteAction::make()->label('Supprimer'), 
             ])
             ->filters(SignalementFilters::getFilters(), layout: FiltersLayout::AboveContent)
             ->bulkActions([
