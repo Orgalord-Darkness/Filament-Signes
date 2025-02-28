@@ -6,11 +6,10 @@ use App\Filament\Resources\SignalementResource;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Support\Facades\Crypt ;
-use App\Traits\EncryptionFilesSignalement ; 
+use Illuminate\Contracts\Encryption\DecryptException;
 
 class EditSignalement extends EditRecord
 {
-    use EncryptionFilesSignalement ; 
     protected static string $resource = SignalementResource::class;
 
     protected function getHeaderActions(): array
@@ -19,37 +18,58 @@ class EditSignalement extends EditRecord
             Actions\DeleteAction::make(),
         ];
     }
-
-    protected function mutateFormDataBeforeFill(array $data): array 
+    
+    protected function mutateFormDataBeforeFill(array $data): array   
     {
-        //$data = self::decryptFiles(data: $data); 
+        //Tableaux des champs cryptés
+        $tabs = [
+            'nature1_autre',
+            'nature2_autre',
+            'description',
+            'periode_eig_autre',
+            'consequence1_autre',
+            'consequence2_autre',
+            'consequence3_autre',
+            'secours_non',
+            'secours_autre',
+            'mesure1',
+            'mesure2',
+            'mesure3',
+            'information_non',
+            'information_autre',
+            'disposition1_autre',
+            'disposition2_autre',
+            'disposition3_autre',
+            'disposition4_autre',
+            'evolution',
+            'media1_oui',
+            'media2_oui',
+            'media3_oui',
+            'analyse_groupe_autre',
+            'commentaire',
+            
+        ] ; 
 
-        //Décryptage des champs
-        $data['nature1_autre'] = Crypt::decrypt($data['nature1_autre']) ;
-        $data['nature2_autre'] = Crypt::decrypt($data['nature2_autre']) ;
-        $data['description'] = Crypt::decrypt($data['description']) ;
-        $data['periode_eig_autre'] = Crypt::decrypt($data['periode_eig_autre']) ; 
-        $data['consequence1_autre'] = Crypt::decrypt($data['consequence1_autre']) ;
-        $data['consequence2_autre'] = Crypt::decrypt($data['consequence2_autre']) ;
-        $data['consequence3_autre'] = Crypt::decrypt($data['consequence3_autre']) ;
-        $data['secours_non'] = Crypt::decrypt($data['secours_non']) ;
-        $data['secours_autre'] = Crypt::decrypt($data['secours_autre']) ;
-        $data['mesure1'] = Crypt::decrypt($data['mesure1']) ;
-        $data['mesure2'] = Crypt::decrypt($data['mesure2']) ;
-        $data['mesure3'] = Crypt::decrypt($data['mesure3']) ;
-        $data['information_non'] = Crypt::decrypt($data['information_non']) ;
-        $data['information_autre'] = Crypt::decrypt($data['information_autre']) ;
-        $data['disposition1_autre'] = Crypt::decrypt($data['disposition1_autre']) ;
-        $data['disposition2_autre'] = Crypt::decrypt($data['disposition2_autre']) ;
-        $data['disposition3_autre'] = Crypt::decrypt($data['disposition3_autre']) ;
-        $data['disposition4_autre'] = Crypt::decrypt($data['disposition4_autre']) ;
-        $data['media1_oui'] = Crypt::decrypt($data['media1_oui']) ;
-        $data['media2_oui'] = Crypt::decrypt($data['media2_oui']) ;
-        $data['media3_oui'] = Crypt::decrypt($data['media3_oui']) ;
-        $data['analyse_groupe_autre'] = Crypt::decrypt($data['analyse_groupe_autre']) ;
-        $data['commentaire'] = Crypt::decrypt($data['commentaire']) ;
+        for($ind = 0 ; $ind < count($tabs) ; $ind++){
+            if($data[$tabs[$ind]] != null && !empty($data[$tabs[$ind]])){
+                try {
+                    $decrypted = Crypt::decrypt($data[$tabs[$ind]]);
+                    $decryptionSuccessful = true;
+                } catch (DecryptException $e) {
+                    $decryptionSuccessful = false;
+                }
+                if($decryptionSuccessful){
+                    $data[$tabs[$ind]] = Crypt::decrypt($data[$tabs[$ind]]) ;
+                }
+            }  
+        }
 
         return $data ; 
 
+    }
+
+    public function getTitle(): string 
+    {
+        return 'Modifier le Signalement N°'.$this->record->id ; 
     }
 }

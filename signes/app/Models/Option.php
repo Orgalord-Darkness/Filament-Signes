@@ -4,8 +4,9 @@ namespace App\Models;
 
 use App\Scopes\OrderScope;
 use Spatie\Permission\Traits\HasRoles;
+use Illuminate\Database\Eloquent\Model;
 
-class Option extends ActiveBaseModel
+class Option extends Model
 {
     use HasRoles;
 

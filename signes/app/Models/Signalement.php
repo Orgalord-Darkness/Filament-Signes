@@ -2,11 +2,15 @@
 
 namespace App\Models;
 
+use Carbon\Carbon ; 
 use App\Scopes\OrderScope;
 use App\Traits\Encryptable;
 use App\Models\Etablissement;
 use Spatie\Permission\Traits\HasRoles;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\SignalementOuvert;
+use Illuminate\Support\Facades\Crypt;
 
 class Signalement extends Model
 {
@@ -171,6 +175,11 @@ class Signalement extends Model
         return $this->hasMany(ActionSignalement::class);
     }
 
+    public function action()
+    {
+        return $this->hasMany(ActionSignalement::class);
+    }
+
     /*
     |--------------------------------------------------------------------------
     | GETTERS
@@ -198,6 +207,22 @@ class Signalement extends Model
         return $this->attributes['civilite']." ".$this->attributes['prenom']." ".$this->attributes['nom'];
     }
 
+    public function getAttribute($key)
+    {
+        $value = parent::getAttribute($key) ;
+
+        if(in_array($key, $this->encryptable))
+        {
+            try {
+                return Crypt::decrypt($value) ; 
+            }catch(\Illuminate\Contracts\Encryption\DecryptException $e){
+                return $value." ".$e->getMessage() ; 
+            }
+        }
+        
+        return $value ; 
+    }
+
     /*
     |--------------------------------------------------------------------------
     | SETTERS
@@ -217,13 +242,13 @@ class Signalement extends Model
         return $this;
     }
 
-    public function setDateAttribute($value) {
-        $this->attributes['date'] = \Carbon\Carbon::parse($value);
-    }
+    // public function setDateAttribute($value) {
+    //     $this->attributes['date'] = Carbon::parse($value);
+    // }
 
-    public function setDateEvenementAttribute($value) {
-        $this->attributes['date_evenement'] = \Carbon\Carbon::parse($value);
-    }
+    // public function setDateEvenementAttribute($value) {
+    //     $this->attributes['date_evenement'] = Carbon::parse($value);
+    // }
 
     /*
     |--------------------------------------------------------------------------
@@ -278,5 +303,6 @@ class Signalement extends Model
         }else{
             return static::getModel()::create($data) ; 
         }
+
     }
 }

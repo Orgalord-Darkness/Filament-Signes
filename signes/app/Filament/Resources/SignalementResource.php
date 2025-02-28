@@ -3,7 +3,8 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\SignalementResource\Pages;
-use App\Filament\Resources\SignalementResource\RelationManagers;
+use App\Filament\Resources\SignalementResource\RelationManagers ; 
+use App\Filament\Resources\SignalementResource\RelationManagers\SignalementRelationManager ; 
 use App\Models\Signalement;
 use App\Models\ActionSignalement ; 
 use Filament\Forms;
@@ -13,7 +14,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-use App\Filament\Resources\SignalementResource\Pages\FiltersSignalement ;
+use App\Filament\Resources\SignalementResource\Pages\SignalementFilters ;
 use Filament\Tables\Enums\FiltersLayout;
 use Filament\Forms\Components\Wizard;
 use Filament\Forms\Components\Wizard\Step;
@@ -67,7 +68,7 @@ class SignalementResource extends Resource
                 Tables\Actions\EditAction::make()->label('Modifier'),
                 Tables\Actions\DeleteAction::make()->label('Supprimer'),
             ])
-            ->filters(FiltersSignalement::getFilters(), layout: FiltersLayout::AboveContent)
+            ->filters(SignalementFilters::getFilters(), layout: FiltersLayout::AboveContent)
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
@@ -85,6 +86,7 @@ class SignalementResource extends Resource
     {
         return [
             //
+            SignalementRelationManager::class, 
         ];
     }
 

@@ -4,9 +4,10 @@ namespace App\Models;
 
 use App\Scopes\OrderScope;
 use Spatie\Permission\Traits\HasRoles;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Categorie extends ActiveBaseModel // Ticket 16
+class Categorie extends Model // Ticket 16
 {
     use SoftDeletes ; 
 

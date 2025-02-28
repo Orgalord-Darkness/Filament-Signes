@@ -19,6 +19,7 @@ use AlperenErsoy\FilamentExport\Actions\FilamentExportBulkAction;
 use App\Filament\Resources\EtablissementResource\Pages\EtablissementFields ;
 use App\Filament\Resources\EtablissementResource\Pages\EtablissementColumns ; 
 use App\Filament\Resources\EtablissementResource\Pages\EtablissementFilters ; 
+use App\Filament\Resources\EtablissementResource\RelationManagers\EtablissementRelationManager ; 
 
 class EtablissementResource extends Resource
 {
@@ -71,6 +72,7 @@ class EtablissementResource extends Resource
     {
         return [
             //
+            EtablissementRelationManager::class, 
         ];
     }
 
