@@ -192,35 +192,6 @@ class SignalementFields
                         Forms\Components\TextInput::make('tel')
                         ->label('Téléphone')
                         ->numeric()
-                        ->afterStateUpdated(function (callable $set, callable $get) {
-                            // Vérifier les valeurs des autres champs et définir la valeur du champ caché
-                            $required = [
-                                'rub_nature1_id', 
-                                'nature1_id', 
-                                'description', 
-                                'eig',
-                                'periode_eig', 
-                                'victimes_pec', 
-                                'victimes_pro',
-                                'victimes_autre', 
-                                'perex_pec',
-                                'perex_pro',
-                                'perex_autre', 
-                            ] ;
-                            $verif = false ; 
-                            for($ind = 0 ; $ind < count($required) ; $ind++){
-                                if ($get($required[$ind]) === null || $get($required[$ind]) === '') {
-                                    $verif = true ; 
-                                }
-                            }
-                            if($verif === true){
-                                $set('etat', 'Incomplet' ) ; 
-                                $set('complet', false) ; 
-                            }else{
-                                $set('etat', 'Incomplet');
-                                $set('complet',true) ; 
-                            }
-                        })
                         ->required(),
 
                         Hidden::make('user_id')
@@ -993,8 +964,33 @@ class SignalementFields
                             $set('groupe_inter','Autre') ;
                         }else{
                             $set('groupe_inter','') ; 
-                        }
-
+                        } ; 
+                            $required = [
+                                'rub_nature1_id', 
+                                'nature1_id', 
+                                'description', 
+                                'eig',
+                                'periode_eig', 
+                                'victimes_pec', 
+                                'victimes_pro',
+                                'victimes_autre', 
+                                'perex_pec',
+                                'perex_pro',
+                                'perex_autre', 
+                            ] ;
+                            $verif = false ; 
+                            for($ind = 0 ; $ind < count($required) ; $ind++){
+                                if ($get($required[$ind]) === null || $get($required[$ind]) === '') {
+                                    $verif = true ; 
+                                }
+                            }
+                            if($verif === true){
+                                $set('etat', 'Ouvert' ) ; 
+                                $set('complet', true) ; 
+                            }else{
+                                $set('etat', 'Ouvert');
+                                $set('complet',true) ; 
+                            }
                     })
                     ->reactive(),
 

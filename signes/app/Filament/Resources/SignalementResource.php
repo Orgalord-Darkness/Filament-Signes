@@ -85,6 +85,7 @@ class SignalementResource extends Resource
                                 ->title('Échec de l\'envoi du mail.')
                                 ->danger()
                                 ->send();
+                                dd($e->getMessage()) ; 
                         }
                     }),
             ])

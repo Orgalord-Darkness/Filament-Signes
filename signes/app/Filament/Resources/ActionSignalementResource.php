@@ -16,6 +16,9 @@ use App\Filament\Resources\ActionSignalementResource\Pages\ActionSignalementColu
 use App\Filament\Resources\ActionSignalementResource\Pages\ActionSignalementFields; 
 //use App\Filament\Resources\ActionSignalementResource\Pages\FiltersActionSignalement ; 
 use Filament\Tables\Enums\FiltersLayout;
+use App\Mail\ActionQuestion; 
+use Illuminate\Support\Facades\Mail;
+use Filament\Notifications\Notification;
 
 class ActionSignalementResource extends Resource
 {
@@ -47,6 +50,8 @@ class ActionSignalementResource extends Resource
                 //
             ActionSignalementColumns::getColumns(), 
             )
+            ->headerActions([
+            ])
             ->filters([//FiltersActionSignalement::getFilters(), layout: FiltersLayout::AboveContent
             ])
             ->actions([
@@ -54,6 +59,23 @@ class ActionSignalementResource extends Resource
                 ->label('modifier'),
                 Tables\Actions\DeleteAction::make()
                 ->label('supprimer'),
+                Tables\Actions\Action::make('envoyerMail')
+                    ->label('Envoyer un mail')
+                    ->action(function ($record) {
+                        try {
+                            Mail::to('experience.example@gmail.com')->send(new ActionQuestion($record));
+                            Notification::make()
+                                ->title('Mail envoyé avec succès !')
+                                ->success()
+                                ->send();
+                        } catch (\Exception $e) {
+                            Notification::make()
+                                ->title('Échec de l\'envoi du mail.')
+                                ->danger()
+                                ->send();
+                                dd($e->getMessage()) ; 
+                        }
+                    }),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

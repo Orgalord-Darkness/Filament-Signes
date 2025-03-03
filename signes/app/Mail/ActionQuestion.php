@@ -6,7 +6,6 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use App\Models\ActionSignalement;
 use Illuminate\Queue\SerializesModels;
-use App\Http\Controllers\Admin\ActionSignalementCrudController;
 
 class ActionQuestion extends Mailable
 {

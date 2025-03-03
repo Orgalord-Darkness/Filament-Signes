@@ -3,6 +3,12 @@
 namespace App\Observers;
 
 use App\Models\Signalement;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\ActionQuestion;
+use App\Mail\SignalementOuvert;
+use App\Models\ActionSignalement;
+use WireUi\Traits\Actions;
+use Illuminate\Support\Facades\Notification;
 
 class SignalementObserver
 {
@@ -23,6 +29,23 @@ class SignalementObserver
         if (request()->has('destinataires')) {
             $signalement->destinataires()->sync(request()->input('destinataires'));
         }
+
+        //Mails
+        if($signalement->etat === "Ouvert")
+        {
+            try {
+                Mail::to('test.valdoise@gmail.com')->send(new SignalementOuvert($signalement));
+                Notification::make()
+                ->title('Mail envoyé avec succès !')
+                ->success()
+                ->send();
+            } catch (\Exception $e) {
+                Notification::make()
+                ->title('Échec de l\'envoi du mail.')
+                ->danger()
+                ->send();
+            }
+        }
     }
 
     /**
@@ -37,6 +60,15 @@ class SignalementObserver
 
         if(is_null($signalement->complet)){
             $signalement->complet = true ; 
+        }
+
+        if($signalement->etat === "Ouvert")
+        {
+            try {
+                Mail::to('test.valdoise@gmail.com')->send(new SignalementOuvert($signalement));
+            } catch (\Exception $e) {
+                dd($e->getMessage()) ; 
+            }
         }
     }
 
