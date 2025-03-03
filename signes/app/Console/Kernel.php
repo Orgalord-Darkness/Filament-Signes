@@ -2,6 +2,11 @@
 
 namespace App\Console;
 
+use Carbon\Carbon ;  
+use App\Models\Signalement ;
+use App\Mail\SignalementRelance;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -41,6 +46,24 @@ class Kernel extends ConsoleKernel
         $schedule->command('relanceSignalement')->dailyAt('10:00')
             ->withoutOverlapping()
             ->appendOutputTo('relanceSignalement.log');
+
+        $schedule->call(function (){
+            $signalements = Signalement::all() ; 
+
+            foreach($signalements as $signalement)
+            {
+                if($signalement::where('date_evenement', '<=', Carbon::now()->subWeek($signalement->secteur->delai_relance))->get())
+                {
+                    Mail::to($signalement->email)->send(new SignalementRelance($signalement)) ;
+                } 
+                if($signalement->isNotEmpty())
+                {
+                    Mail::to('test.valdoise@gmail.com')->send(new SignalementRelance($signalement)) ;
+                } else {
+                    Log::info('Aucun utilisateur trouvé pour l\'envoi de l\'email.');
+                }
+            }
+        }) ; 
     }
 
     /**
