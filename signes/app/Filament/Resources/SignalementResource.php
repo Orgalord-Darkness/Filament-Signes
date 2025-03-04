@@ -34,9 +34,11 @@ use App\Enums\SignalementEtatEnum ;
 use App\Enums\SignalementCompletEnum ; 
 use Filament\Tables\Columns\LinkColumn ;
 use Symfony\Component\Console\Logger\ConsoleLogger;
-use App\Mail\Test; 
+use App\Mail\SignalementRelance; 
 use Illuminate\Support\Facades\Mail;
 use Filament\Notifications\Notification;
+use Carbon\Carbon ; 
+use Illuminate\Support\Facades\Log;
 
 class SignalementResource extends Resource
 {
@@ -67,15 +69,16 @@ class SignalementResource extends Resource
         return $table
             ->columns(SignalementColumns::getColumns())
             ->headerActions([
+            ])
+            //->filters(FiltersSignalement::getFilters(), layout: FiltersLayout::AboveContent)
+            ->actions([
+                Tables\Actions\EditAction::make()->label('Modifier'),
+                Tables\Actions\DeleteAction::make()->label('Supprimer'), 
                 Tables\Actions\Action::make('envoyerMail')
-                    ->label('Envoyer un mail')
-                    ->action(function () {
+                    ->label('Envoyer un mail de relance')
+                    ->action(function ($record) {
                         try {
-                            $data = [
-                                'title' => 'Titre du Mail de Test',
-                                'message' => 'Ceci est un message de test.'
-                            ];
-                            Mail::to('heddy.mameri@gmail.com')->send(new Test($data));
+                            Mail::to('heddy.mameri@gmail.com')->send(new SignalementRelance($record));
                             Notification::make()
                                 ->title('Mail envoyé avec succès !')
                                 ->success()
@@ -88,11 +91,6 @@ class SignalementResource extends Resource
                                 dd($e->getMessage()) ; 
                         }
                     }),
-            ])
-            //->filters(FiltersSignalement::getFilters(), layout: FiltersLayout::AboveContent)
-            ->actions([
-                Tables\Actions\EditAction::make()->label('Modifier'),
-                Tables\Actions\DeleteAction::make()->label('Supprimer'), 
             ])
             ->filters(SignalementFilters::getFilters(), layout: FiltersLayout::AboveContent)
             ->bulkActions([
@@ -155,5 +153,37 @@ class SignalementResource extends Resource
         }else{
             return static::getModel()::create($data) ; 
         }
+    }
+
+    public function relance()
+    {
+        $signalements = Signalement::all() ; 
+
+            foreach($signalements as $signalement)
+            {
+                if($signalement::where('date_evenement', '<=', Carbon::now()->subWeek($signalement->secteur->delai_relance))->get())
+                {
+                    Mail::to($signalement->email)->send(new SignalementRelance($signalement)) ;
+                } 
+                if($signalement->isNotEmpty())
+                {
+                    Mail::to('test.valdoise@gmail.com')->send(new SignalementRelance($signalement)) ;
+                }
+                else {
+                    Log::info('Aucun utilisateur trouvé pour l\'envoi de l\'email.');
+                }
+
+                if($signalement::where('date_evenement', '<=', Carbon::now()->subSeconds(30))->get())
+                {
+                    Mail::to($signalement->email)->send(new SignalementRelance($signalement)) ;
+                } 
+                if($signalement->isNotEmpty())
+                {
+                    Mail::to('test.valdoise@gmail.com')->send(new SignalementRelance($signalement)) ;
+                }
+                else {
+                    Log::info('Aucun utilisateur trouvé pour l\'envoi de l\'email.');
+                }
+            }
     }
 } 

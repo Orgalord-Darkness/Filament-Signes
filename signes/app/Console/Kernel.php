@@ -7,6 +7,8 @@ use App\Models\Signalement ;
 use App\Mail\SignalementRelance;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Artisan;
+use App\Console\Commands\RelanceSignalement;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -41,30 +43,22 @@ class Kernel extends ConsoleKernel
      * - pour stopper php artisan schedule:work, exécuter Ctrl+c dans le terminal
 
      */
-    protected function schedule(Schedule $schedule)
-    {
-        $schedule->command('relanceSignalement')->dailyAt('10:00')
-            ->withoutOverlapping()
-            ->appendOutputTo('relanceSignalement.log');
+    /**
+     * Définir le planificateur de commandes de l'application.
+     *
+     * @param  \Illuminate\Console\Scheduling\Schedule  $schedule
+     * @return void
+     */
+    // protected function schedule(Schedule $schedule)
+    // {
+    //     $schedule->command('relanceSignalement')->dailyAt('10:00')
+    //     ->withoutOverlapping()
+    //     ->appendOutputTo('relanceSignalement.log') ;
 
-        $schedule->call(function (){
-            $signalements = Signalement::all() ; 
-
-            foreach($signalements as $signalement)
-            {
-                if($signalement::where('date_evenement', '<=', Carbon::now()->subWeek($signalement->secteur->delai_relance))->get())
-                {
-                    Mail::to($signalement->email)->send(new SignalementRelance($signalement)) ;
-                } 
-                if($signalement->isNotEmpty())
-                {
-                    Mail::to('test.valdoise@gmail.com')->send(new SignalementRelance($signalement)) ;
-                } else {
-                    Log::info('Aucun utilisateur trouvé pour l\'envoi de l\'email.');
-                }
-            }
-        }) ; 
-    }
+    //     $schedule->call(function () {
+    //         Artisan::call('relanceSignalement'); 
+    //     })->everyMinute() ; 
+    // }
 
     /**
      * Register the commands for the application.

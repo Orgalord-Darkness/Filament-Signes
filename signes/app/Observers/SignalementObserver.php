@@ -2,10 +2,13 @@
 
 namespace App\Observers;
 
+use App\Models\User ;
 use App\Models\Signalement;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Auth;
 use App\Mail\ActionQuestion;
 use App\Mail\SignalementOuvert;
+use App\Mail\SignalementFerme;
 use App\Models\ActionSignalement;
 use WireUi\Traits\Actions;
 use Illuminate\Support\Facades\Notification;
@@ -54,12 +57,25 @@ class SignalementObserver
     public function updated(Signalement $signalement): void
     {
         //Valeurs par défaut pour les attributs automatiques 
-        if(is_null($signalement->etat)){
-            $signalement->etat = "Ouvert" ; 
+        $user = null ; 
+        $users = User::all() ; 
+        foreach($users as $ligne){
+            if($ligne->id === Auth::user()->id)
+            {
+                $user = $ligne ; 
+            }
         }
 
-        if(is_null($signalement->complet)){
-            $signalement->complet = true ; 
+        if($user->isGestionnaire()){
+            try {
+                $signalement->etat = "Fermé" ;  
+                $signalement->save() ; 
+                Mail::to('test.valdoise@gmail.com')->send(new SignalementFerme($signalement));
+            } catch (\Exception $e) {
+                dd($e->getMessage()) ; 
+            }
+        }else{
+            
         }
 
         if($signalement->etat === "Ouvert")
@@ -67,7 +83,7 @@ class SignalementObserver
             try {
                 Mail::to('test.valdoise@gmail.com')->send(new SignalementOuvert($signalement));
             } catch (\Exception $e) {
-                dd($e->getMessage()) ; 
+                //dd($e->getMessage()) ; 
             }
         }
     }

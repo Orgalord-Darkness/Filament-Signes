@@ -79,6 +79,7 @@ class User extends Authenticatable implements FilamentUser, HasName, HasAvatar
     {
         return $this->avatar_url ? Storage::url($this->avatar_url) : null ;
     }
+    
 
     /*
     |--------------------------------------------------------------------------
@@ -123,6 +124,10 @@ class User extends Authenticatable implements FilamentUser, HasName, HasAvatar
         return $this->belongsToMany(Etablissement::class);
     }
 
+    public function role()
+    {
+        return $this->belongsToMany(Role::class, 'model_has_roles', 'model_id', 'role_id');
+    }
     /*
     |--------------------------------------------------------------------------
     | FUNCTIONS
@@ -164,5 +169,15 @@ class User extends Authenticatable implements FilamentUser, HasName, HasAvatar
     public function canAccessPanel(Panel $panel): bool 
     {
         return $this->delete_at == null ? true : false ; 
+    }
+
+    public function isAdmin(): bool 
+    {
+        return $this->role->pluck('name')->contains("Administrateur") ; 
+    }
+
+    public function isGestionnaire(): bool 
+    {
+        return $this->role->pluck('name')->contains("Gestionnaire") ;
     }
 }

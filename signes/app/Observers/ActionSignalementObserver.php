@@ -17,6 +17,7 @@ class ActionSignalementObserver
     {
         //
         try {
+            $actionSignalement->signalement->etat = 'En cours' ; 
             Mail::to('test.valdoise@gmail.com')->send(new ActionQuestion($actionSignalement));
             // Notification::make()
             //     ->title('Mail envoyé avec succès !')

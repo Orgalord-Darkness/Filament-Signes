@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
     <body>
+        <h1>Ceci est un test d'envoie de mail automatique. Ne pas répondre.</h1>
         <h1>Bonjour {{$signalement->civilite}} {{$signalement->prenom}} {{$signalement->nom}}</h1>
         <p>
             Nous vous remercions de bien vouloir nous faire connaitre les suites données à 

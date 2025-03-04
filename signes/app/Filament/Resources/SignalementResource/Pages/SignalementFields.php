@@ -33,13 +33,14 @@ class SignalementFields
     {
         return in_array('Autre', $get($champ, [])) ; 
     }
+    
     public static function getFields()
     {
         $required = [
             'secteur_id', 
             'etablissement_id',
-            'public' => 'saisir public',
-            'etat' => 'Non complet',
+            'public' ,
+            'etat', 
             'fonction_id',
             'rub_nature1_id', 
             'nature1_id', 
@@ -81,7 +82,6 @@ class SignalementFields
                     ])
                     ->inline() // Pour afficher les options en ligne
                     ->required(),
-                    
                     
                     Hidden::make('etat')->default('Ouvert'), 
                     Hidden::make('complet')->default(true), 

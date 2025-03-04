@@ -5,7 +5,7 @@
 </head>
 <body>
     <p>
-        Bonjour {{ $civilite }} {{ $prenom }} {{$nom}}
+        Bonjour {{ $signalement->civilite }} {{ $signalement->prenom }} {{ $signalement->nom }}
         </br>
         Nous accusons réception de votre signalement et nous vous en remercions.
         </br>
