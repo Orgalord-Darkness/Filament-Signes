@@ -15,15 +15,15 @@ class UserObserver
     public function created(User $user): void
     {
         //
-        try {
-            $data = [
-                'title' => 'Bienvenue ' . $user->nom,
-                'message' => 'Merci de vous être inscrit sur notre site.',
-            ];
-            Mail::to('test.valdoise@gmail.com')->send(new Test($data));
-        } catch (\Exception $e) {
-            dd($e->getMessage());
-        }
+        // try {
+        //     $data = [
+        //         'title' => 'Bienvenue ' . $user->nom,
+        //         'message' => 'Merci de vous être inscrit sur notre site.',
+        //     ];
+        //     Mail::to('test.valdoise@gmail.com')->send(new Test($data));
+        // } catch (\Exception $e) {
+        //     dd($e->getMessage());
+        // }
 
     }
 

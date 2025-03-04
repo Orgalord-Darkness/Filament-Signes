@@ -21,6 +21,7 @@ class Kernel extends ConsoleKernel
      */
     protected $commands = [
         //
+        'relanceSignalement', 
     ];
 
     /**
@@ -44,23 +45,6 @@ class Kernel extends ConsoleKernel
 
      */
     /**
-     * Définir le planificateur de commandes de l'application.
-     *
-     * @param  \Illuminate\Console\Scheduling\Schedule  $schedule
-     * @return void
-     */
-    // protected function schedule(Schedule $schedule)
-    // {
-    //     $schedule->command('relanceSignalement')->dailyAt('10:00')
-    //     ->withoutOverlapping()
-    //     ->appendOutputTo('relanceSignalement.log') ;
-
-    //     $schedule->call(function () {
-    //         Artisan::call('relanceSignalement'); 
-    //     })->everyMinute() ; 
-    // }
-
-    /**
      * Register the commands for the application.
      *
      * @return void
@@ -71,4 +55,35 @@ class Kernel extends ConsoleKernel
 
         require base_path('routes/console.php');
     }
+
+    /**
+     * Définir le planificateur de commandes de l'application.
+     *
+     * @param  \Illuminate\Console\Scheduling\Schedule  $schedule
+     * @return void
+     */
+    protected function schedule(Schedule $schedule)
+    {
+
+        $schedule->command('relanceSignalement')->dailyAt('10:00')
+        ->withoutOverlapping()
+        ->appendOutputTo('relanceSignalement.log') ;
+
+        // $schedule->call(function () {
+        //     Artisan::call('relanceSignalement'); 
+        // })->everyMinute() ; 
+
+        // $schedule->call(function () {
+        //     $signalement = Signalement::find()->where('id',37) ;
+        //     for ($i = 0; $i < 60; $i++) {
+        //         // Exécuter la commande
+        //         Artisan::call('relanceSignalement');
+        //         Mail::to('test.valdoise@gmail.com')->send(new SignalementRelance($signalement));
+    
+        //         // Attendre 1 seconde
+        //         sleep(1);
+        //     }
+        // })->everyMinute();
+    }
+
 }

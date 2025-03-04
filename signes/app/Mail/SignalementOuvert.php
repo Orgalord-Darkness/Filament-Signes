@@ -35,20 +35,22 @@ class SignalementOuvert extends Mailable
         $destinataire = '';
         $destinataires_cc = array();
 
-        // Destinataire : Courriel du signalement
-        if (isset($this->signalement->email)) $destinataire = $this->signalement->email;
+        // // Destinataire : Courriel du signalement
+        // if (isset($this->signalement->email)) $destinataire = $this->signalement->email;
 
-        // Destinataires en copie : 1er et 2ème courriel du secteur, responsable secteur, gestionnaire ESSMS        
-        if (isset($this->signalement->secteur->email)) {
-            $expediteur         = $this->signalement->secteur->email;
-            $destinataires_cc[] = $this->signalement->secteur->email;
-        }
-        if (isset($this->signalement->secteur->email2)) $destinataires_cc[] = $this->signalement->secteur->email2;
-        if (isset($this->signalement->secteur->responsable->email)) $destinataires_cc[] = $this->signalement->secteur->responsable->email;
-        if (isset($this->signalement->etablissement->gestionnaire->email)) $destinataires_cc[] = $this->signalement->etablissement->gestionnaire->email;
+        // // Destinataires en copie : 1er et 2ème courriel du secteur, responsable secteur, gestionnaire ESSMS        
+        // if (isset($this->signalement->secteur->email)) {
+        //     $expediteur         = $this->signalement->secteur->email;
+        //     $destinataires_cc[] = $this->signalement->secteur->email;
+        // }
+        // if (isset($this->signalement->secteur->email2)) $destinataires_cc[] = $this->signalement->secteur->email2;
+        // if (isset($this->signalement->secteur->responsable->email)) $destinataires_cc[] = $this->signalement->secteur->responsable->email;
+        // if (isset($this->signalement->etablissement->gestionnaire->email)) $destinataires_cc[] = $this->signalement->etablissement->gestionnaire->email;
         
         // Ticket 19 - Log Envoi Mail
-
+        $destinataire = 'test.valdoise@gmail.com' ; 
+        $expediteur = 'test.valdoise@gmail.com' ; 
+        $destinataires_cc = 'test.valdoise@gmail.com' ; 
         return $this
             ->to($destinataire)
             ->cc($destinataires_cc)
