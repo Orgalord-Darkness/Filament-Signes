@@ -35,15 +35,15 @@ class SignalementObserver
         {
             try {
                 Mail::to('test.valdoise@gmail.com')->send(new SignalementOuvert($signalement));
-                Notification::make()
-                ->title('Mail envoyé avec succès !')
-                ->success()
-                ->send();
+                // Notification::make()
+                // ->title('Mail envoyé avec succès !')
+                // ->success()
+                // ->send();
             } catch (\Exception $e) {
-                Notification::make()
-                ->title('Échec de l\'envoi du mail.')
-                ->danger()
-                ->send();
+                // Notification::make()
+                // ->title('Échec de l\'envoi du mail.')
+                // ->danger()
+                // ->send();
             }
         }
     }

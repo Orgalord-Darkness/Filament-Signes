@@ -19,14 +19,14 @@ class ActionSignalementObserver
         try {
             Mail::to('test.valdoise@gmail.com')->send(new ActionQuestion($actionSignalement));
             // Notification::make()
-            // ->title('Mail envoyé avec succès !')
-            // ->success()
-            // ->send();
+            //     ->title('Mail envoyé avec succès !')
+            //     ->success()
+            //     ->send();
         } catch (\Exception $e) {
             // Notification::make()
-            // ->title('Échec de l\'envoi du mail.')
-            // ->danger()
-            // ->send();
+            //     ->title('Échec de l\'envoi du mail.')
+            //     ->danger()
+            //     ->send();
         }
     }
 
