@@ -24,6 +24,7 @@ class FaqColumns
                 ->wrap()
                 ->searchable()
                 ->sortable(),
+            Tables\Columns\TextColumn::make('reponse')->searchable()->sortable()->wrap()->toggleable(isToggledHiddenByDefault: true),
 
         ] ; 
     }
