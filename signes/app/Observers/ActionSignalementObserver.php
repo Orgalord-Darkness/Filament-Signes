@@ -16,8 +16,10 @@ class ActionSignalementObserver
     public function created(ActionSignalement $actionSignalement): void
     {
         //
-        try {
-            $actionSignalement->signalement->etat = 'En cours' ; 
+        //dd($actionSignalement->signalement->etat = "En cours") ; 
+        $actionSignalement->signalement->etat = "En cours" ; 
+        $actionSignalement->signalement->save() ;
+        try { 
             Mail::to('test.valdoise@gmail.com')->send(new ActionQuestion($actionSignalement));
             // Notification::make()
             //     ->title('Mail envoyé avec succès !')
@@ -28,6 +30,7 @@ class ActionSignalementObserver
             //     ->title('Échec de l\'envoi du mail.')
             //     ->danger()
             //     ->send();
+            dd($actionSignalement) ; 
         }
     }
 
