@@ -208,7 +208,7 @@ class SignalementColumns
                         return "<a style='font-size:14px;' class='text-center warning'href='$url'>Action N°".$n."</a>" ; 
                     }
                 }else{
-                    return "<p style='font-size:14px;'>Aucune action</p>" ; 
+                    return "<a style='font-size:14px;' class='text-center warning'href='/admin/action-signalements/create?signalement_id=".$record->id."'>Ajouter une action</a>" ; 
                 }
             })
             ->wrap()

@@ -242,6 +242,12 @@ class Signalement extends Model
         return $this;
     }
 
+    public function setEtatAttribute($etat)
+    {
+        $this->attributes['etat'] = $etat ; 
+        return $this ; 
+    }
+
     // public function setDateAttribute($value) {
     //     $this->attributes['date'] = Carbon::parse($value);
     // }

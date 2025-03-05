@@ -33,7 +33,7 @@ class ActionSignalement extends Model
     */
 
     public function signalement()
-    {
+    {   
         return $this->belongsTo(Signalement::class);
     }
 

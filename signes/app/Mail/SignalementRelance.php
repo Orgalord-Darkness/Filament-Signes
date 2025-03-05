@@ -6,12 +6,14 @@ use App\Models\Signalement;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
+use App\Http\Controllers\Admin\SignalementCrudController;
 
-class SignalementOuvert extends Mailable
+class SignalementRelance extends Mailable
 {
     use Queueable, SerializesModels;
 
     public $signalement ; 
+
     /**
      * Create a new message instance.
      *
@@ -29,7 +31,7 @@ class SignalementOuvert extends Mailable
      */
     public function build()
     {
-        $subject = $this->signalement->etablissement->nom." - Ouverture signalement N° ".$this->signalement->id." du ".date('d-m-Y H:i:s', strtotime($this->signalement->date));
+        $subject = $this->signalement->etablissement->nom." - Relance signalement N° ".$this->signalement->id." du ".date('d-m-Y H:i:s', strtotime($this->signalement->date));
 
         $expediteur = '';
         $destinataire = '';
@@ -47,15 +49,16 @@ class SignalementOuvert extends Mailable
         // if (isset($this->signalement->secteur->responsable->email)) $destinataires_cc[] = $this->signalement->secteur->responsable->email;
         // if (isset($this->signalement->etablissement->gestionnaire->email)) $destinataires_cc[] = $this->signalement->etablissement->gestionnaire->email;
         
-        // Ticket 19 - Log Envoi Mail
-        $destinataire = 'test.valdoise@gmail.com' ; 
+        // // Ticket 19 - Log Envoi Mail$
+            
         $expediteur = 'test.valdoise@gmail.com' ; 
-        $destinataires_cc = 'test.valdoise@gmail.com' ; 
+        $destinataire = 'test.valdoise@gmail.com' ; 
+        $destinataires_cc = 'test.valdoise@gmail.com' ;
         return $this
             ->to($destinataire)
             ->cc($destinataires_cc)
             ->from($expediteur)
             ->subject($subject)
-            ->markdown('emails.signalement_ouvert', ['signalement' => $this->signalement]);
+            ->markdown('emails.signalement_relance', ['signalement' => $this->signalement]);
     }
 }

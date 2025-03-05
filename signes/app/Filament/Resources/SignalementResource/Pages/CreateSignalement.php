@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\SignalementResource\Pages;
 
+use App\Events\EnvoieMail; 
 use App\Filament\Resources\SignalementResource;
 use Filament\Actions;
 use Filament\Resources\Pages\CreateRecord;
@@ -15,14 +16,18 @@ class CreateSignalement extends CreateRecord
     {
         return [
             Actions\Action::make('saveDraft')
-                ->label('Enregistrer la saisie')
-                ->action(function (){
-                    $data = $this->form->getState();
-                    $data['complet'] = false ; 
-                    $this->record = $this->handleRecordCreation($data) ; 
-                    dd($data) ; 
-                }),
+            ->label('Enregistrer la saisie')
+            ->action(function (){
+                $data = $this->form->getState();
+                $data['complet'] = false ; 
+                $this->record = $this->handleRecordCreation($data) ;
+            }),
         ];
+    }
+
+    protected function afterCreate(): void
+    {
+        // event(new EnvoieMail($this->record)) ; 
     }
     
 }

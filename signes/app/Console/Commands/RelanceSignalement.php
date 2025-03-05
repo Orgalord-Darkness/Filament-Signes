@@ -71,7 +71,7 @@ class RelanceSignalement extends Command
 
                     //Envoi mail de Relance
                     try {
-                        Mail::send(new SignalementRelance($signalement));
+                        Mail::to('test.valdoise@gmail.com')->send(new SignalementRelance($signalement));
                     }
                     catch (Exception $exception) {
                         Log::channel('emailError')->error($exception->getMessage(),  ['signalement' => $signalement]);

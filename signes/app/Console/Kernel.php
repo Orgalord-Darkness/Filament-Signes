@@ -2,6 +2,13 @@
 
 namespace App\Console;
 
+use Carbon\Carbon ;  
+use App\Models\Signalement ;
+use App\Mail\SignalementRelance;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Artisan;
+use App\Console\Commands\RelanceSignalement;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -14,6 +21,7 @@ class Kernel extends ConsoleKernel
      */
     protected $commands = [
         //
+        'relanceSignalement', 
     ];
 
     /**
@@ -36,13 +44,6 @@ class Kernel extends ConsoleKernel
      * - pour stopper php artisan schedule:work, exécuter Ctrl+c dans le terminal
 
      */
-    protected function schedule(Schedule $schedule)
-    {
-        $schedule->command('relanceSignalement')->dailyAt('10:00')
-            ->withoutOverlapping()
-            ->appendOutputTo('relanceSignalement.log');
-    }
-
     /**
      * Register the commands for the application.
      *
@@ -54,4 +55,35 @@ class Kernel extends ConsoleKernel
 
         require base_path('routes/console.php');
     }
+
+    /**
+     * Définir le planificateur de commandes de l'application.
+     *
+     * @param  \Illuminate\Console\Scheduling\Schedule  $schedule
+     * @return void
+     */
+    protected function schedule(Schedule $schedule)
+    {
+
+        $schedule->command('relanceSignalement')->dailyAt('10:00')
+        ->withoutOverlapping()
+        ->appendOutputTo('relanceSignalement.log') ;
+
+        // $schedule->call(function () {
+        //     Artisan::call('relanceSignalement'); 
+        // })->everyMinute() ; 
+
+        // $schedule->call(function () {
+        //     $signalement = Signalement::find()->where('id',37) ;
+        //     for ($i = 0; $i < 60; $i++) {
+        //         // Exécuter la commande
+        //         Artisan::call('relanceSignalement');
+        //         Mail::to('test.valdoise@gmail.com')->send(new SignalementRelance($signalement));
+    
+        //         // Attendre 1 seconde
+        //         sleep(1);
+        //     }
+        // })->everyMinute();
+    }
+
 }
