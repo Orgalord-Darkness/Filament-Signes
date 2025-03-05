@@ -13,16 +13,18 @@ class DomicileSignalementESSMSWidget extends ChartWidget
 
     protected function getData(): array
     {
-        $etabs = Secteur::all();
+        $etabs = Etablissement::all();
+        $secteurs = Secteur::all() ; 
 
         $annee = $this->filters['annee'] ?? null;
         $directionId = $this->filters['direction'] ?? null;
 
         foreach ($etabs as $ligne) {
             $query = Signalement::join('secteurs', 'signalements.secteur_id', '=', 'secteurs.id')
-            ->where('secteurs.id', $ligne->id)
-            ->where('secteurs.libelle', 'Domicile')
-            ->select('signalements.*')
+            ->join('etablissements', 'signalements.etablissement_id', '=', 'etablissements.id')
+            ->where('etablissements.id',$ligne->id)
+            ->where('secteurs.libelle','like', 'Domicile')
+            ->select('signalements.id', 'secteurs.libelle', 'etablissements.nom')
             ->get();
 
             if (!empty($annee)) {
@@ -34,7 +36,7 @@ class DomicileSignalementESSMSWidget extends ChartWidget
             }
             $datas[] = $query->count();
             $colors[] = 'rgb('.rand(0, 255).','.rand(0, 255).','.rand(0, 255).')';
-            $libelles[] = $ligne->libelle;
+            $libelles[] = $ligne->nom;
         }
 
         return [
@@ -42,20 +44,20 @@ class DomicileSignalementESSMSWidget extends ChartWidget
                 [
                     'label' => 'Nb Signalement',
                     'data'  => $datas,
-                    // 'backgroundColor'=>$colors, 
-                    'backgroundColor'=>[
-                        "#FF0000",
-                        "#00FF00",
-                        "#0000FF",
-                        "#FFFF00",
-                        "#00FFFF",
-                        "#FF00FF",
-                        "#000000",
-                        "#FFFFFF",
-                        "#808080",
-                        "#FFA500"
-                    ],
-                    'borderColor'     => 'rgb(255, 255, 255)',
+                    'backgroundColor'=>$colors, 
+                    // 'backgroundColor'=>[
+                    //     "#FF0000",
+                    //     "#00FF00",
+                    //     "#0000FF",
+                    //     "#FFFF00",
+                    //     "#00FFFF",
+                    //     "#FF00FF",
+                    //     "#000000",
+                    //     "#FFFFFF",
+                    //     "#808080",
+                    //     "#FFA500"
+                    // ],
+                    'borderColor'=> 'rgb(255, 255, 255)',
                 ],
             ],
             'labels' => $libelles,

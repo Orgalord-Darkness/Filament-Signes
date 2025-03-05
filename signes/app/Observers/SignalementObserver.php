@@ -21,12 +21,29 @@ class SignalementObserver
     public function created(Signalement $signalement): void
     {
         //Valeurs par défaut pour les attributs automatiques 
-        if(is_null($signalement->etat)){
-            $signalement->etat = "Ouvert" ; 
+        $required = [
+            'rub_nature1_id', 
+            'nature1_id', 
+            'description', 
+            'eig',
+            'periode_eig', 
+            'victimes_pec', 
+            'victimes_pro',
+            'victimes_autre', 
+            'perex_pec',
+            'perex_pro',
+            'perex_autre', 
+        ] ;
+        $incomplet = false ; 
+        for($ind = 0 ; $ind < count($required) ; $ind++)
+        {
+            if(empty($signalement->$required[$ind]) || !isset($signalement->$required[$ind])){
+                $incomplet = true ; 
+            }
         }
-
-        if(is_null($signalement->complet)){
-            $signalement->complet = true ; 
+        if($incomplet === true){
+            $signalement->etat = 'null'; 
+            $signalement->complet = false ; 
         }
 
         if (request()->has('destinataires')) {

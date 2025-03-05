@@ -12,15 +12,15 @@ class PaSignalementCategorieNatureWidget extends ChartWidget
 
     protected function getData(): array
     {
-        $etabs = Rubrique::all();
+        $rubs = Rubrique::all();
 
         $annee = $this->filters['annee'] ?? null;
         $directionId = $this->filters['direction'] ?? null;
 
-        foreach ($etabs as $ligne) {
+        foreach ($rubs as $ligne) {
             $query = Signalement::join('secteurs', 'signalements.secteur_id', '=', 'secteurs.id')
             ->join('rubriques', 'signalements.rub_nature1_id', '=', 'rubriques.id')
-            ->where('secteurs.id', $ligne->id)
+            ->where('rubriques.id', $ligne->id)
             ->where('secteurs.libelle', 'Personnes Agées')
             ->select('signalements.*')
             ->get();

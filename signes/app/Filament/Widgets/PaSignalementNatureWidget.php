@@ -20,8 +20,8 @@ class PaSignalementNatureWidget extends ChartWidget
         foreach ($etabs as $ligne) {
             $query = Signalement::join('secteurs', 'signalements.secteur_id', '=', 'secteurs.id')
             ->join('options', 'signalements.nature1_id', '=', 'options.id')
-            ->where('secteurs.id', $ligne->id)
-            ->where('secteurs.libelle', 'Domicile')
+            ->where('options.id', $ligne->id)
+            ->where('secteurs.libelle', 'Personnes Agées')
             ->select('signalements.*')
             ->get();
 

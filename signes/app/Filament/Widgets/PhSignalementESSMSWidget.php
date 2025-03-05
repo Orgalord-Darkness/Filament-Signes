@@ -4,6 +4,7 @@ namespace App\Filament\Widgets;
 
 use Filament\Widgets\ChartWidget;
 use App\Models\Signalement ; 
+use App\Models\Etablissement ; 
 use App\Models\Secteur ; 
 
 class PhSignalementESSMSWidget extends ChartWidget
@@ -12,14 +13,15 @@ class PhSignalementESSMSWidget extends ChartWidget
 
     protected function getData(): array
     {
-        $etabs = Secteur::all();
+        $etabs = Etablissement::all();
 
         $annee = $this->filters['annee'] ?? null;
         $directionId = $this->filters['direction'] ?? null;
 
         foreach ($etabs as $ligne) {
             $query = Signalement::join('secteurs', 'signalements.secteur_id', '=', 'secteurs.id')
-            ->where('secteurs.id', $ligne->id)
+            ->join('etablissements', 'signalements.etablissement_id', '=', 'etablissements.id')
+            ->where('etablissements.id', $ligne->id)
             ->where('secteurs.code', 'PH')
             ->select('signalements.*')
             ->get();
@@ -33,7 +35,7 @@ class PhSignalementESSMSWidget extends ChartWidget
             }
             $datas[] = $query->count();
             $colors[] = 'rgb('.rand(0, 255).','.rand(0, 255).','.rand(0, 255).')';
-            $libelles[] = $ligne->libelle;
+            $libelles[] = $ligne->nom;
         }
 
         return [

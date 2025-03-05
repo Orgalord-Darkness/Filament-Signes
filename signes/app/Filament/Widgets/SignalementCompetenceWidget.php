@@ -7,10 +7,12 @@ use App\Models\Signalement ;
 use App\Models\Etablissement ; 
 use Filament\Widgets\Concerns\InteractsWithPageFilters;
 
-class SignalemenCompetenceWidget extends ChartWidget
+class SignalementCompetenceWidget extends ChartWidget
 {
     use InteractsWithPageFilters ; 
     protected static ?string $heading = 'Nombre de signalements par compétences';
+
+    protected static ?string $pollingInterval = null ; 
 
     protected function getData(): array
     {
@@ -20,7 +22,9 @@ class SignalemenCompetenceWidget extends ChartWidget
         $directionId = $this->filters['direction'] ?? null;
 
         foreach ($etabs as $ligne) {
-            $query = Signalement::where('etablissement_id', $ligne->competence);
+            $query = Signalement::join('etablissements', 'signalements.etablissement_id', '=', 'etablissements.id')
+            ->where('etablissements.competence', $ligne->competence)
+            ->select('etablissements.competence');
 
             if (!empty($annee)) {
                 $query = $query->where('created_at', '>=', $annee.'-01-01')->where('created_at', '<',  $annee.'-12-31');
