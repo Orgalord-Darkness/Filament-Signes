@@ -30,7 +30,7 @@ class ActionSignalementObserver
             //     ->title('Échec de l\'envoi du mail.')
             //     ->danger()
             //     ->send();
-            dd($actionSignalement) ; 
+            // dd($actionSignalement) ; 
         }
     }
 

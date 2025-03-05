@@ -72,25 +72,9 @@ class SignalementResource extends Resource
             ])
             //->filters(FiltersSignalement::getFilters(), layout: FiltersLayout::AboveContent)
             ->actions([
-                Tables\Actions\EditAction::make()->label('Modifier'),
+                Tables\Actions\EditAction::make()->label('Modifier')
+                ->visible(fn ($record ) => $record->etat != 'Fermé' ),
                 Tables\Actions\DeleteAction::make()->label('Supprimer'), 
-                Tables\Actions\Action::make('envoyerMail')
-                    ->label('Envoyer un mail de relance')
-                    ->action(function ($record) {
-                        try {
-                            Mail::to('heddy.mameri@gmail.com')->send(new SignalementRelance($record));
-                            Notification::make()
-                                ->title('Mail envoyé avec succès !')
-                                ->success()
-                                ->send();
-                        } catch (\Exception $e) {
-                            Notification::make()
-                                ->title('Échec de l\'envoi du mail.')
-                                ->danger()
-                                ->send();
-                                dd($e->getMessage()) ; 
-                        }
-                    }),
             ])
             ->filters(SignalementFilters::getFilters(), layout: FiltersLayout::AboveContent)
             ->bulkActions([

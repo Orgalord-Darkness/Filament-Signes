@@ -11,7 +11,9 @@ use App\Mail\SignalementOuvert;
 use App\Mail\SignalementFerme;
 use App\Models\ActionSignalement;
 use WireUi\Traits\Actions;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Notification;
+
 
 class SignalementObserver
 {
@@ -30,9 +32,6 @@ class SignalementObserver
             'victimes_pec', 
             'victimes_pro',
             'victimes_autre', 
-            'perex_pec',
-            'perex_pro',
-            'perex_autre', 
         ] ;
         $incomplet = false ; 
         for($ind = 0 ; $ind < count($required) ; $ind++)
@@ -44,6 +43,7 @@ class SignalementObserver
         if($incomplet === true){
             $signalement->etat = 'null'; 
             $signalement->complet = false ; 
+            $signalement->save() ; 
         }
 
         if (request()->has('destinataires')) {
@@ -73,7 +73,7 @@ class SignalementObserver
      */
     public function updated(Signalement $signalement): void
     {
-        //Valeurs par défaut pour les attributs automatiques 
+        //Valeurs par défaut pour les attributs automatiques
         $user = null ; 
         $users = User::all() ; 
         foreach($users as $ligne){
@@ -91,8 +91,32 @@ class SignalementObserver
             } catch (\Exception $e) {
                 dd($e->getMessage()) ; 
             }
-        }else{
-            
+        }
+
+        $required = [
+            'rub_nature1_id', 
+            'nature1_id', 
+            'description', 
+            'eig',
+            'periode_eig', 
+            'victimes_pec', 
+            'victimes_pro',
+            'victimes_autre',  
+        ] ;
+        $incomplet = false ;  
+        for($ind = 0 ; $ind < count($required) ; $ind++)
+        { 
+            if (is_null($signalement->{$required[$ind]})) {
+                $incomplet = true ; 
+                dd($required[$ind]) ; 
+            }else{
+                // dd($required[$ind]) ; 
+            }
+        }
+        if($incomplet === false){
+            $signalement->etat = "Ouvert" ; 
+            $signalement->complet = true ; 
+            $signalement->save() ; 
         }
 
         if($signalement->etat === "Ouvert")

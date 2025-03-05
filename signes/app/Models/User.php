@@ -171,11 +171,17 @@ class User extends Authenticatable implements FilamentUser, HasName, HasAvatar
         return $this->delete_at == null ? true : false ; 
     }
 
+    /*
+    Méthode qui vérifie si l'utilisateur est un administrateur
+    */
     public function isAdmin(): bool 
     {
         return $this->role->pluck('name')->contains("Administrateur") ; 
     }
 
+    /*
+    Méthode qui vérifie si l'utilisateur est un gestionnaire, rôle nécessaire pour fermer un signalement
+    */
     public function isGestionnaire(): bool 
     {
         return $this->role->pluck('name')->contains("Gestionnaire") ;
