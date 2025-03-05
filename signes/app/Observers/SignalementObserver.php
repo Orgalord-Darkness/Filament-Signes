@@ -36,14 +36,20 @@ class SignalementObserver
         $incomplet = false ; 
         for($ind = 0 ; $ind < count($required) ; $ind++)
         {
-            if(empty($signalement->$required[$ind]) || !isset($signalement->$required[$ind])){
+            if(is_null($signalement->{$required[$ind]})){
                 $incomplet = true ; 
             }
         }
         if($incomplet === true){
-            $signalement->etat = 'null'; 
-            $signalement->complet = false ; 
+            $signalement->etat = 'null';
+            $signalement->complet = false ;  
             $signalement->save() ; 
+            
+        }else{
+            $signalement->etat = 'Ouvert' ; 
+            $signalement->complet = true ; 
+            $signalement->save() ; 
+            Mail::to('test.valdoise@gmail.com')->send(new SignalementOuvert($signalement));
         }
 
         if (request()->has('destinataires')) {
@@ -108,7 +114,7 @@ class SignalementObserver
         { 
             if (is_null($signalement->{$required[$ind]})) {
                 $incomplet = true ; 
-                dd($required[$ind]) ; 
+                //dd($required[$ind]) ; 
             }else{
                 // dd($required[$ind]) ; 
             }
