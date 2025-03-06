@@ -10,6 +10,8 @@ class PaSignalementCategorieNatureWidget extends ChartWidget
 {
     protected static ?string $heading = 'Personnes Agees - Nb de signalements par Catégorie Nature des faits';
 
+    protected static ?string $pollingInterval = null ; 
+
     protected function getData(): array
     {
         $rubs = Rubrique::all();

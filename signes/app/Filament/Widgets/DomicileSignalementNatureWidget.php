@@ -10,6 +10,8 @@ class DomicileSignalementNatureWidget extends ChartWidget
 {
     protected static ?string $heading = 'Domicile - Nb de signalement par Nature des faits';
 
+    protected static ?string $pollingInterval = null ; 
+
     protected function getData(): array
     {
         $etabs = Option::all();

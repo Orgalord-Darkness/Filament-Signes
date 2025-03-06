@@ -10,6 +10,8 @@ class PhSignalementNatureWidget extends ChartWidget
 {
     protected static ?string $heading = 'Personnes Handicapees - Nb de signalement par Nature des faits';
 
+    protected static ?string $pollingInterval = null ; 
+
     protected function getData(): array
     {
         $etabs = Option::all();

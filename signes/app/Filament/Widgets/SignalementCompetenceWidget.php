@@ -23,8 +23,8 @@ class SignalementCompetenceWidget extends ChartWidget
 
         foreach ($etabs as $ligne) {
             $query = Signalement::join('etablissements', 'signalements.etablissement_id', '=', 'etablissements.id')
-            ->where('etablissements.competence', $ligne->competence)
-            ->select('etablissements.competence');
+            ->groupby('etablissements.competence')
+            ->select('signalements.*');
 
             if (!empty($annee)) {
                 $query = $query->where('created_at', '>=', $annee.'-01-01')->where('created_at', '<',  $annee.'-12-31');
@@ -40,18 +40,6 @@ class SignalementCompetenceWidget extends ChartWidget
                     'label' =>'Nb Signalements', 
                     'data' => $datas, 
                     'backgroundColor'=>$colors, 
-                    // 'backgroundColor'=>[
-                    //     "#FF0000",
-                    //     "#00FF00",
-                    //     "#0000FF",
-                    //     "#FFFF00",
-                    //     "#00FFFF",
-                    //     "#FF00FF",
-                    //     "#000000",
-                    //     "#FFFFFF",
-                    //     "#808080",
-                    //     "#FFA500"
-                    // ], 
                     'borderColor'=> 'rgb(255,255,255)', 
                 ],
             ],
