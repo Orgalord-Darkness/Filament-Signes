@@ -14,7 +14,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\ActionSignalementResource\Pages\ActionSignalementColumns; 
 use App\Filament\Resources\ActionSignalementResource\Pages\ActionSignalementFields; 
-//use App\Filament\Resources\ActionSignalementResource\Pages\FiltersActionSignalement ; 
+use App\Filament\Resources\ActionSignalementResource\Pages\ActionSignalementFilters ; 
 use Filament\Tables\Enums\FiltersLayout;
 use App\Mail\ActionQuestion; 
 use Illuminate\Support\Facades\Mail;
@@ -52,30 +52,12 @@ class ActionSignalementResource extends Resource
             )
             ->headerActions([
             ])
-            ->filters([//FiltersActionSignalement::getFilters(), layout: FiltersLayout::AboveContent
-            ])
+            ->filters(ActionSignalementFilters::getFilters(), layout: FiltersLayout::AboveContent )
             ->actions([
                 Tables\Actions\EditAction::make()
                 ->label('modifier'),
                 Tables\Actions\DeleteAction::make()
                 ->label('supprimer'),
-                Tables\Actions\Action::make('envoyerMail')
-                    ->label('Envoyer un mail')
-                    ->action(function ($record) {
-                        try {
-                            Mail::to('experience.example@gmail.com')->send(new ActionQuestion($record));
-                            Notification::make()
-                                ->title('Mail envoyé avec succès !')
-                                ->success()
-                                ->send();
-                        } catch (\Exception $e) {
-                            Notification::make()
-                                ->title('Échec de l\'envoi du mail.')
-                                ->danger()
-                                ->send();
-                                dd($e->getMessage()) ; 
-                        }
-                    }),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

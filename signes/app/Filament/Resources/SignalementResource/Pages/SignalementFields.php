@@ -490,39 +490,123 @@ class SignalementFields
                         ->schema([
                             Forms\Components\Select::make('consequence1')
                             ->label('Pour la ou les personnes prises en charge')
-                            ->options([
-                                'Aucune' => 'Aucune',
-                                'Aggravation de la santé' => 'Aggravation de la santé',
-                                'Blessure' => 'Blessure',
-                                'Changement de comportement ou d\'humeur' => 'Changement de comportement ou d\'humeur',
-                                'Décès' => 'Décès',
-                                'Hospitalisation'=>'Hospitalisation',
-                                'Soin en interne'=>'Soin en interne',
-                                'Autre'=>'Autre',                       
-                            ])
+                            ->relationship('consequences1', 'libelle', function ($query){
+                                $sections = Section::all() ; 
+                                $rubriques = Rubrique::all() ; 
+                                foreach($sections as $ligne){
+                                    if($ligne->libelle == "Conséquences")
+                                    {
+                                        $idSection = $ligne->id ; 
+                                        break ;
+                                    }
+                                }
+                                foreach($rubriques as $ligne){
+                                    if($ligne->libelle == "Pour la ou les personnes prise(s) en charge"){
+                                        $idRubrique = $ligne->id ; 
+                                        break ; 
+                                    }
+                                }
+                                $query->where('section_id', $idSection) 
+                                ->where('rubrique_id', $idRubrique ) ; 
+                                $query->orderBy('ordre','asc') ;
+                            })
+                            ->afterStateUpdated(function ($state, callable $set, callable $get){
+                                $rubriques = Rubrique::all();
+                                $sections = Section::all() ; 
+                                $options = Option::all() ; 
+                                foreach($sections as $ligne){
+                                    if($ligne->libelle == "Conséquences")
+                                    {
+                                        $idSection = $ligne->id ; 
+                                        break ;
+                                    }
+                                }
+                                foreach($rubriques as $ligne){
+                                    if($ligne->libelle == "Pour la ou les personnes prise(s) en charge"){
+                                        $idRubrique = $ligne->id ; 
+                                        break ; 
+                                    }
+                                }
+                                $idOption = null ; 
+                                foreach($options as $ligne){
+                                    if($ligne->rubrique_id === $idRubrique && $ligne->section_id == $idSection && $ligne->libelle === "Autre"){
+                                        $idOption = $ligne->id ;  
+                                        break ; 
+                                    }
+                                }
+                                if($state == $idOption){ 
+                                    $set('consequence1_inter','Autre') ; 
+                                }
+                            })
                             ->reactive()
                             ->default(null)
                             ->requiredIf('complet',true),
+
+                            Hidden::make('consequence1_inter'), 
+
                             Forms\Components\TextInput::make('consequence1_autre')
                             ->label('Si autre précisez')
-                            ->visible(fn ($get) => $get('consequence1') === 'Autre'),
+                            ->visible(fn ($get) => $get('consequence1_inter') === 'Autre'),
 
                         ]),
                         Forms\Components\Grid::make(2)
                         ->schema([
                             Forms\Components\Select::make('consequence2')
-                            ->label('Pour la ou les professionnels')
-                            ->options([
-                                'Aucune' => 'Aucune',
-                                'Arrêt maladie' => 'Arrêt maladie',
-                                'Décès' => 'Décès',
-                                'Impossibilité de se rendre sur le lieu de travail' => 'Impossibilité de se rendre sur le lieu de travail',
-                                'Organisation d\'une prise en charge médicale et/ou soutien psychologique' => 'Organisation d\'une prise en charge médicale et/ou soutien psychologique',
-                                'Autre'=>'Autre',                       
-                            ])
+                            ->label('Pour la ou les personnes prises en charge')
+                            ->relationship('consequences2', 'libelle', function ($query){
+                                $sections = Section::all() ; 
+                                $rubriques = Rubrique::all() ; 
+                                foreach($sections as $ligne){
+                                    if($ligne->libelle == "Conséquences")
+                                    {
+                                        $idSection = $ligne->id ; 
+                                        break ;
+                                    }
+                                }
+                                foreach($rubriques as $ligne){
+                                    if($ligne->libelle == "Pour la ou les personnes prise(s) en charge"){
+                                        $idRubrique = $ligne->id ; 
+                                        break ; 
+                                    }
+                                }
+                                $query->where('section_id', $idSection) 
+                                ->where('rubrique_id', $idRubrique ) ; 
+                                $query->orderBy('ordre','asc') ;
+                            })
+                            ->afterStateUpdated(function ($state, callable $set, callable $get){
+                                $rubriques = Rubrique::all();
+                                $sections = Section::all() ; 
+                                $options = Option::all() ; 
+                                foreach($sections as $ligne){
+                                    if($ligne->libelle == "Conséquences")
+                                    {
+                                        $idSection = $ligne->id ; 
+                                        break ;
+                                    }
+                                }
+                                foreach($rubriques as $ligne){
+                                    if($ligne->libelle == "Pour la ou les personnes prise(s) en charge"){
+                                        $idRubrique = $ligne->id ; 
+                                        break ; 
+                                    }
+                                }
+                                $idOption = null ; 
+                                foreach($options as $ligne){
+                                    if($ligne->rubrique_id === $idRubrique && $ligne->section_id == $idSection && $ligne->libelle === "Autre"){
+                                        $idOption = $ligne->id ;  
+                                        break ; 
+                                    }
+                                }
+                                if($state == $idOption){ 
+                                    $set('consequence2_inter','Autre') ; 
+                                }
+                            })
                             ->reactive()
                             ->default(null)
                             ->requiredIf('complet',true),
+
+                            Hidden::make('consequence2_inter'),
+
                             Forms\Components\TextInput::make('consequence2_autre')
                             ->label('Si autre précisez')
                             ->visible(fn ($get) => $get('consequence2') === 'Autre'),
@@ -531,18 +615,61 @@ class SignalementFields
                         Forms\Components\Grid::make(2)
                         ->schema([
                             Forms\Components\Select::make('consequence3')
-                            ->label('Pour l\'organisation et le fonctionnement de l\'établissement')
-                            ->options([
-                                'Aucune' => 'Aucune',
-                                'Difficultés d\'approvisionnement'=> 'Difficultés d\'approvisionnement',
-                                'Difficultés d\'accès à l\'établissement ou au lieu de prise en charge'=>'Difficultés d\'accès à l\'établissement ou au lieu de prise en charge', 
-                                'Nécessitant d\'évacuation des résidents'=>'Nécessitant d\'évacuation des résidents',
-                                'Fonctionnement en mode dégradé' => 'Fonctionnement en mode dégradé', 
-                                'Autre'=>'Autre',                       
-                            ])
+                            ->label('Pour la ou les personnes prises en charge')
+                            ->relationship('consequences3', 'libelle', function ($query){
+                                $sections = Section::all() ; 
+                                $rubriques = Rubrique::all() ; 
+                                foreach($sections as $ligne){
+                                    if($ligne->libelle == "Conséquences")
+                                    {
+                                        $idSection = $ligne->id ; 
+                                        break ;
+                                    }
+                                }
+                                foreach($rubriques as $ligne){
+                                    if($ligne->libelle == "Pour la ou les personnes prise(s) en charge"){
+                                        $idRubrique = $ligne->id ; 
+                                        break ; 
+                                    }
+                                }
+                                $query->where('section_id', $idSection) 
+                                ->where('rubrique_id', $idRubrique ) ; 
+                                $query->orderBy('ordre','asc') ;
+                            })
+                            ->afterStateUpdated(function ($state, callable $set, callable $get){
+                                $rubriques = Rubrique::all();
+                                $sections = Section::all() ; 
+                                $options = Option::all() ; 
+                                foreach($sections as $ligne){
+                                    if($ligne->libelle == "Conséquences")
+                                    {
+                                        $idSection = $ligne->id ; 
+                                        break ;
+                                    }
+                                }
+                                foreach($rubriques as $ligne){
+                                    if($ligne->libelle == "Pour la ou les personnes prise(s) en charge"){
+                                        $idRubrique = $ligne->id ; 
+                                        break ; 
+                                    }
+                                }
+                                $idOption = null ; 
+                                foreach($options as $ligne){
+                                    if($ligne->rubrique_id === $idRubrique && $ligne->section_id == $idSection && $ligne->libelle === "Autre"){
+                                        $idOption = $ligne->id ;  
+                                        break ; 
+                                    }
+                                }
+                                if($state == $idOption){ 
+                                    $set('consequence3_inter','Autre') ; 
+                                }
+                            })
                             ->reactive()
                             ->default(null)
                             ->requiredIf('complet',true),
+
+                            Hidden::make('consequence3_inter'),
+
                             Forms\Components\TextInput::make('consequence3_autre')
                             ->label('Si autre précisez')
                             ->visible(fn ($get) => $get('consequence3') === 'Autre'),
@@ -715,17 +842,27 @@ class SignalementFields
                         Grid::make('Destinataire')
                         ->schema([
                         Forms\Components\Select::make('destinataires')
-                        ->options([
-                            'CVS' => 'CVS ou groupe d\'expression', 
-                            'DAC' => 'DAC (Dispositif d\'Appui à la Coordination', 
-                            'Famille et proches' => 'Famille et proches', 
-                            'Les Points Conseils' => 'Les Points Conseils (du Département)', 
-                            'Personnes concernées' => 'Personnes concernées', 
-                            'Professionnels' => 'Professionnels', 
-                            'Responsable légal' => 'Responsable légal', 
-                            'Autre' => 'Autre', 
-                        ])
-                        //->relationship('destinataires','libelle')
+                        ->relationship('destinataires','libelle', function($query){
+                            $sections = Section::all() ; 
+                            $rubriques = Rubrique::all() ; 
+
+                            foreach($sections as $ligne){
+                                if($ligne->libelle == "Informations"){
+                                    $idSection = $ligne->id ; 
+                                    break ; 
+                                }
+                            }
+
+                            foreach($rubriques as $ligne){
+                                if($ligne->libelle == "Information aux proches, familles et personnes concernées"){
+                                    $idRubrique = $ligne->id ; 
+                                }
+                            }
+
+                            $query->where('section_id',$idSection)
+                            ->where('rubrique_id', $idRubrique)  
+                            ->orderBy('ordre', 'asc') ; 
+                        })
                         ->reactive()
                         ->multiple()
                         ->label('Destinataire'),
@@ -741,69 +878,200 @@ class SignalementFields
                     Grid::make()
                     ->schema([
                         Forms\Components\Select::make('disposition1')
-                        // ->options([
-                        //     'Aucune' => 'Aucune',
-                        //     'Adaptation des soins/de la prise en charge' => 'Adaptation des soins/de la prise en charge',
-                        //     'Fin de prise en charge' => 'Fin de prise en charge',
-                        //     'Orientation vers autre établissement/service' => 'Orientation vers autre établissement/service',
-                        //     'Orientation vers Dispositif Personnes Qualifiées' => 'Orientation vers Dispositif Personnes Qualifiées',
-                        //     'Révision du projet de vie' => 'Révision du projet de vie',
-                        //     'Soutien psychologique'=>'Soutien psychologique', 
-                        //     'Transfert/hospitalisation'=>'Transfert/hospitalisation',
-                        //     'Autre'=>'Autre', 
-                        // ])
-                        ->relationship('dispositions1','libelle')
-                        ->reactive()
+                        ->relationship('dispositions1','libelle', function ($query){
+                            $sections = Section::all() ; 
+                            $rubriques = Rubrique::all() ; 
+                            foreach($sections as $ligne){
+                                if($ligne->libelle == "Dispositions")
+                                {
+                                    $idSection = $ligne->id ; 
+                                    break ;
+                                }
+                            }
+                            foreach($rubriques as $ligne){
+                                if($ligne->libelle == "Concernant les usagers"){
+                                    $idRubrique = $ligne->id ; 
+                                    break ; 
+                                }
+                            }
+                            $query->where('section_id', $idSection) 
+                            ->where('rubrique_id', $idRubrique ) ; 
+                            $query->orderBy('ordre','asc') ; 
+
+                        })
+                        ->afterStateUpdated(function ($state, callable $set, callable $get){
+                            $rubriques = Rubrique::all();
+                            $sections = Section::all() ; 
+                            $options = Option::all() ; 
+                            foreach($sections as $ligne){
+                                if($ligne->libelle == "Dispositions")
+                                {
+                                    $idSection = $ligne->id ; 
+                                    break ;
+                                }
+                            }
+                            foreach($rubriques as $ligne){
+                                if($ligne->libelle == "Concernant les usagers"){
+                                    $idRubrique = $ligne->id ; 
+                                    break ; 
+                                }
+                            }
+                            $idOption = null ; 
+                            foreach($options as $ligne){
+                                if($ligne->rubrique_id === $idRubrique && $ligne->section_id == $idSection && $ligne->libelle === "Autre"){
+                                    $idOption = $ligne->id ;  
+                                    break ; 
+                                }
+                            }
+                            for($ind = 0 ; $ind < count($state) ; $ind++){
+                                if($state[$ind] == $idOption){ 
+                                    $set('disposition1_inter','Autre') ; 
+                                }
+                            }
+                        })
                         ->multiple()
+                        ->reactive()
                         ->label('Concernant les usagers')
                         ->default(null)
                         ->requiredIf('complet',true),
+
+                        Hidden::make('disposition1_inter')->reactive(), 
                         
                         Forms\Components\TextInput::make('disposition1_autre')
                         ->label('Si Autre, précisez')
-                        ->visible(fn ($get)=> in_array('Autre', $get('disposition1') ?? []) ),
+                        ->visible(fn ($get) => $get('disposition1_inter') === 'Autre' ),
 
                     ]),
 
                     Grid::make()
                     ->schema([
                         Forms\Components\Select::make('disposition2')
-                        ->options([
-                            'Aucune' => 'Aucune',
-                            'Action de formation' => 'Action de formation',
-                            'Action de sensibilité' => 'Action de sensibilité',
-                            'Mesure conservatoire' => 'Mesure conservatoire',
-                            'Mesure disciplinaire' => 'Mesure disciplinaire',
-                            'Soutien psychologique'=>'Soutien psychologique', 
-                            'Autre'=>'Autre', 
-                        ])
-                        ->reactive()
+                        ->relationship('dispositions2','libelle', function ($query){
+                            $sections = Section::all() ; 
+                            $rubriques = Rubrique::all() ; 
+                            foreach($sections as $ligne){
+                                if($ligne->libelle == "Dispositions")
+                                {
+                                    $idSection = $ligne->id ; 
+                                    break ;
+                                }
+                            }
+                            foreach($rubriques as $ligne){
+                                if($ligne->libelle == "Concernant les professionnels"){
+                                    $idRubrique = $ligne->id ; 
+                                    break ; 
+                                }
+                            }
+                            $query->where('section_id', $idSection) 
+                            ->where('rubrique_id', $idRubrique ) ; 
+                            $query->orderBy('ordre','asc') ; 
+
+                        })
+                        ->afterStateUpdated(function ($state, callable $set, callable $get){
+                            $rubriques = Rubrique::all();
+                            $sections = Section::all() ; 
+                            $options = Option::all() ; 
+                            foreach($sections as $ligne){
+                                if($ligne->libelle == "Dispositions")
+                                {
+                                    $idSection = $ligne->id ; 
+                                    break ;
+                                }
+                            }
+                            foreach($rubriques as $ligne){
+                                if($ligne->libelle == "Concernant les professionnels"){
+                                    $idRubrique = $ligne->id ; 
+                                    break ; 
+                                }
+                            }
+                            $idOption = null ; 
+                            foreach($options as $ligne){
+                                if($ligne->rubrique_id === $idRubrique && $ligne->section_id == $idSection && $ligne->libelle === "Autre"){
+                                    $idOption = $ligne->id ;  
+                                    break ; 
+                                }
+                            }
+                            for($ind = 0 ; $ind < count($state) ; $ind++){
+                                if($state[$ind] == $idOption){ 
+                                    $set('disposition2_inter','Autre') ; 
+                                }
+                            }
+                        })
                         ->multiple()
+                        ->reactive()
                         ->label('Concernant les professionnels')
                         ->default(null)
                         ->requiredIf('complet',true),
+
+                        Hidden::make('disposition2_inter')->reactive(), 
                         
                         Forms\Components\TextInput::make('disposition2_autre')
                         ->label('Si Autre, précisez')
-                        ->visible(fn ($get)=> in_array('Autre', $get('disposition2') ?? [])  ),
+                        ->visible(fn ($get)=> $get('disposition2_inter') === 'Autre'),
 
                     ]),
 
                     Grid::make()
                     ->schema([
                         Forms\Components\Select::make('disposition3')
-                        ->options([
-                            'Aucune' => 'Aucune',
-                            'Fonctionnement en mode dégradé' => 'Fonctionnement en mode dégradé',
-                            'Mise en place / à jour de procédures' => 'Mise en place / à jour de procédures',
-                            'Révision de planning' => 'Révision de planning',
-                            'Autre'=>'Autre', 
-                        ])
-                        ->reactive()
+                        ->relationship('dispositions3','libelle', function ($query){
+                            $sections = Section::all() ; 
+                            $rubriques = Rubrique::all() ; 
+                            foreach($sections as $ligne){
+                                if($ligne->libelle == "Dispositions")
+                                {
+                                    $idSection = $ligne->id ; 
+                                    break ;
+                                }
+                            }
+                            foreach($rubriques as $ligne){
+                                if($ligne->libelle == "Concernant l'organisation de travail"){
+                                    $idRubrique = $ligne->id ; 
+                                    break ; 
+                                }
+                            }
+                            $query->where('section_id', $idSection) 
+                            ->where('rubrique_id', $idRubrique ) ; 
+                            $query->orderBy('ordre','asc') ; 
+
+                        })
+                        ->afterStateUpdated(function ($state, callable $set, callable $get){
+                            $rubriques = Rubrique::all();
+                            $sections = Section::all() ; 
+                            $options = Option::all() ; 
+                            foreach($sections as $ligne){
+                                if($ligne->libelle == "Dispositions")
+                                {
+                                    $idSection = $ligne->id ; 
+                                    break ;
+                                }
+                            }
+                            foreach($rubriques as $ligne){
+                                if($ligne->libelle == "Concernant l'organisation de travail"){
+                                    $idRubrique = $ligne->id ; 
+                                    break ; 
+                                }
+                            }
+                            $idOption = null ; 
+                            foreach($options as $ligne){
+                                if($ligne->rubrique_id === $idRubrique && $ligne->section_id == $idSection && $ligne->libelle === "Autre"){
+                                    $idOption = $ligne->id ;  
+                                    break ; 
+                                }
+                            }
+                            for($ind = 0 ; $ind < count($state) ; $ind++){
+                                if($state[$ind] == $idOption){ 
+                                    $set('disposition3_inter','Autre') ; 
+                                }
+                            }
+                        })
                         ->multiple()
-                        ->label('Concernant l\'organisation du travail')
+                        ->reactive()
+                        ->label('Concernant l\'organisation de travail')
                         ->default(null)
                         ->requiredIf('complet',true),
+
+                        Hidden::make('disposition3_inter')->reactive(), 
                         
                         Forms\Components\TextInput::make('disposition3_autre')
                         ->label('Si Autre, précisez')
@@ -813,19 +1081,64 @@ class SignalementFields
                     Grid::make()
                     ->schema([
                         Forms\Components\Select::make('disposition4')
-                        ->options([
-                            'Aucune' => 'Aucune',
-                            'Activation d\'une cellule de crise ou d\'un plan' => 'Activation d\'une cellule de crise ou d\'un plan',
-                            'Aménagement ou réparation des locaux et / ou équipements' => 'Aménagement ou réparation des locaux et / ou équipements',
-                            'Orientation vers autre établissement/service' => 'Demande d\'aide ou d\'appui à autorité administrative ',
-                            'Information interne et/ou externe' => 'Information interne et/ou externe',
-                            'Autre'=>'Autre', 
-                        ])
+                        ->relationship('dispositions4','libelle', function ($query){
+                            $sections = Section::all() ; 
+                            $rubriques = Rubrique::all() ; 
+                            foreach($sections as $ligne){
+                                if($ligne->libelle == "Dispositions")
+                                {
+                                    $idSection = $ligne->id ; 
+                                    break ;
+                                }
+                            }
+                            foreach($rubriques as $ligne){
+                                if($ligne->libelle == "Concernant l'établissement"){
+                                    $idRubrique = $ligne->id ; 
+                                    break ; 
+                                }
+                            }
+                            $query->where('section_id', $idSection) 
+                            ->where('rubrique_id', $idRubrique ) ; 
+                            $query->orderBy('ordre','asc') ; 
+
+                        })
+                        ->afterStateUpdated(function ($state, callable $set, callable $get){
+                            $rubriques = Rubrique::all();
+                            $sections = Section::all() ; 
+                            $options = Option::all() ; 
+                            foreach($sections as $ligne){
+                                if($ligne->libelle == "Dispositions")
+                                {
+                                    $idSection = $ligne->id ; 
+                                    break ;
+                                }
+                            }
+                            foreach($rubriques as $ligne){
+                                if($ligne->libelle == "Concernant l'établissement"){
+                                    $idRubrique = $ligne->id ; 
+                                    break ; 
+                                }
+                            }
+                            $idOption = null ; 
+                            foreach($options as $ligne){
+                                if($ligne->rubrique_id === $idRubrique && $ligne->section_id == $idSection && $ligne->libelle === "Autre"){
+                                    $idOption = $ligne->id ;  
+                                    break ; 
+                                }
+                            }
+                            for($ind = 0 ; $ind < count($state) ; $ind++){
+                                if($state[$ind] == $idOption){ 
+                                    $set('disposition4_inter','Autre') ; 
+                                }
+                            }
+                        })
+                        ->multiple()
                         ->reactive()
                         ->label('Concernant l\'établissement')
-                        ->multiple()
                         ->default(null)
                         ->requiredIf('complet',true),
+
+                        Hidden::make('disposition4_inter')->reactive(), 
 
                         Forms\Components\TextInput::make('disposition4_autre')
                         ->label('Si Autre, précisez')

@@ -23,6 +23,11 @@ class ActionSignalementFields
         ->schema([
             Select::make('signalement_id')
             ->relationship('signalement', 'id')
+            ->default(function($state){
+                if(isset($_GET['signalement_id'])){
+                    return $_GET['signalement_id'] ; 
+                }
+            })
             ->required(),
 
             Select::make('question_id')
@@ -36,7 +41,7 @@ class ActionSignalementFields
                     }
                 }
                 $query->where('section_id',$id); 
-            })  
+            })
             ->required(),
 
             Select::make('motif_id')
@@ -51,15 +56,12 @@ class ActionSignalementFields
                 }
                 $query->where('section_id',$id); 
             })
-            ->required(),  
+            ->required(),
 
-            TextInput::make('question'), 
-
-            TextArea::make('question_libre'), 
+            TextArea::make('question2'), 
             TextArea::make('reponse'), 
 
-            Select::make('user_id')
-            ->relationship('user', 'nom')
+            Hidden::make('user_id')
             ->default(Auth::user()->id)
             ->required(),
         ]) 
