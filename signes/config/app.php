@@ -26,8 +26,7 @@ return [
     |
     */
 
-    'env' => env('APP_ENV', 'production'),
-
+    'env' => env('APP_ENV', 'production'),    
     /*
     |--------------------------------------------------------------------------
     | Application Debug Mode
@@ -131,5 +130,5 @@ return [
         'driver' => env('APP_MAINTENANCE_DRIVER', 'file'),
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
-
+    
 ];

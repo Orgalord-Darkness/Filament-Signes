@@ -3,6 +3,7 @@
 namespace App\Filament\Pages;
 
 use App\Models\User;
+use Filament\Pages\Page;
 use Filament\Forms\Components\Select;
 use Filament\Pages\Dashboard as BasePage;
 use Filament\Pages\Dashboard\Actions\FilterAction;
@@ -24,9 +25,6 @@ class Dashboard extends BasePage {
                 ->form([
                     Select::make('annee')->label('Année')
                         ->options([date('Y'), date('Y')-1, date('Y')-2, date('Y')-3]),
-
-                    Select::make('direction')
-                        ->options(User::orderBy('code','ASC')->get()->pluck('code','id'))
                     ])
         ];
     }

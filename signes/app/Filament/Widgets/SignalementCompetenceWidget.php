@@ -19,7 +19,6 @@ class SignalementCompetenceWidget extends ChartWidget
         $etabs = Etablissement::all();
 
         $annee = $this->filters['annee'] ?? null;
-        $directionId = $this->filters['direction'] ?? null;
 
         foreach ($etabs as $ligne) {
             $query = Signalement::join('etablissements', 'signalements.etablissement_id', '=', 'etablissements.id')
@@ -27,7 +26,7 @@ class SignalementCompetenceWidget extends ChartWidget
             ->select('signalements.*');
 
             if (!empty($annee)) {
-                $query = $query->where('created_at', '>=', $annee.'-01-01')->where('created_at', '<',  $annee.'-12-31');
+                $query = $query->where('signalements.date_evenement', '>=', $annee.'-01-01')->where('signalements.date_evenement', '<',  $annee.'-12-31');
             }
             $datas[] = $query->count();
             $colors[] = 'rgb('.rand(0, 255).','.rand(0, 255).','.rand(0, 255).')';

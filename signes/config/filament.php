@@ -33,7 +33,26 @@ return [
 
     'brand' => 'Signes', 
 
+    'pages' => [
+        'namespace' => 'App\\Filament\\Pages', 
+        'path' => app_path('Filament/Pages'), 
+        'register' => [
+            \App\Filament\Pages\Dashboard::class, // Ajoutez votre nouvelle page ici
+        ],
+    ] , 
+
     'name' => env('APP_NAME', 'Signes'),
+
+    // 'navigation' => [
+    //     'items' => [
+    //         [
+    //             'label' => 'Tableau de bord',
+    //             'icon' => 'heroicon-o-home',
+    //             'route' => 'filament.dashboard', // Assurez-vous que le nom de la route est correct
+    //         ],
+    //         // Autres éléments de navigation
+    //     ],
+    // ],
 
     /*
     |--------------------------------------------------------------------------
