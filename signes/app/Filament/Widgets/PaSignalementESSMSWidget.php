@@ -11,6 +11,8 @@ class PaSignalementESSMSWidget extends ChartWidget
 {
     protected static ?string $heading = 'Personnes Agees - Nb de signalements par ESSMS';
 
+    protected static ?string $pollingInterval = null ; 
+
     protected function getData(): array
     {
         $etabs = Etablissement::all();

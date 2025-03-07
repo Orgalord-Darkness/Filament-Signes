@@ -11,6 +11,8 @@ class PhSignalementESSMSWidget extends ChartWidget
 {
     protected static ?string $heading = 'Personnes Handicapees  - Nb de signalements par ESSMS';
 
+    protected static ?string $pollingInterval = null ; 
+
     protected function getData(): array
     {
         $etabs = Etablissement::all();

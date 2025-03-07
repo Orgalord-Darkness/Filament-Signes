@@ -42,6 +42,46 @@ class Option extends Model
         return $this->belongsTo(Rubrique::class);
     }
 
+    public function Disposition1Signalement()
+    {
+        return $this->belongsToMany(Signalement::class, 'disposition1_signalement') ; 
+    }
+
+    public function Disposition2Signalement()
+    {
+        return $this->belongsToMany(Signalement::class, 'disposition1_signalement') ; 
+    }
+
+    public function Disposition3Signalement()
+    {
+        return $this->belongsToMany(Signalement::class, 'disposition1_signalement') ; 
+    }
+
+    public function Disposition4Signalement()
+    {
+        return $this->belongsToMany(Signalement::class, 'disposition1_signalement') ; 
+    }
+
+    public function destinataires()
+    {
+        return $this->belongsToMany(Signalement::class, 'destinataire_signalement'); 
+    }
+
+    public function consequence1()
+    {
+        return $this->belongsToMany(Signalement::class, 'consequence1_signalement'); 
+    }
+
+    public function consequence2()
+    {
+        return $this->belongsToMany(Signalement::class, 'consequence1_signalement'); 
+    }
+
+    public function consequence3()
+    {
+        return $this->belongsToMany(Signalement::class, 'consequence1_signalement'); 
+    }
+
     /*
     |--------------------------------------------------------------------------
     | SCOPES

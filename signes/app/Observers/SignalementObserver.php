@@ -3,6 +3,7 @@
 namespace App\Observers;
 
 use App\Models\User ;
+use App\Models\Secteur ; 
 use App\Models\Signalement;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Auth;
@@ -36,14 +37,20 @@ class SignalementObserver
         $incomplet = false ; 
         for($ind = 0 ; $ind < count($required) ; $ind++)
         {
-            if(empty($signalement->$required[$ind]) || !isset($signalement->$required[$ind])){
+            if(is_null($signalement->{$required[$ind]})){
                 $incomplet = true ; 
             }
         }
         if($incomplet === true){
-            $signalement->etat = 'null'; 
-            $signalement->complet = false ; 
+            $signalement->etat = 'null';
+            $signalement->complet = false ;  
             $signalement->save() ; 
+            
+        }else{
+            $signalement->etat = 'Ouvert' ; 
+            $signalement->complet = true ; 
+            $signalement->save() ; 
+            Mail::to('test.valdoise@gmail.com')->send(new SignalementOuvert($signalement));
         }
 
         if (request()->has('destinataires')) {
@@ -74,6 +81,12 @@ class SignalementObserver
     public function updated(Signalement $signalement): void
     {
         //Valeurs par défaut pour les attributs automatiques
+        $secteurs = Secteur::all() ; 
+        foreach($secteurs as $ligne){
+            if($ligne->libelle == "Enfance"){
+                $idSecteur = $ligne->id ; 
+            }
+        }
         $user = null ; 
         $users = User::all() ; 
         foreach($users as $ligne){
@@ -87,7 +100,9 @@ class SignalementObserver
             try {
                 $signalement->etat = "Fermé" ;  
                 $signalement->save() ; 
-                Mail::to('test.valdoise@gmail.com')->send(new SignalementFerme($signalement));
+                if($signalement->secteur->libelle != "Enfance"){
+                    Mail::to('test.valdoise@gmail.com')->send(new SignalementFerme($signalement));
+                }
             } catch (\Exception $e) {
                 dd($e->getMessage()) ; 
             }
@@ -108,7 +123,7 @@ class SignalementObserver
         { 
             if (is_null($signalement->{$required[$ind]})) {
                 $incomplet = true ; 
-                dd($required[$ind]) ; 
+                //dd($required[$ind]) ; 
             }else{
                 // dd($required[$ind]) ; 
             }

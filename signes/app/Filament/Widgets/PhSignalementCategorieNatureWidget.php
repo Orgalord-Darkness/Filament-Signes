@@ -10,6 +10,8 @@ class PhSignalementCategorieNatureWidget extends ChartWidget
 {
     protected static ?string $heading = 'Personnes Handicapees - Nb de signalements par Catégorie Nature des faits';
 
+    protected static ?string $pollingInterval = null ; 
+
     protected function getData(): array
     {
         $rubs = Rubrique::all();

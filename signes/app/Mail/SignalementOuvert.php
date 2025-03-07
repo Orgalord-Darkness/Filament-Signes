@@ -2,6 +2,7 @@
 
 namespace App\Mail;
 
+use App\Models\Secteur ; 
 use App\Models\Signalement;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
@@ -51,11 +52,18 @@ class SignalementOuvert extends Mailable
         $destinataire = 'test.valdoise@gmail.com' ; 
         $expediteur = 'test.valdoise@gmail.com' ; 
         $destinataires_cc = 'test.valdoise@gmail.com' ; 
+
+        if($this->signalement->secteur->libelle == "Enfance" ){
+            $vue = 'email.signalements_ouvert_enfance' ; 
+        }else{
+            $vue = 'email.signalement_ouvert' ; 
+        }
+
         return $this
             ->to($destinataire)
             ->cc($destinataires_cc)
             ->from($expediteur)
             ->subject($subject)
-            ->markdown('emails.signalement_ouvert', ['signalement' => $this->signalement]);
+            ->markdown($vue, ['signalement' => $this->signalement]);
     }
 }

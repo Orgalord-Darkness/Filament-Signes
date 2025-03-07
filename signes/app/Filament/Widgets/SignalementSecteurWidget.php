@@ -13,6 +13,8 @@ class SignalementSecteurWidget extends ChartWidget
 
     protected static ?string $heading = 'Nombre de signalements par secteur';
 
+    protected static ?string $pollingInterval = null ; 
+
     protected function getData(): array
     {
         $secteurs = Secteur::all();
@@ -36,19 +38,7 @@ class SignalementSecteurWidget extends ChartWidget
                 [          
                     'label' =>'Nb Signalements', 
                     'data' => $datas, 
-                    //'backgroundColor'=>$colors, 
-                    'backgroundColor'=>[
-                        "#FF0000",
-                        "#00FF00",
-                        "#0000FF",
-                        "#FFFF00",
-                        "#00FFFF",
-                        "#FF00FF",
-                        "#000000",
-                        "#FFFFFF",
-                        "#808080",
-                        "#FFA500"
-                    ], 
+                    'backgroundColor'=>$colors,  
                     'borderColor'=> 'rgb(255,255,255)', 
                 ],
             ],
